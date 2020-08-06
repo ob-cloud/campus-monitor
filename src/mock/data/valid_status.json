@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "message": "操作成功！",
+  "code": 0,
+  "result": [{
+    "value": "0",
+    "text": "无效",
+    "title": "无效"
+  }, {
+    "value": "1",
+    "text": "有效",
+    "title": "有效"
+  }],
+  "timestamp": 1578031058313
+}

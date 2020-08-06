@@ -1,0 +1,57 @@
+{
+  "code": 0,
+  "message": "",
+  "result": {
+    "records": [{
+      "createBy": "admin",
+      "dictCode": "menu_type",
+      "createTime": "2020-12-18 23:24:32",
+      "updateBy": "admin",
+      "description": null,
+      "dictName": "菜单类型",
+      "updateTime": "2019-04-01 15:27:06",
+      "id": "ac2f7c0c5c5775fcea7e2387bcb22f01",
+      "type": 1,
+      "delFlag": 0
+    }, {
+      "createBy": "admin",
+      "dictCode": "valid_status",
+      "createTime": "2020-09-26 19:21:14",
+      "updateBy": "admin",
+      "description": "有效无效状态",
+      "dictName": "有效无效状态",
+      "updateTime": "2019-04-26 19:21:23",
+      "id": "68168534ff5065a152bfab275c2136f8",
+      "type": 0,
+      "delFlag": 0
+    }, {
+      "createBy": "admin",
+      "dictCode": "dict_item_status",
+      "createTime": "2020-06-18 23:18:42",
+      "updateBy": "admin",
+      "description": null,
+      "dictName": "字典状态",
+      "updateTime": "2019-03-30 19:33:52",
+      "id": "4c753b5293304e7a445fd2741b46529d",
+      "type": 1,
+      "delFlag": 0
+    }, {
+      "createBy": "admin",
+      "dictCode": "msg_category",
+      "createTime": "2019-04-22 18:01:35",
+      "updateBy": null,
+      "description": "消息类型1:通知公告2:系统消息",
+      "dictName": "通告类型",
+      "updateTime": null,
+      "id": "0b5d19e1fce4b2e6647e6b4a17760c14",
+      "type": 0,
+      "delFlag": 0
+    }],
+    "total": 25,
+    "size": 10,
+    "current": 1,
+    "pages": 3
+  },
+  "success": true,
+  "timestamp": 0
+}

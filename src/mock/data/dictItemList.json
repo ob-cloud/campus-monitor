@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "message": "操作成功！",
+  "code": 0,
+  "result": {
+    "records": [{
+      "createBy": "admin",
+      "createTime": "2019-04-26 19:21:49",
+      "updateBy": null,
+      "itemValue": "0",
+      "sortOrder": 1,
+      "description": "无效",
+      "updateTime": null,
+      "id": "b5f3bd5f66bb9a83fecd89228c0d93d1",
+      "dictId": "68168534ff5065a152bfab275c2136f8",
+      "status_dictText": "启用",
+      "itemText": "无效",
+      "status": 1
+    }, {
+      "createBy": "admin",
+      "createTime": "2019-04-26 19:22:01",
+      "updateBy": null,
+      "itemValue": "1",
+      "sortOrder": 2,
+      "description": "有效",
+      "updateTime": null,
+      "id": "2d51376643f220afdeb6d216a8ac2c01",
+      "dictId": "68168534ff5065a152bfab275c2136f8",
+      "status_dictText": "启用",
+      "itemText": "有效",
+      "status": 1
+    }],
+    "total": 2,
+    "size": 10,
+    "current": 1,
+    "orders": [],
+    "searchCount": true,
+    "pages": 1
+  },
+  "timestamp": 1578030663142
+}

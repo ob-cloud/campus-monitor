@@ -1,0 +1,122 @@
+{
+  "code": 0,
+  "message": "",
+  "result": {
+    "auth": [{
+      "action": "online:goGenerateCode",
+      "describe": "代码生成按钮",
+      "type": "1",
+      "status": "1"
+    }, {
+      "action": "user:form:phone",
+      "describe": "手机号禁用",
+      "type": "2",
+      "status": "1"
+    }, {
+      "action": "user:add",
+      "describe": "添加用户按钮",
+      "type": "1",
+      "status": "1"
+    }],
+    "menu": [{
+        "redirect": null,
+        "path": "/dashboard/analysis",
+        "component": "dashboard/Analysis",
+        "route": "1",
+        "meta": {
+          "keepAlive": false,
+          "icon": "home",
+          "title": "首页"
+        },
+        "name": "dashboard-analysis",
+        "id": "9502685863ab87f0ad1134142788a385"
+      },
+      {
+        "redirect": null,
+        "path": "/isystem",
+        "component": "Layouts/RouteView",
+        "route": "1",
+        "children": [{
+          "path": "/isystem/user",
+          "component": "system/UserList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "用户管理"
+          },
+          "name": "isystem-user",
+          "id": "3f915b2769fc80648e92d04e84ca059d"
+        }, {
+          "path": "/isps/userAnnouncement",
+          "component": "system/UserAnnouncementList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "我的消息"
+          },
+          "name": "isps-userAnnouncement",
+          "id": "53a9230444d33de28aa11cc108fb1dba"
+        }, {
+          "path": "/isystem/role",
+          "component": "system/RoleList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "角色管理"
+          },
+          "name": "isystem-role",
+          "id": "e8af452d8948ea49d37c934f5100ae6a"
+        }, {
+          "path": "/isystem/permission",
+          "component": "system/MenuList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "菜单管理"
+          },
+          "name": "isystem-permission",
+          "id": "54dd5457a3190740005c1bfec55b1c34"
+        }, {
+          "path": "/isys/category",
+          "component": "system/SysCategoryList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "分类字典"
+          },
+          "name": "isys-category",
+          "id": "ebb9d82ea16ad864071158e0c449d186"
+        }, {
+          "path": "/isystem/dict",
+          "component": "system/DictList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "数据字典"
+          },
+          "name": "isystem-dict",
+          "id": "f1cb187abf927c88b89470d08615f5ac"
+        }, {
+          "path": "/isystem/annountCement",
+          "component": "system/SysAnnouncementList",
+          "route": "1",
+          "meta": {
+            "keepAlive": false,
+            "title": "系统通告"
+          },
+          "name": "isystem-annountCement",
+          "id": "e08cb190ef230d5d4f03824198773950"
+        }],
+        "meta": {
+          "keepAlive": false,
+          "icon": "setting",
+          "title": "系统管理"
+        },
+        "name": "isystem",
+        "id": "d7d6e2e4e2934f2c9385a623fd98c6f3"
+      }
+    ]
+  },
+  "success": true,
+  "timestamp": 0
+}
