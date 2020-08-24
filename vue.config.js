@@ -58,7 +58,8 @@ module.exports = {
         // target: 'https://aliiot.on-bright.com/mock/13/pro',
         // target: 'http://192.168.200.241',
         // target: 'http://10.10.92.161:8082/nurse',
-        target: 'https://aliiot.on-bright.com/nurseTest',
+        // target: 'https://aliiot.on-bright.com/nurseTest',
+        target: 'http://10.10.92.129',
         ws: false,
         changeOrigin: true,
         pathRewrite: {

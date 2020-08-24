@@ -89,7 +89,7 @@ export function generateIndexRouter (data) {
     },
     redirect: '/dashboard/analysis',
     children: [
-      ...generateChildRouters(data)
+      ...generateChildRouters(data),
     ]
   }, {
     path: '*',
@@ -102,6 +102,7 @@ export function generateIndexRouter (data) {
 
 // 生成嵌套路由（子路由）
 function generateChildRouters (data) {
+  console.log('-=-=-=-=-=-= ', data)
   const routers = [];
   for (let item of data) {
     let component = ''

@@ -234,6 +234,7 @@
             this.model.keepAlive = this.isKeepalive
             this.model.internalOrExternal = this.internalOrExternal
             let formData = Object.assign(this.model, values)
+            // formData.children = null
             if ((formData.menuType === 1 || formData.menuType === 2) && !formData.parentId) {
               this.validateStatus = 'error'
               this.$message.error('请检查你填的类型以及信息是否正确！')
