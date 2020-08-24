@@ -2,33 +2,18 @@
  * @Author: eamiear
  * @Date: 2019-11-04 11:23:06
  * @Last Modified by: eamiear
- * @Last Modified time: 2019-11-13 11:12:44
+ * @Last Modified time: 2020-08-24 16:05:56
  */
 
-import {request} from '@/common/request'
+import { getAction, postAction } from '@/utils/ajax'
 
-const MapAPI = {
-  getPointList () {
-    return request.get('/consumer/common', {
-      CMD: 'get_map_point',
-    })
-  },
-  createPoint (roomId, x, y) {
-    return request.postForm('/consumer/common', {
-      CMD: 'add_map_point',
-      point: JSON.stringify({roomId, x, y})
-    })
-  },
-  removePoint (id) {
-    return request.postForm('/consumer/common', {
-      CMD: 'delete_map_point',
-      point: JSON.stringify({id})
-    })
-  },
-  getMapInfo () {
-    return request.get('/consumer/common', {
-      CMD: 'get_map_info'
-    })
-  }
+const getPointList = () => getAction('/common', { CMD: 'get_map_point' })
+const createPoint = (roomId, x, y) => postAction('/common', { CMD: 'add_map_point', point: JSON.stringify({roomId, x, y})})
+const removePoint = (id) => postAction('/common', { point: JSON.stringify(id), CMD: 'delete_map_point' })
+const getMapInfo  = (params) => getAction('/common', { ...params, ...{ CMD: 'get_map_info' }})
+export {
+  getPointList,
+  createPoint,
+  removePoint,
+  getMapInfo
 }
-export default MapAPI

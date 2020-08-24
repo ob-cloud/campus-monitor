@@ -176,3 +176,29 @@ export function isAjaxSuccess (code) {
 // export function ajaxResponseFn (code, callback) {
 
 // }
+
+export function buildRoomCascaderTree (list) {
+  if (!list || !list.length) return
+  return list.map(area => {
+    const building = {
+      value: area.buildingId,
+      label: area.buildingName,
+      children: []
+    }
+    building.children = Array.from(area.floors).map(flo => {
+      const floor = {
+        value: flo.floorId,
+        label: flo.floorName,
+        children: []
+      }
+      floor.children = Array.from(flo.rooms).map(r => {
+        return {
+          value: r.roomId,
+          label: r.roomName
+        }
+      })
+      return floor
+    })
+    return building
+  })
+}
