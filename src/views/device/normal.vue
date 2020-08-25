@@ -7,24 +7,26 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="序列号">
-              <a-input placeholder="请输入设备序列号" v-model="queryParam.username"></a-input>
+              <a-input placeholder="请输入设备序列号" v-model="queryParam.serialId"></a-input>
+
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
             <a-form-item label="网关">
-              <a-select v-model="queryParam.sex" placeholder="请选择网关设备">
-                <a-select-option value="">请选择性别查询</a-select-option>
-                <a-select-option value="1">男性</a-select-option>
-                <a-select-option value="2">女性</a-select-option>
+              <a-select placeholder="请选择楼栋" v-model="queryParam.obox_serial_id">
+                <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
+                  {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
 
+
           <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
               <a-form-item label="设备名称">
-                <a-input placeholder="请输入设备名称" v-model="queryParam.email"></a-input>
+                <a-input placeholder="请输入设备名称" v-model="queryParam.name"></a-input>
               </a-form-item>
             </a-col>
           </template>
@@ -128,41 +130,50 @@
         queryParam: {},
         columns: [
           {
-            title: '设备序列号',
+            title: '序列号',
             align: 'center',
-            dataIndex: 'username',
-            width: 120
+            dataIndex: 'serialId',
           },
           {
             title: '设备名称',
             align: 'center',
-            width: 100,
-            dataIndex: 'realname',
+            dataIndex: 'name',
           },
           {
             title: '设备状态',
             align: 'center',
-            width: 120,
-            dataIndex: 'avatar',
-            scopedSlots: { customRender: 'avatarslot' }
-          },
-
-          {
-            title: '设备类型',
-            align: 'center',
-            width: 80,
-            dataIndex: 'sex',
-            sorter: true,
+            dataIndex: 'state',
             customRender (t) {
               const sexMap = {1: '男', 2: '女'}
               return sexMap[t] || ''
             }
           },
           {
-            title: '子设备类型',
+            title: '设备类型',
             align: 'center',
-            width: 180,
-            dataIndex: 'birthday'
+            dataIndex: 'device_type',
+            customRender (t) {
+              const sexMap = {1: '男', 2: '女'}
+              return sexMap[t] || ''
+            }
+          },
+          {
+            title: '设备子类型',
+            align: 'center',
+            dataIndex: 'device_child_type',
+            customRender (t) {
+              const sexMap = {1: '男', 2: '女'}
+              return sexMap[t] || ''
+            }
+          },
+          {
+            title: '异常状态',
+            align: 'center',
+            dataIndex: 'state',
+            customRender (t) {
+              const sexMap = {1: '男', 2: '女'}
+              return sexMap[t] || ''
+            }
           },
           {
             title: '操作',
@@ -186,7 +197,6 @@
     },
     methods: {
       loadData (arg) {
-
         //加载数据 若传入参数1则加载第一页的内容
         if (arg === 1) {
           this.ipagination.current = 1
