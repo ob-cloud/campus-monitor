@@ -136,7 +136,7 @@ export default {
     getMapPoints () {
       this.contentSpinning = true
       getPointList().then(res => {
-        if (res.code === 'OK') {
+        if (this.$isAjaxSuccess(res.code)) {
           this.points = res.result.records
         }
        this.contentSpinning = false
@@ -144,7 +144,7 @@ export default {
     },
     initMapInfo () {
       getMapInfo().then(res => {
-        if (res.code === 'OK') {
+        if (this.$isAjaxSuccess(res.code)) {
           this.graph = res.result.records
         }
       })
@@ -177,7 +177,7 @@ export default {
       this.setSpinning(true, '位置设置中..')
       const point = this.points.pop()
       createPoint(value[2], point.x, point.y).then(res => {
-        if (res.code === 'OK') {
+        if (this.$isAjaxSuccess(res.code)) {
           this.isSetLocation = true
           this.$message.success('设置成功')
           this.getMapPoints()
@@ -216,7 +216,7 @@ export default {
         point = (point && point.length) && point[0]
         if (!point) return
         removePoint(point.id).then(res => {
-          if (res.status === 0) {
+          if (this.$isAjaxSuccess(res.code)) {
             this.dialogVisible = false
             this.$message.success('删除成功')
           } else {

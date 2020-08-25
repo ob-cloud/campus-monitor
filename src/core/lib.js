@@ -6,6 +6,9 @@ import config from '@/config/defaultSettings'
 import '@/assets/styles/global.less'
 import '@/assets/styles/pro.less'
 
+// fonts
+import '@/assets/fonts/iconfont.css'
+
 // base library
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.less'

@@ -5,7 +5,6 @@
         <div class="caption">
           <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.buildName" placeholder="楼栋"></a-input>
           <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.floorName" placeholder="楼层"></a-input>
-          <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.roomName" placeholder="教室"></a-input>
           <a-button type="primary" icon="el-icon-search" @click="handleSearch">查询</a-button>
         </div>
       </div>
@@ -20,10 +19,9 @@
         </a-button-group>
       </div>
       <div class="block-list">
-        <div class="block-item" v-for="item in roomList" :key="item.id">
+        <div class="block-item" v-for="item in dataList" :key="item.id">
           <div class="toolbar">
-            <i class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
-            <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}教室灯?`" @confirm="() => handlePower(item)">
+            <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
               <i class="icon obicon obicon-power" title="电源"></i>
             </a-popconfirm>
             <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
@@ -32,36 +30,31 @@
             </a-popconfirm>
           </div>
           <div class="content">
-            <i class="building-sign obicon obicon-classroom" :class="{'is-active': isLightActive(item.deviceState)}"></i>
+            <i class="building-sign obicon obicon-building" :class="{'is-active': item.allType}"></i>
             <p class="text">
-              {{ item.buildingName }}栋{{ item.floorName }}层{{ item.roomName }}
+              {{ item.buildingName }}栋{{ item.floorName }}层
             </p>
           </div>
         </div>
       </div>
-      <classroom-modal ref="modalForm" @ok="modalFormOk"></classroom-modal>
-      <room-device-modal ref="deviceModal" @ok="deviceModalOk"></room-device-modal>
+      <floor-modal ref="modalForm" @ok="modalFormOk"></floor-modal>
     </a-card>
   </div>
 </template>
 
 <script>
-// import RoomAPI from '@/api/room'
-// import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
-// import Helper from '@/common/helper'
-import { getRoomList, delRoom, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
+import { getFloorList, delFloor, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
-import ClassroomModal from './modules/ClassroomModal'
-import RoomDeviceModal from './modules/RoomDeviceModal'
+import FloorModal from './modules/FloorModal'
 export default {
-  components: { ClassroomModal, RoomDeviceModal },
+  components: { FloorModal },
   mixins: [ProListMixin],
   data () {
     return {
       loading: false,
       containerHeight: 500,
-      roomList: [],
+      dataList: [],
       queryParam: {
       },
       buildingTotal: 0,
@@ -80,17 +73,14 @@ export default {
     },
     getDataList () {
       this.loading = true
-      getRoomList(this.queryParam).then(res => {
+      getFloorList(this.queryParam).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.roomList = res.result.records
+          this.dataList = res.result.records
         }
       })
     },
     handleDeviceModal (item) {
       this.$refs.deviceModal.show(item)
-    },
-    deviceModalOk () {
-
     },
     isLightActive (status) {
       if (!status) return false
@@ -125,14 +115,9 @@ export default {
           this.loadData()
         }
       })
-      // this.$confirm(`333`, '3333', {
-      //   confirmButtonText: '3333',
-      //   cancelButtonText: '33333',
-      //   type: 'warning',
-      // })
     },
     handleRemove (id) {
-      delRoom(id).then(res => {
+      delFloor(id).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.loadData()
         }
