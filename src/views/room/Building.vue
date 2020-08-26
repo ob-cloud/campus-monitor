@@ -11,10 +11,7 @@
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
           <a-button type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-popconfirm :title="`${powerText}电源?`" @confirm="handleAllPower">
-            <a-button type="primary" icon="poweroff" title="开关"></a-button>
-          </a-popconfirm>
-
+          <a-button type="primary" icon="poweroff" title="开关" @confirm="handleAllPower"></a-button>
         </a-button-group>
       </div>
       <div class="block-list">
@@ -57,7 +54,6 @@ export default {
       queryParam: {
       },
       buildingTotal: 0,
-      powerText: ''
     }
   },
   mounted () {
@@ -106,12 +102,16 @@ export default {
     },
     async handleAllPower () {
       const res = await getPowerStatus()
-      if (this.$isAjaxSuccess(res.code)) {
-        this.powerText = res.result ? '关闭' : '开启'
-      }
-      triggerAllPower(+!res.data ? 1 : 2).then(res => {
-        if (this.$isAjaxSuccess(res.code)) {
-          this.loadData()
+      if (!this.$isAjaxSuccess(res.code)) return this.$message.warning('获取开关状态失败')
+      this.$confirm({
+        title: '确认操作',
+        content: '是否' + (res.result ? '关闭' : '开启') + '电源?',
+        onOk: function () {
+          triggerAllPower(+!res.result ? 1 : 2).then(response => {
+            if (this.$isAjaxSuccess(response.code)) {
+              this.loadData()
+            }
+          })
         }
       })
     },

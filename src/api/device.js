@@ -2,21 +2,60 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-25 15:52:32
+ * @Last Modified time: 2020-08-26 15:13:57
  */
 
 // import {request} from '@/common/request'
-import { getAction } from '@/utils/ajax'
+import { getAction, postAction } from '@/utils/ajax'
 
 
+// device
 const getDeviceList = (params) => getAction('/common', {
   CMD: 'query_device',
-  start_index: params.pageNo,
-  count: params.pageSize,
   ...params
 })
 
 const getAllBuildingDeviceList = (params) => getAction('/common', { CMD: 'get_building_devices', user: JSON.stringify(params) })
+
+// OBOX
+const getOboxList = (params) => getAction('/common', {
+  CMD: 'get_obox',
+  obox: JSON.stringify(params)
+})
+
+const getAllOboxList = () => getAction('/common', {
+  CMD: 'get_allobox'
+})
+
+const getOboxDeviceList = (params) => getAction('/common', {
+  CMD: 'get_obox_device',
+  oboxdevice: JSON.stringify(params)
+})
+
+const delObox = (oboxSerialId) => postAction('/common', {
+  CMD: 'delete_obox',
+  obox_serial_id: oboxSerialId,
+  fForce_delete: '00'
+})
+
+const editOboxName = (oboxSerialId, name) => postAction('/common', {
+  CMD: 'update_obox_name',
+  obox_serial_id: oboxSerialId,
+  name
+})
+
+// 开关
+
+const getSwitchStatus = (serialId) => postAction('/common', {
+  CMD: 'query_node_real_status',
+  serialId
+})
+
+const editSwitchStatus = (serialId, status) => postAction('/common', {
+  CMD: 'setting_node_status',
+  serialId,
+  status
+})
 
 // export  {
 //   getDeviceList
@@ -93,12 +132,7 @@ const getAllBuildingDeviceList = (params) => getAction('/common', { CMD: 'get_bu
 //   //     type
 //   //   })
 //   // },
-//   // getOboxDeviceList (oboxdevice = {}) {
-//   //   return request.get('/consumer/common', {
-//   //     CMD: 'get_obox_device',
-//   //     oboxdevice: JSON.stringify(oboxdevice)
-//   //   })
-//   // }
+
 // }
 
 // const WifiDeviceAPI = {
@@ -141,16 +175,6 @@ const getAllBuildingDeviceList = (params) => getAction('/common', { CMD: 'get_bu
 //   // }
 // }
 
-// 开关控制
-// const KeySwitchAPI = {
-//   // setSwitchStatus (serialId, status) {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'setting_node_status',
-//   //     serialId,
-//   //     status
-//   //   })
-//   // }
-// }
 
 // 空调控制
 // const AcControlAPI = {
@@ -186,5 +210,14 @@ const getAllBuildingDeviceList = (params) => getAction('/common', { CMD: 'get_bu
 // }
 export {
   getDeviceList,
-  getAllBuildingDeviceList
+  getAllBuildingDeviceList,
+
+  getOboxList,
+  getAllOboxList,
+  getOboxDeviceList,
+  delObox,
+  editOboxName,
+
+  getSwitchStatus,
+  editSwitchStatus
 }

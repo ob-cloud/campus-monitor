@@ -85,13 +85,22 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="record.status==1">
-                <a href="javascript:;">开关</a>
+              <a-menu-item v-if="TypeHints.isXkeySocketSwitch(record.device_child_type)">
+                <a @click="handleAction(0, record)">开关</a>
               </a-menu-item>
 
-              <a-menu-item v-if="record.status==2">
-                <a href="javascript:;">温湿度</a>
+              <a-menu-item v-if="TypeHints.isHumidifierSensors(record.device_child_type)">
+                <a @click="handleAction(1, record)">温湿度</a>
               </a-menu-item>
+
+              <a-menu-item v-if="TypeHints.isSettableSceneSocketSwitch(record.device_child_type)">
+                <a @click="handleAction(2, record)">设置</a>
+              </a-menu-item>
+
+              <a-menu-item v-if="TypeHints.isSimpleLed(record.device_child_type)">
+                <a @click="handleAction(3, record)">灯控</a>
+              </a-menu-item>
+
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
@@ -105,23 +114,26 @@
     </div>
     <!-- table区域-end -->
 
-    <!-- <user-modal ref="modalForm" @ok="modalFormOk"></user-modal> -->
-    <!-- <password-modal ref="passwordmodal" @ok="passwordModalOk"></password-modal> -->
+    <normal-modal ref="modalForm" @ok="modalFormOk"></normal-modal>
+    <lamp-action-modal ref="lampModal" @ok="actionModalOk"></lamp-action-modal>
   </a-card>
 </template>
 
 <script>
-  // import UserModal from './modules/UserModal'
+  import NormalModal from './modules/NormalModal'
+  import LampActionModal from './modules/LampActionModal'
   // import PasswordModal from './modules/PasswordModal'
   import { frozenBatch } from '@/api/system'
-  import { getDeviceList } from '@/api/device'
+  import { getOboxDeviceList, getAllOboxList } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
+  import { Descriptor, TypeHints } from 'hardware-suit'
 
   export default {
     name: 'UserList',
     mixins: [ ProListMixin ],
     components: {
-      // UserModal,
+      NormalModal,
+      LampActionModal
       // PasswordModal
     },
     data() {
@@ -143,9 +155,8 @@
             title: '设备状态',
             align: 'center',
             dataIndex: 'state',
-            customRender (t) {
-              const sexMap = {1: '男', 2: '女'}
-              return sexMap[t] || ''
+            customRender (status, row) {
+              return Descriptor.getStatusDescriptor(status, row.device_type, row.device_child_type)
             }
           },
           {
@@ -153,26 +164,28 @@
             align: 'center',
             dataIndex: 'device_type',
             customRender (t) {
-              const sexMap = {1: '男', 2: '女'}
-              return sexMap[t] || ''
+              return Descriptor.getEquipTypeDescriptor(t)
             }
           },
           {
             title: '设备子类型',
             align: 'center',
             dataIndex: 'device_child_type',
-            customRender (t) {
-              const sexMap = {1: '男', 2: '女'}
-              return sexMap[t] || ''
+            customRender (t, row) {
+              return Descriptor.getEquipTypeDescriptor(row.device_type, t)
             }
           },
           {
             title: '异常状态',
             align: 'center',
-            dataIndex: 'state',
-            customRender (t) {
-              const sexMap = {1: '男', 2: '女'}
-              return sexMap[t] || ''
+            customRender (row) {
+              if (TypeHints.isSimpleLed(row.device_child_type)) {
+                const exception = row.state.slice(14) || '00'
+                const bits = exception.split('')
+                if (!bits || !bits.length) return '无异常'
+                return bits[0] === '1' ? '开路' : bits[1] === '1' ? '短路' : '无异常'
+              }
+              return '-'
             }
           },
           {
@@ -183,6 +196,8 @@
             width: 170
           }
         ],
+        oboxList: [],
+        TypeHints,
         url: {
           list: '/sys/user/list',
           delete: '/sys/user/delete',
@@ -195,15 +210,19 @@
         return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`
       }
     },
+    mounted () {
+      this.getOboxList()
+    },
     methods: {
-      loadData (arg) {
-        //加载数据 若传入参数1则加载第一页的内容
-        if (arg === 1) {
-          this.ipagination.current = 1
-        }
-        let params = this.getQueryParams() //查询条件
+      loadData () {
+        this.getDeviceList()
+      },
+      getDeviceList () {
         this.loading = true
-        getDeviceList(params).then((res) => {
+        const params = {...this.queryParam}
+        params.start_index = this.ipagination.current
+        params.count = this.ipagination.pageSize
+        getOboxDeviceList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
             this.ipagination.total = res.result.total
@@ -214,6 +233,20 @@
           this.loading = false
         })
       },
+      getOboxList () {
+        getAllOboxList().then(res => {
+          if (this.$isAjaxSuccess(res.code)) {
+            this.oboxList = res.result
+          }
+        })
+      },
+      handleAction (type, record) {
+        type === 3 && this.$refs.lampModal.show(record)
+      },
+      actionModalOk () {
+        this.loadData()
+      },
+
       getAvatarView (avatar) {
         // return this.url.imgServer + '/' + avatar
         return avatar
