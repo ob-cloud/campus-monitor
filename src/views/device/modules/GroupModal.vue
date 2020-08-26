@@ -22,7 +22,6 @@
 </template>
 
 <script>
-// import pick from 'lodash.pick'
 import { setPanelGroup } from '@/api/device'
 import GroupMemberModal from './GroupMemberModal'
 export default {

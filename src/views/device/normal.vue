@@ -14,7 +14,7 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="网关">
-              <a-select placeholder="请选择网关" v-model="queryParam.obox_serial_id">
+              <a-select placeholder="请选择网关" v-model="queryParam.obox_serial_id" allowClear>
                 <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
                   {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
                 </a-select-option>
