@@ -7,16 +7,16 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="序列号">
-              <a-input placeholder="请输入设备序列号" v-model="queryParam.deviceId"></a-input>
+              <a-input placeholder="请输入序列号" v-model="queryParam.obox_serial_id"></a-input>
 
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
             <a-form-item label="状态">
-              <a-select placeholder="请选择状态" v-model="queryParam.online" allowClear>
-                <a-select-option :value="0">在线</a-select-option>
-                <a-select-option :value="1">离线</a-select-option>
+              <a-select placeholder="请选择状态" v-model="queryParam.obox_status" allowClear>
+                <a-select-option :value="1">在线</a-select-option>
+                <a-select-option :value="0">离线</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -24,8 +24,8 @@
 
           <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
-              <a-form-item label="设备名称">
-                <a-input placeholder="请输入设备名称" v-model="queryParam.name"></a-input>
+              <a-form-item label="名称">
+                <a-input placeholder="请输入名称" v-model="queryParam.obox_name"></a-input>
               </a-form-item>
             </a-col>
           </template>
@@ -44,18 +44,8 @@
       </a-form>
     </div>
 
-    <!-- 操作按钮区域 -->
-    <div class="table-operator" style="border-top: 5px">
-      <a-button @click="handleAdd" type="primary" icon="plus">添加设备</a-button>
-    </div>
-
     <!-- table区域-begin -->
     <div>
-      <!-- <div class="ant-alert ant-alert-info" style="margin-bottom: 16px;">
-        <i class="anticon anticon-info-circle ant-alert-icon"></i>已选择&nbsp;<a style="font-weight: 600">{{ selectedRowKeys.length }}</a>项&nbsp;&nbsp;
-        <a style="margin-left: 24px" @click="onClearSelected">清空</a>
-      </div> -->
-
       <a-table
         ref="table"
         bordered
@@ -78,12 +68,8 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="TypeHints.isTransponder(record.type)">
-                <a @click="handleAction(record)">红外控制</a>
-              </a-menu-item>
-
               <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.deviceId)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.obox_serial_id)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -95,21 +81,20 @@
     </div>
     <!-- table区域-end -->
 
-    <infrared-modal ref="modalForm" @ok="modalFormOk"></infrared-modal>
+    <gateway-modal ref="modalForm" @ok="modalFormOk"></gateway-modal>
   </a-card>
 </template>
 
 <script>
-  import InfraredModal from './modules/InfraredModal'
-  import { getInfratedDeviceList, delInfratedDevice } from '@/api/device'
+  import GatewayModal from './modules/GatewayModal'
+  import { getOboxList, delObox } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
-  import { Descriptor, TypeHints } from 'hardware-suit'
 
   export default {
     name: '',
     mixins: [ ProListMixin ],
     components: {
-      InfraredModal,
+      GatewayModal,
     },
     data() {
       return {
@@ -122,28 +107,25 @@
           {
             title: '序列号',
             align: 'center',
-            dataIndex: 'deviceId',
+            dataIndex: 'obox_serial_id',
           },
           {
-            title: '设备名称',
+            title: '名称',
             align: 'center',
-            dataIndex: 'name',
+            dataIndex: 'obox_name',
           },
           {
-            title: '设备状态',
+            title: '状态',
             align: 'center',
-            dataIndex: 'online',
+            dataIndex: 'obox_status',
             customRender (status) {
-              return status === 0 ? '在线' : '离线'
+              return status ? '在线' : '离线'
             }
           },
           {
-            title: '设备类型',
+            title: '版本',
             align: 'center',
-            dataIndex: 'type',
-            customRender (t) {
-              return Descriptor.getEquipTypeDescriptor(t)
-            }
+            dataIndex: 'obox_version'
           },
           {
             title: '操作',
@@ -152,19 +134,17 @@
             align: 'center',
             width: 170
           }
-        ],
-        oboxList: [],
-        TypeHints,
+        ]
       }
     },
     methods: {
       loadData () {
-        this.getDeviceList()
+        this.getDataList()
       },
-      getDeviceList () {
+      getDataList () {
         this.loading = true
         const params = {...this.queryParam}
-        getInfratedDeviceList(params).then((res) => {
+        getOboxList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
             this.ipagination.total = res.result.total || 0
@@ -174,16 +154,8 @@
           this.loading = false
         })
       },
-      handleAction (type, record) {
-        type === 1 && this.$refs.humidityModal.show(record)
-        type === 2 && this.$refs.keypanelModal.show(record)
-        type === 3 && this.$refs.lampModal.show(record)
-      },
-      actionModalClose () {
-        this.loadData()
-      },
       handleDelete (id) {
-        delInfratedDevice(id).then(res => {
+        delObox(id).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.loadData()
             this.$message.success('删除成功')

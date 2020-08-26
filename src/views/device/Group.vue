@@ -7,7 +7,7 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="序列号">
-              <a-input placeholder="请输入设备序列号" v-model="queryParam.deviceId"></a-input>
+              <a-input placeholder="请输入组号" v-model="queryParam.group_id"></a-input>
 
             </a-form-item>
           </a-col>
@@ -46,7 +46,7 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
-      <a-button @click="handleAdd" type="primary" icon="plus">添加设备</a-button>
+      <a-button @click="handleAdd" type="primary" icon="plus">添加编组</a-button>
     </div>
 
     <!-- table区域-begin -->
@@ -78,12 +78,8 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="TypeHints.isTransponder(record.type)">
-                <a @click="handleAction(record)">红外控制</a>
-              </a-menu-item>
-
               <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.deviceId)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.group_id)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -95,54 +91,47 @@
     </div>
     <!-- table区域-end -->
 
-    <infrared-modal ref="modalForm" @ok="modalFormOk"></infrared-modal>
+    <group-modal ref="modalForm" @ok="modalFormOk"></group-modal>
   </a-card>
 </template>
 
 <script>
-  import InfraredModal from './modules/InfraredModal'
-  import { getInfratedDeviceList, delInfratedDevice } from '@/api/device'
+  import GroupModal from './modules/GroupModal'
+  import { getPanelGroupList, delPanelGroup } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
-  import { Descriptor, TypeHints } from 'hardware-suit'
 
   export default {
     name: '',
     mixins: [ ProListMixin ],
     components: {
-      InfraredModal,
+      GroupModal,
     },
     data() {
       return {
         description: '这是用户管理页面',
         queryParam: {
-          pageNo: 1,
-          pageSize: 10
+          current: 1,
+          size: 10
         },
         columns: [
           {
-            title: '序列号',
+            title: '组号',
             align: 'center',
-            dataIndex: 'deviceId',
+            dataIndex: 'group_id',
           },
           {
-            title: '设备名称',
+            title: '名称',
             align: 'center',
-            dataIndex: 'name',
+            dataIndex: 'group_name',
           },
           {
-            title: '设备状态',
+            title: '面板地址',
             align: 'center',
-            dataIndex: 'online',
-            customRender (status) {
-              return status === 0 ? '在线' : '离线'
-            }
-          },
-          {
-            title: '设备类型',
-            align: 'center',
-            dataIndex: 'type',
-            customRender (t) {
-              return Descriptor.getEquipTypeDescriptor(t)
+            dataIndex: 'panel_addr',
+            customRender (panelAddr) {
+              // const panelAddr = row.panel_addr
+              const cell = panelAddr && panelAddr.length ? <div><p style="text-align:left;">addr: {panelAddr[0].addr}</p><p style="text-align:left;">group_addr: {panelAddr[0].group_addr}</p></div> : <span>-</span>
+              return cell
             }
           },
           {
@@ -152,19 +141,17 @@
             align: 'center',
             width: 170
           }
-        ],
-        oboxList: [],
-        TypeHints,
+        ]
       }
     },
     methods: {
       loadData () {
-        this.getDeviceList()
+        this.getDataList()
       },
-      getDeviceList () {
+      getDataList () {
         this.loading = true
         const params = {...this.queryParam}
-        getInfratedDeviceList(params).then((res) => {
+        getPanelGroupList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
             this.ipagination.total = res.result.total || 0
@@ -174,16 +161,8 @@
           this.loading = false
         })
       },
-      handleAction (type, record) {
-        type === 1 && this.$refs.humidityModal.show(record)
-        type === 2 && this.$refs.keypanelModal.show(record)
-        type === 3 && this.$refs.lampModal.show(record)
-      },
-      actionModalClose () {
-        this.loadData()
-      },
       handleDelete (id) {
-        delInfratedDevice(id).then(res => {
+        delPanelGroup(id).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.loadData()
             this.$message.success('删除成功')
