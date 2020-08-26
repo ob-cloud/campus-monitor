@@ -7,17 +7,16 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="序列号">
-              <a-input placeholder="请输入设备序列号" v-model="queryParam.serialId"></a-input>
+              <a-input placeholder="请输入设备序列号" v-model="queryParam.deviceId"></a-input>
 
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="网关">
-              <a-select placeholder="请选择网关" v-model="queryParam.obox_serial_id">
-                <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
-                  {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
-                </a-select-option>
+            <a-form-item label="状态">
+              <a-select placeholder="请选择状态" v-model="queryParam.online">
+                <a-select-option :value="0">在线</a-select-option>
+                <a-select-option :value="1">离线</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -79,24 +78,12 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="TypeHints.isXkeySocketSwitch(record.device_child_type)">
-                <a @click="handleAction(0, record)">开关</a>
-              </a-menu-item>
-
-              <a-menu-item v-if="TypeHints.isHumidifierSensors(record.device_child_type)">
-                <a @click="handleAction(1, record)">温湿度</a>
-              </a-menu-item>
-
-              <a-menu-item v-if="TypeHints.isSettableSceneSocketSwitch(record.device_child_type)">
-                <a @click="handleAction(2, record)">设置</a>
-              </a-menu-item>
-
-              <a-menu-item v-if="TypeHints.isSimpleLed(record.device_child_type)">
-                <a @click="handleAction(3, record)">灯控</a>
+              <a-menu-item v-if="TypeHints.isTransponder(record.type)">
+                <a @click="handleAction(record)">红外控制</a>
               </a-menu-item>
 
               <a-menu-item>
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.deviceId)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -108,42 +95,34 @@
     </div>
     <!-- table区域-end -->
 
-    <normal-modal ref="modalForm" @ok="modalFormOk"></normal-modal>
-    <humidity-action-modal ref="humidityModal" @close="actionModalClose"></humidity-action-modal>
-    <lamp-action-modal ref="lampModal" @close="actionModalClose"></lamp-action-modal>
-    <keypanel-action-modal ref="keypanelModal" @ok="actionModalClose"></keypanel-action-modal>
+    <infrared-modal ref="modalForm" @ok="modalFormOk"></infrared-modal>
   </a-card>
 </template>
 
 <script>
-  import NormalModal from './modules/NormalModal'
-  import LampActionModal from './modules/LampActionModal'
-  import KeypanelActionModal from './modules/KeyPanelActionModal'
-  import HumidityActionModal from './modules/HumidityActionModal'
-  // import PasswordModal from './modules/PasswordModal'
-  import { getOboxDeviceList, getAllOboxList, delDevice } from '@/api/device'
+  import InfraredModal from './modules/InfraredModal'
+  import { getInfratedDeviceList, delInfratedDevice } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
   import { Descriptor, TypeHints } from 'hardware-suit'
 
   export default {
-    name: 'UserList',
+    name: '',
     mixins: [ ProListMixin ],
     components: {
-      NormalModal,
-      LampActionModal,
-      KeypanelActionModal,
-      HumidityActionModal
-      // PasswordModal
+      InfraredModal,
     },
     data() {
       return {
         description: '这是用户管理页面',
-        queryParam: {},
+        queryParam: {
+          pageNo: 1,
+          pageSize: 10
+        },
         columns: [
           {
             title: '序列号',
             align: 'center',
-            dataIndex: 'serialId',
+            dataIndex: 'deviceId',
           },
           {
             title: '设备名称',
@@ -153,38 +132,17 @@
           {
             title: '设备状态',
             align: 'center',
-            dataIndex: 'state',
-            customRender (status, row) {
-              return Descriptor.getStatusDescriptor(status, row.device_type, row.device_child_type)
+            dataIndex: 'online',
+            customRender (status) {
+              return status === 0 ? '在线' : '离线'
             }
           },
           {
             title: '设备类型',
             align: 'center',
-            dataIndex: 'device_type',
+            dataIndex: 'type',
             customRender (t) {
               return Descriptor.getEquipTypeDescriptor(t)
-            }
-          },
-          {
-            title: '设备子类型',
-            align: 'center',
-            dataIndex: 'device_child_type',
-            customRender (t, row) {
-              return Descriptor.getEquipTypeDescriptor(row.device_type, t)
-            }
-          },
-          {
-            title: '异常状态',
-            align: 'center',
-            customRender (row) {
-              if (TypeHints.isSimpleLed(row.device_child_type)) {
-                const exception = row.state.slice(14) || '00'
-                const bits = exception.split('')
-                if (!bits || !bits.length) return '无异常'
-                return bits[0] === '1' ? '开路' : bits[1] === '1' ? '短路' : '无异常'
-              }
-              return '-'
             }
           },
           {
@@ -199,9 +157,6 @@
         TypeHints,
       }
     },
-    mounted () {
-      this.getOboxList()
-    },
     methods: {
       loadData () {
         this.getDeviceList()
@@ -209,23 +164,14 @@
       getDeviceList () {
         this.loading = true
         const params = {...this.queryParam}
-        params.start_index = this.ipagination.current
-        params.count = this.ipagination.pageSize
-        getOboxDeviceList(params).then((res) => {
+        getInfratedDeviceList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
-            this.ipagination.total = res.result.total
+            this.ipagination.total = res.result.total || 0
           } else {
             this.$message.warning(res.message)
           }
           this.loading = false
-        })
-      },
-      getOboxList () {
-        getAllOboxList().then(res => {
-          if (this.$isAjaxSuccess(res.code)) {
-            this.oboxList = res.result
-          }
         })
       },
       handleAction (type, record) {
@@ -236,8 +182,8 @@
       actionModalClose () {
         this.loadData()
       },
-      handleDelete (record) {
-        delDevice(record.serialId, record.name).then(res => {
+      handleDelete (id) {
+        delInfratedDevice(id).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.loadData()
             this.$message.success('删除成功')
@@ -247,5 +193,6 @@
         })
       }
     }
+
   }
 </script>

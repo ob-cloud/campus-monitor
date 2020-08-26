@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-26 15:13:57
+ * @Last Modified time: 2020-08-26 17:33:08
  */
 
 // import {request} from '@/common/request'
@@ -16,6 +16,13 @@ const getDeviceList = (params) => getAction('/common', {
 })
 
 const getAllBuildingDeviceList = (params) => getAction('/common', { CMD: 'get_building_devices', user: JSON.stringify(params) })
+
+const delDevice = (serialId, name) => postAction('/common', {
+  CMD: 'modify_device',
+  serialId,
+  operate_type: '00',
+  name
+})
 
 // OBOX
 const getOboxList = (params) => getAction('/common', {
@@ -57,9 +64,67 @@ const editSwitchStatus = (serialId, status) => postAction('/common', {
   status
 })
 
-// export  {
-//   getDeviceList
-// }
+
+// group
+const getPanelGroupList = (params) => getAction('/common', {
+  CMD: 'get_user_panel_group',
+  ...params
+})
+const setPanelGroup = (params) => postAction('/common', {
+  CMD: 'set_panel_group',
+  ...params
+})
+const delPanelGroup = (groupId) => postAction('/common', {
+  CMD: 'del_panel_group',
+  group_id: groupId
+})
+
+const setPanelKey = (params) => postAction('/common', {
+  CMD: 'set_panel_key',
+  ...params
+})
+
+const getGroupListByPanelId = (serialId) => getAction('/common', {
+  CMD: 'get_panel_group',
+  serialId
+})
+
+const getGrouplListPanelKey = (serialId, index) => getAction('/common', {
+  CMD: 'get_panel_key',
+  serialId,
+  index
+})
+
+// 温湿度
+
+const getDeviceStatusHistory = (serialId, fromDate, toDate, type = '02') => getAction('/common', {
+  CMD: 'query_device_status_history',
+  serialId,
+  from_data: fromDate,
+  to_data: toDate,
+  type
+})
+
+// 红外
+
+const editIrDevice = (serialId, name) => postAction('/common', {
+  CMD: 'update_ir_name',
+  device_serial_id: serialId,
+  name
+})
+const getTransponderDevice = (serialId) => getAction('/common', {
+  CMD: 'query_ir_device',
+  serialId
+})
+const getInfratedDeviceList = (params) => getAction('/common', {
+  CMD: 'get_wifi',
+  wifi: JSON.stringify(params)
+})
+
+const delInfratedDevice = (deviceId) => getAction('/common', {
+  CMD: 'delete_ali_dev',
+  deviceId
+})
 
 // const DeviceAPI = {
 //   // getDeviceList (params) {
@@ -104,14 +169,7 @@ const editSwitchStatus = (serialId, status) => postAction('/common', {
 //   //     name
 //   //   })
 //   // },
-//   // removeDevice (serialId, name) {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'modify_device',
-//   //     serialId,
-//   //     operate_type: '00',
-//   //     name
-//   //   })
-//   // },
+
 //   // searchToAddDevice (oboxId, deviceType, deviceSubType) {
 //   //   return request.postForm('/consumer/common', {
 //   //     CMD: 'search_new_device',
@@ -123,15 +181,7 @@ const editSwitchStatus = (serialId, status) => postAction('/common', {
 //   //     timeout: 60
 //   //   })
 //   // },
-//   // getDeviceStatusHistory (serialId, fromDate, toDate, type = '02') {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'query_device_status_history',
-//   //     serialId,
-//   //     from_data: fromDate,
-//   //     to_data: toDate,
-//   //     type
-//   //   })
-//   // },
+
 
 // }
 
@@ -142,31 +192,9 @@ const editSwitchStatus = (serialId, status) => postAction('/common', {
 //   //   })
 //   // },
 //   // // 红外转发器下的设备
-//   // getTransponderDevice (serialId) {
-//   //   return request.get('/consumer/common', {
-//   //     CMD: 'query_ir_device',
-//   //     serialId
-//   //   })
-//   // },
-//   // getInfratedDeviceList (wifi = {}) {
-//   //   return request.get('/consumer/common', {
-//   //     CMD: 'get_wifi',
-//   //     wifi: JSON.stringify(wifi)
-//   //   })
-//   // },
-//   // removeInfratedDevice (deviceId) {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'delete_ali_dev',
-//   //     deviceId
-//   //   })
-//   // },
-//   // reNameIrDevice (serialId, name) {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'update_ir_name',
-//   //     device_serial_id: serialId,
-//   //     name
-//   //   })
-//   // },
+
+
+
 //   // getIrCustomKeys () {
 //   //   return request.postForm('/consumer/common', {
 //   //     CMD: 'get_custom_key',
@@ -189,28 +217,10 @@ const editSwitchStatus = (serialId, status) => postAction('/common', {
 //   // }
 // }
 
-// const GroupApi = {
-//   // getPanelGroupList () {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'get_panel_group',
-//   //   })
-//   // },
-//   // setanelGroup (params = {}) {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'set_panel_group',
-//   //     ...params
-//   //   })
-//   // },
-//   // delPanelGroup (groupId) {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'del_panel_group',
-//   //     group_id: groupId
-//   //   })
-//   // },
-// }
 export {
   getDeviceList,
   getAllBuildingDeviceList,
+  delDevice,
 
   getOboxList,
   getAllOboxList,
@@ -219,5 +229,19 @@ export {
   editOboxName,
 
   getSwitchStatus,
-  editSwitchStatus
+  editSwitchStatus,
+
+  getPanelGroupList,
+  setPanelGroup,
+  delPanelGroup,
+  setPanelKey,
+  getGroupListByPanelId,
+  getGrouplListPanelKey,
+
+  getDeviceStatusHistory,
+
+  editIrDevice,
+  getTransponderDevice,
+  getInfratedDeviceList,
+  delInfratedDevice
 }

@@ -32,6 +32,10 @@ module.exports = {
       .set('@layout', resolve('src/components/Layouts'))
       .set('@static', resolve('src/static'))
   },
+  transpileDependencies: [
+    'vue-echarts',
+    'resize-detector'
+  ]
 
   css: {
     loaderOptions: {
