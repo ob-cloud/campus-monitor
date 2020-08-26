@@ -8,17 +8,17 @@
 
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="位置" class="location">
           <a-select placeholder="请选择楼栋" v-model="queryParam.buildingId" allowClear>
-            <a-select-option v-for="item in buildingList" :key="item.buildingId" :value="item.buildingId" v-decorator="[ 'location.buildingId', validatorRules.buildingId]">
+            <a-select-option v-for="item in buildingList" :key="item.buildingId" :value="item.buildingId" v-decorator="[ 'buildingId', validatorRules.buildingId]">
               {{ item.buildingName }}
             </a-select-option>
           </a-select>
           <a-select placeholder="请选择楼层" v-model="queryParam.floorId" allowClear>
-            <a-select-option v-for="item in floorList" :key="item.floorId" :value="item.floorId" v-decorator="[ 'location.floorId']">
+            <a-select-option v-for="item in floorList" :key="item.floorId" :value="item.floorId" v-decorator="[ 'floorId']">
               {{ item.floorName }}
             </a-select-option>
           </a-select>
           <a-select placeholder="请选择教室" v-model="queryParam.roomId" allowClear>
-            <a-select-option v-for="item in roomList" :key="item.roomId" :value="item.roomId" v-decorator="[ 'location.roomId']">
+            <a-select-option v-for="item in roomList" :key="item.roomId" :value="item.roomId" v-decorator="[ 'roomId']">
               {{ item.roomName }}
             </a-select-option>
           </a-select>
@@ -99,6 +99,7 @@
 import pick from 'lodash.pick'
 import { getSmartSceneById } from '@/api/scene'
 import SceneMixin from '../SceneMixin'
+import { Descriptor, TypeHints } from 'hardware-suit'
 export default {
   mixins: [ SceneMixin ],
   data () {
@@ -149,7 +150,43 @@ export default {
       deviceTypeList: this.initDeviceType(), // list of device's type
       actionDialogVisible: false,
       isEditScene: false,
-      loadingEditData: false
+      loadingEditData: false,
+      sceneNumber: ''
+    }
+  },
+  watch: {
+    'buildingId' (id) { // get floor's list by building id
+      if (!this.isEditScene) {
+        this.sceneModel.location.floorId = ''
+        this.sceneModel.location.roomId = ''
+      }
+      this.floorList = []
+      this.roomList = []
+      this.getFloorList(id)
+      this.deviceActionModel = this.initActionModel()
+      this.deviceActionModel[0].deviceTypeList = this.initDeviceType()
+    },
+    'floorId' (id) { // get room's list by floor id
+      !this.isEditScene && (this.sceneModel.location.roomId = '')
+      this.roomList = []
+      this.getRoomList(id)
+      this.deviceActionModel = this.initActionModel()
+      this.deviceActionModel[0].deviceTypeList = this.initDeviceType()
+    },
+    'roomId' (id) { // get device's list by room id
+      if (!id) { // init by default data
+        this.deviceTypeList = this.initDeviceType()
+        this.deviceActionModel = this.initActionModel()
+        this.deviceActionModel[0].deviceTypeList = this.initDeviceType()
+        return
+      }
+      this.getDeviceTypeListByRoomId(id)
+      this.deviceTypeList = this.deviceTypeList.filter(item => {
+        return this.isActionDevice(item.deviceType, item.deviceChildType)
+      })
+      this.deviceActionModel = this.initActionModel()
+      this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
+      this.isEditScene = false // after finishing rendering location, reset isEditScene variable
     }
   },
   methods: {
@@ -178,12 +215,12 @@ export default {
       // return subtype ? this.$t('system.devtype', {FIELD: Suit.getDeviceTypeDescriptor(type, subtype)}) : this.$t('system.devtype', {FIELD: Suit.getRootDeviceDescriptor(type)})
     },
     isActionDevice (deviceType, deviceSubType, isLocal) { // only some device can be set action
-      return !Suit.typeHints.isSensors(deviceType)
-        && !Suit.typeHints.isFinger(deviceType)
-        && !Suit.typeHints.isDoorLock(deviceType)
-        && !Suit.typeHints.isCamera(deviceType)
-        && !(Suit.typeHints.isSocketSwitch(deviceType) && Suit.typeHints.isSceneSocketSwitch(deviceSubType))
-        && !(Suit.typeHints.isSocketSwitch(deviceType) && Suit.typeHints.isMixSocketSwitch(deviceSubType))
+      return !TypeHints.isSensors(deviceType)
+        && !TypeHints.isFinger(deviceType)
+        && !TypeHints.isDoorLock(deviceType)
+        && !TypeHints.isCamera(deviceType)
+        && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isSceneSocketSwitch(deviceSubType))
+        && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isMixSocketSwitch(deviceSubType))
     },
     settingAction (serialId, index, deviceType, type) { // click area of the action behavior and set
       this.actionDialogVisible = true
@@ -281,7 +318,7 @@ export default {
       if (this.hasEmptyAction(actions)) {
         return this.$message.warning({title: false, message: this.$t('smart.scene.condition', {FIELD: 'setActionBehavior'})})
       }
-      this.$refs.sceneForm.validate(valid => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           this.$emit('scene-ready', model, false)
         }
@@ -329,7 +366,8 @@ export default {
       })
     },
     getLocation () { // get validable location
-      const location = {...this.sceneModel.location}
+      // const location = {...this.sceneModel.location}
+      const location = { buildingId: this.buildingId, floorId: this.floorId, roomId: this.roomId}
       location.buildingId === '' && delete location.buildingId
       location.floorId === '' && delete location.floorId
       location.roomId === '' && delete location.roomId
@@ -427,10 +465,20 @@ export default {
     edit (record) {
       this.form.resetFields()
       this.model = Object.assign({}, record)
+      this.sceneNumber = record.scene_number
       this.visible = true
-      this.$nextTick(() => {
-        this.form.setFieldsValue(pick(this.model, 'name'))
-      })
+      // this.$nextTick(() => {
+      //   this.form.setFieldsValue(pick(this.model, 'name'))
+      // })
+      this.getSceneDeviceList().then(buildingList => {
+      if (this.sceneNumber) { // when there is a sceneNumber, It's in an editable mode
+        this.isEditScene = true
+        this.loadingEditData = true
+        this.getSceneDataBySceneNumber()
+      } else {
+        this.isEditScene = false
+      }
+    })
     },
     // 确定
     handleOk () {

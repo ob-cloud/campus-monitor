@@ -163,12 +163,12 @@
       }
     },
     watch: {
-      'search.buildingId' (val) {
+      'queryParam.buildingId' (val) {
         this.search.floorId = ''
         this.floorList = []
         this.getFloorList(val)
       },
-      'search.floorId' (val) {
+      'queryParam.floorId' (val) {
         this.search.roomId = ''
         this.roomList = []
         this.getRoomList(val)
