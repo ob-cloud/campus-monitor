@@ -13,14 +13,13 @@ export default {
       return new Promise(resolve => {
         getSceneDeviceList().then(res => {
           if (this.$isAjaxSuccess(res.code)) {
-            this.buildingList = res.data.records
+            this.buildingList = res.result.records
             resolve(this.buildingList)
           }
         })
       })
     },
-    getBuildingList (sceneDeviceList) {
-
+    getBuildingList () {
     },
     getFloorList (buildingId) {
       if (!buildingId) return

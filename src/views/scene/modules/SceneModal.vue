@@ -1,111 +1,130 @@
 <template>
-  <a-modal :title="title" :width="600" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
+  <a-modal :title="title" :width="900" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
     <a-spin :spinning="confirmLoading">
-      <a-form :form="form">
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="场景名称">
-          <a-input placeholder="请输入场景名称" v-decorator="[ 'scene_name', validatorRules.name]" />
-        </a-form-item>
+      <a-form-model ref="sceneForm" :rules="sceneModelRules" :model="sceneModel">
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="场景名称" prop="scene_name">
+          <a-input placeholder="请输入场景名称" v-model="sceneModel.scene_name" />
+        </a-form-model-item>
 
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="位置" class="location">
-          <a-select placeholder="请选择楼栋" v-model="queryParam.buildingId" allowClear>
-            <a-select-option v-for="item in buildingList" :key="item.buildingId" :value="item.buildingId" v-decorator="[ 'buildingId', validatorRules.buildingId]">
-              {{ item.buildingName }}
-            </a-select-option>
-          </a-select>
-          <a-select placeholder="请选择楼层" v-model="queryParam.floorId" allowClear>
-            <a-select-option v-for="item in floorList" :key="item.floorId" :value="item.floorId" v-decorator="[ 'floorId']">
-              {{ item.floorName }}
-            </a-select-option>
-          </a-select>
-          <a-select placeholder="请选择教室" v-model="queryParam.roomId" allowClear>
-            <a-select-option v-for="item in roomList" :key="item.roomId" :value="item.roomId" v-decorator="[ 'roomId']">
-              {{ item.roomName }}
-            </a-select-option>
-          </a-select>
-        </a-form-item>
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="位置" class="location" prop="location.buildingId">
+          <a-row>
+            <a-col :span="8">
+              <a-select placeholder="请选择楼栋" v-model="sceneModel.location.buildingId" allowClear :disabled="!!this.sceneNumber">
+                <a-select-option v-for="item in buildingList" :key="item.buildingId" :value="item.buildingId">
+                  {{ item.buildingName }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+            <a-col :span="7" :offset="1">
+              <a-select placeholder="请选择楼层" v-model="sceneModel.location.floorId" allowClear :disabled="!!this.sceneNumber">
+                <a-select-option v-for="item in floorList" :key="item.floorId" :value="item.floorId">
+                  {{ item.floorName }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+            <a-col :span="7" :offset="1">
+              <a-select placeholder="请选择教室" v-model="sceneModel.location.roomId" allowClear :disabled="!!this.sceneNumber">
+                <a-select-option v-for="item in roomList" :key="item.roomId" :value="item.roomId">
+                  {{ item.roomName }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+          </a-row>
+        </a-form-model-item>
 
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="设备条件" class="box-card">
-          <a-tabs class="condition w8" v-model="conditionsTab" type="border-card">
-            <a-tab-pane tab="条件1" key="c1" class="panel">
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="设备条件" class="box-card">
+          <a-tabs class="condition w8" v-model="conditionsTab" :animated="false">
+            <a-tab-pane key="c1" class="panel">
               <span slot="tab">条件1<span class="or">OR</span></span>
               <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c1']" :key="index">
                 <i class="obicon obicon-node fl"></i>
-                <i class="el-icon-close fr" @click="removeCondition(index)"></i>
+                <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
+                <!-- <i class="el-icon-close fr" ></i> -->
                 <p>
-                  {{parseCondition(condition)}}
+                  {{ parseCondition(condition) }}
                   <span class="and" v-if="conditionMapList['c1'].length !== 1 && index !== conditionMapList['c1'].length - 1">AND</span>
                 </p>
               </div>
-              <a-button class="add-btn" size="mini" type="plain" icon="plus" @click="addCondition"></a-button>
+              <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
             </a-tab-pane>
 
-            <a-tab-pane tab="条件2" name="c2" class="panel">
+            <a-tab-pane key="c2" class="panel">
               <span slot="tab">条件2<span class="or">OR</span></span>
               <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c2']" :key="index">
                 <i class="obicon obicon-node fl"></i>
-                <i class="el-icon-close fr" @click="removeCondition(index)"></i>
+                <!-- <i class="el-icon-close fr" @click="removeCondition(index)"></i> -->
+                <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
                 <p>
-                  {{parseCondition(condition)}}
+                  {{ parseCondition(condition) }}
                   <span class="and" v-if="conditionMapList['c2'].length !== 1 && index !== conditionMapList['c2'].length - 1">AND</span>
                 </p>
               </div>
-              <a-button class="add-btn" size="mini" type="plain" icon="plus" @click="addCondition"></a-button>
+              <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
             </a-tab-pane>
-            <a-tab-pane tab="条件3" name="c3" class="panel">
+            <a-tab-pane tab="条件3" key="c3" class="panel">
               <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c3']" :key="index">
                 <i class="obicon obicon-node fl"></i>
-                <i class="el-icon-close fr" @click="removeCondition(index)"></i>
+                <!-- <i class="el-icon-close fr" @click="removeCondition(index)"></i> -->
+                <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
                 <p>
-                  {{parseCondition(condition)}}
+                  {{ parseCondition(condition) }}
                   <span class="and" v-if="conditionMapList['c3'].length !== 1 && index !== conditionMapList['c3'].length - 1">AND</span>
                 </p>
               </div>
-              <a-button class="add-btn" size="mini" type="plain" icon="plus" @click="addCondition"></a-button>
+              <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
             </a-tab-pane>
           </a-tabs>
-        </a-form-item>
+        </a-form-model-item>
 
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="设备行为">
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="设备行为">
           <div class="action-content">
+            <a-button class="add-btn" size="small" icon="plus" @click="handleAddAction"></a-button>
             <div class="condition-item clearfix" v-for="(deviceAction, index) in deviceActionModel" :key="index">
-              <i v-if="index !== 0" class="el-icon-close fr" @click="handleRemoveAction(index)"></i>
+              <!-- <i v-if="index !== 0" class="el-icon-close fr" @click="handleRemoveAction(index)"></i> -->
+              <a-icon v-if="index !== 0" type="close" class="fr" @click="handleRemoveAction(index)"></a-icon>
               <div class="action-item">
                 <a-tooltip title="行为执行时间(单位秒)" placement="top">
                   <a-input-number v-model="deviceAction.action_time" :min="0" @change="onSelectDevice('', index, '', 1)"></a-input-number>
                 </a-tooltip>
-                <a-select v-if="deviceAction.serialId" placeholder="选择设备类型" v-model="deviceAction.serialId"  @change="onSelectDevice(deviceAction.serialId, index)">
+                <a-select v-if="deviceAction.serialId" placeholder="选择设备类型" v-model="deviceAction.serialId" @change="onSelectDevice(deviceAction.serialId, index)">
                   <a-select-option v-for="item in deviceAction.deviceTypeList" :key="item.deviceSerialId" :value="item.deviceSerialId">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                   </a-select-option>
                 </a-select>
-                <a-select v-else placeholder="设备类型" v-model="deviceAction.deviceType"  @change="onSelectDevice(deviceAction.serialId, index, deviceAction.deviceType)">
+                <a-select v-else placeholder="选择设备类型" v-model="deviceAction.deviceType" @change="onSelectDevice(deviceAction.serialId, index, deviceAction.deviceType)">
                   <a-select-option v-for="item in deviceAction.deviceTypeList" :key="item.deviceType" :value="item.deviceType">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                   </a-select-option>
                 </a-select>
                 <div v-if="deviceAction.serialId || deviceAction.deviceType" class="action-item__behavior" @click="settingAction(deviceAction.serialId, index, deviceAction.deviceType, 2)" :title="deviceAction.actionDescriptor">
-                  <p>{{deviceAction.actionDescriptor || '配置设备动作' }}</p>
+                  <p>{{ deviceAction.actionDescriptor || '配置设备动作' }}</p>
                 </div>
               </div>
             </div>
-            <el-button class="add-btn" size="mini" type="plain" icon="el-icon-plus" @click="handleAddAction"></el-button>
-        </a-form-item>
-      </a-form>
+          </div>
+        </a-form-model-item>
+      </a-form-model>
     </a-spin>
+    <scene-condition-modal ref="conditionModal" @ok="conditionModalOk"></scene-condition-modal>
+    <scene-action-modal ref="actionModal" @ok="actionModalOk"></scene-action-modal>
   </a-modal>
 </template>
 
 <script>
-import pick from 'lodash.pick'
-import { getSmartSceneById } from '@/api/scene'
+// import pick from 'lodash.pick'
+import { getSmartSceneById, addSmartScene, editSmartScene } from '@/api/scene'
 import SceneMixin from '../SceneMixin'
-import { Descriptor, TypeHints } from 'hardware-suit'
+import { Descriptor, TypeHints, Converter } from 'hardware-suit'
+import SceneConditionModal from './SceneConditionModal'
+import SceneActionModal from './SceneActionModal'
 export default {
+  components: { SceneConditionModal, SceneActionModal },
   mixins: [ SceneMixin ],
   data () {
     return {
       title: '操作',
       visible: false,
+      queryParam: {},
       model: {},
       labelCol: {
         xs: { span: 24 },
@@ -116,11 +135,11 @@ export default {
         sm: { span: 16 }
       },
       confirmLoading: false,
-      form: this.$form.createForm(this),
-      validatorRules: {
-        scene_name: { rules: [{ required: true, message: '场景名称不能为空!' }] },
-        buildingId: [{ required: true, trigger: 'change', message: '楼栋不能为空'}],
-      },
+      // form: this.$form.createForm(this),
+      // validatorRules: {
+      //   name: { rules: [{ required: true, message: '场景名称不能为空!' }] },
+      //   buildingId: { rules: [{ required: true, message: '楼栋不能为空'}] },
+      // },
       sceneModel: { // the scene created or edited model object
         scene_type: '00',
         scene_status: '01',
@@ -136,11 +155,13 @@ export default {
           roomId: ''
         }
       },
+      sceneModelRules: {
+        scene_name: [{ required: true, trigger: 'blur', message: '场景名称不能为空!'}],
+        'location.buildingId': [{ required: true, trigger: 'change', message: '楼栋不能为空'}],
+      },
       deviceActionModel: this.initActionModel(),
       currentAction: null, // current handling action
       activeDevice: null, // current active device
-      conDialogVisible: false, // condition dialog visible controller flag
-      conditionList: [], // list to store conditions
       conditionsTab: 'c1', // condition 'c1' for the default or active tab
       conditionMapList: { // condition tab map list
         'c1': [],
@@ -155,7 +176,18 @@ export default {
     }
   },
   watch: {
-    'buildingId' (id) { // get floor's list by building id
+    'sceneModel.location.buildingId' (id) { // get floor's list by building id
+      this.handleBuildingChange(id)
+    },
+    'sceneModel.location.floorId' (id) { // get room's list by floor id
+      this.handleFloorChange(id)
+    },
+    'sceneModel.location.roomId' (id) { // get device's list by room id
+      this.handleRoomChange(id)
+    }
+  },
+  methods: {
+    handleBuildingChange (id) {
       if (!this.isEditScene) {
         this.sceneModel.location.floorId = ''
         this.sceneModel.location.roomId = ''
@@ -166,14 +198,14 @@ export default {
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.initDeviceType()
     },
-    'floorId' (id) { // get room's list by floor id
+    handleFloorChange (id) {
       !this.isEditScene && (this.sceneModel.location.roomId = '')
       this.roomList = []
       this.getRoomList(id)
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.initDeviceType()
     },
-    'roomId' (id) { // get device's list by room id
+    handleRoomChange (id) {
       if (!id) { // init by default data
         this.deviceTypeList = this.initDeviceType()
         this.deviceActionModel = this.initActionModel()
@@ -187,9 +219,7 @@ export default {
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
-    }
-  },
-  methods: {
+    },
     initDeviceType () { // for building or floor location
       return [{
         name: '3 way switch',
@@ -212,9 +242,9 @@ export default {
     },
     deviceTypeFilter (type, subtype) { // get description text of device's type
       if (!type && !subtype) return
-      // return subtype ? this.$t('system.devtype', {FIELD: Suit.getDeviceTypeDescriptor(type, subtype)}) : this.$t('system.devtype', {FIELD: Suit.getRootDeviceDescriptor(type)})
+      return Descriptor.getTypeDescriptor(type, subtype)
     },
-    isActionDevice (deviceType, deviceSubType, isLocal) { // only some device can be set action
+    isActionDevice (deviceType, deviceSubType) { // only some device can be set action
       return !TypeHints.isSensors(deviceType)
         && !TypeHints.isFinger(deviceType)
         && !TypeHints.isDoorLock(deviceType)
@@ -223,34 +253,32 @@ export default {
         && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isMixSocketSwitch(deviceSubType))
     },
     settingAction (serialId, index, deviceType, type) { // click area of the action behavior and set
-      this.actionDialogVisible = true
       this.onSelectDevice(serialId, index, deviceType, type)
+      this.$refs.actionModal.edit(this.activeDevice)
     },
 
     addCondition () { // for condition modal/dialog controller
-      this.conDialogVisible = true
+      this.$refs.conditionModal.edit({})
     },
-    removeCondition (index) {
-      this.conditionList.splice(index, 1)
-      this.conditionMapList[this.conditionsTab].splice(index, 1)
-    },
-    onConditionChange (condition, dialogVisible) { // when finishing choosing conditions, enter this callback function
+    conditionModalOk (condition) { // when finishing choosing conditions, enter this callback function
       if (this.conditionMapList[this.conditionsTab].length >= 3) {
-        this.$message({
-          message: this.$t('smart.scene.create', {FIELD: 'conTip'}),
-          type: 'info'
-        })
+        this.$message.warning('一组最多三个条件')
         return
       }
-      this.conditionList.push(condition)
       this.conditionMapList[this.conditionsTab].push(condition)
-      this.conDialogVisible = dialogVisible
     },
-    onActionChange (actionData, dialogVisible) { // when finishing handling actions, enter this callback function
-      this.actionDialogVisible = dialogVisible
+    actionModalOk (actionData) {
       this.currentAction.actionDescriptor = actionData.extra
       this.currentAction.action = actionData.action
     },
+    removeCondition (index) {
+      this.conditionMapList[this.conditionsTab].splice(index, 1)
+    },
+    // onActionChange (actionData, dialogVisible) { // when finishing handling actions, enter this callback function
+    //   this.actionDialogVisible = dialogVisible
+    //   this.currentAction.actionDescriptor = actionData.extra
+    //   this.currentAction.action = actionData.action
+    // },
     /**
      * @param {String} serialId
      * @param {Number} index  action index
@@ -309,28 +337,15 @@ export default {
       return !actions || !actions.length || actions.findIndex(item => !item || !Object.keys(item).length || !item.action) > -1
     },
     handleSelectedCondition () { // combine the arguments and save
-      const actions = this.getModelAction()
-      const conditions = this.getModelCondition()
-      this.sceneModel.actions = actions
-      this.sceneModel.conditions = [...conditions]
-      const model = {...this.sceneModel}
-      model.location = this.getLocation()
-      if (this.hasEmptyAction(actions)) {
-        return this.$message.warning({title: false, message: this.$t('smart.scene.condition', {FIELD: 'setActionBehavior'})})
-      }
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          this.$emit('scene-ready', model, false)
-        }
-      })
+
     },
     parseCondition (condition) { // parse condition to readable text
       let str = ''
       if (condition.model.type === '1') {
-        str = `${this.$t('smart.scene.condition', {FIELD: 'timing'})} ${condition.model.condition}`
+        str = `定时 ${condition.model.condition}`
       } else if (condition.model.type === '2') {
-        const type = this.$t('system.devtype', {FIELD: Suit.getDeviceTypeDescriptor(condition.selected.device_type, condition.selected.device_child_type)})
-        str = `${this.$t('smart.scene.condition', {FIELD: 'chain'})} ${type} ${condition.model.action}`
+        const type = condition.selected && Descriptor.getTypeDescriptor(condition.selected.device_type, condition.selected.device_child_type)
+        str = `联动 ${type} ${condition.model.action}`
       }
       return str
     },
@@ -377,7 +392,8 @@ export default {
       if (!this.sceneNumber) return
       getSmartSceneById(this.sceneNumber).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.sceneModel.location = res.result.location
+
+          this.sceneModel.location = res.result.location || {}
           this.sceneModel.scene_type = res.result.scene_type || '00'
           this.sceneModel.scene_status = res.result.scene_status || '01'
           this.sceneModel.scene_number = res.result.scene_number || this.sceneNumber
@@ -392,9 +408,20 @@ export default {
           setTimeout(() => {
             this.deviceActionModel = this.inverseActions(res.result.actions)
           }, 0)
+
+
         }
         this.loadingEditData = false
       })
+      // this.$nextTick(() => {
+      //   const model = {
+      //     'scene_name': this.sceneModel.scene_name,
+      //     buildingId: this.sceneModel.location.buildingId,
+      //     floorId: this.sceneModel.location.floorId,
+      //     roomId: this.sceneModel.location.roomId
+      //   }
+      //   this.form.setFieldsValue(model)
+      // })
     },
     inverseActions (actions) { // convert action data to created structure
       const parseKey = act => {
@@ -431,9 +458,9 @@ export default {
     inverseCondition (conditions) { // convert condition to created mode
       const parseChainAction = condition => {
         const temSymbol = condition.slice(0, 2)
-        const temperature = condition.slice(2, 4) === '4C' ? '' : Suit.converter.toDecimal(condition.slice(2, 4), 16) - 30
+        const temperature = condition.slice(2, 4) === '4C' ? '' : new Converter(condition.slice(2, 4), 16).toDecimal() - 30
         const humSymbol = condition.slice(4, 6)
-        const humidifier = condition.slice(6, 8) === '00' ? '' : Suit.converter.toDecimal(condition.slice(6, 8), 16)
+        const humidifier = condition.slice(6, 8) === '00' ? '' : new Converter(condition.slice(6, 8), 16).toDecimal()
         const symbol = {'49': '>', '4a': '=', '4b': '>=', '4c': '<', '4e': '<=', '4C': '无', '00': '无'}
         return `温度${symbol[temSymbol]}${temperature} / 湿度${symbol[humSymbol]}${humidifier}`
       }
@@ -463,14 +490,13 @@ export default {
       this.edit({})
     },
     edit (record) {
-      this.form.resetFields()
+      // this.form.resetFields()
+      // this.$refs.sceneForm.resetFields();
       this.model = Object.assign({}, record)
-      this.sceneNumber = record.scene_number
+      this.sceneNumber = record.sceneNumber
       this.visible = true
-      // this.$nextTick(() => {
-      //   this.form.setFieldsValue(pick(this.model, 'name'))
-      // })
-      this.getSceneDeviceList().then(buildingList => {
+
+      this.getSceneDeviceList().then(() => {
       if (this.sceneNumber) { // when there is a sceneNumber, It's in an editable mode
         this.isEditScene = true
         this.loadingEditData = true
@@ -482,14 +508,19 @@ export default {
     },
     // 确定
     handleOk () {
+      const actions = this.getModelAction()
+      const conditions = this.getModelCondition()
+      this.sceneModel.actions = actions
+      this.sceneModel.conditions = [...conditions]
+      const model = {...this.sceneModel}
+      model.location = this.getLocation()
+      if (this.hasEmptyAction(actions)) {
+        return this.$message.warning('请补全设备行为')
+      }
       const that = this
-      // 触发表单验证
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          that.confirmLoading = true
-          let formData = Object.assign(this.model, values)
-          console.log(formData)
-          let obj = editOboxName(formData)
+      this.$refs.sceneForm.validate(valid => {
+        if (valid) {
+          let obj = model.sceneNumber ? editSmartScene(model) : addSmartScene(model)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
               that.$message.success(res.message)
@@ -511,11 +542,245 @@ export default {
     close () {
       this.$emit('close')
       this.visible = false
+      this.resetModal()
+    },
+    resetModal () {
+      this.$refs.sceneForm.resetFields()
+      this. conditionMapList =  { // condition tab map list
+        'c1': [],
+        'c2': [],
+        'c3': []
+      }
+      this.deviceActionModel = this.initActionModel()
     }
   },
 }
 </script>
 
 <style lang="less" scoped>
+.close{
+  font-size: 20px;
+  color: #999;
+  line-height: 41px;
+  cursor: pointer;
+}
+.w8{
+  width: 80%;
+}
+.w140px{
+  width: 140px;
+}
+.w440px{
+  width: 440px;
+}
+.h200{
+  min-height: 200px;
+}
+.fl{
+  float: left;
+}
+.fr{
+  float: right;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
+.center{
+  text-align: center;
+}
+.left{
+  text-align: left;
+}
+.condition{
+  // margin: 0 20px;
+  .condition-item > p{
+    position: relative;
+  }
+}
+.condition .panel{
+  position: relative;
+  padding: 20px 20px 20px 0;
+}
+.condition .panel .add-btn{
+  position: absolute;
+  // top: 26px;
+  // right: 10px;
+  top: 0;
+  right: 0;
+  // padding: 5px;
+  // font-size: 16px;
+}
+.action-content{
+  position: relative;
+}
+.action-content .add-btn{
+  float: right;
+  margin: 24px 5px 0;
+}
+.action-content .condition-item{
+  // width: 80%;
+  padding: 14px 5px;
+  border-radius: 4px;
+  // padding: 5px;
+  // margin: 0 auto;
+}
+.condition-item .action-item > div{
+  width: 130px;
+  margin-right: 5px;
+}
+.condition-item .action-item > div:first-of-type{
+  width: 70px;
+}
+.condition-item .action-item > .action-item__behavior{
+  width: 150px;
+  vertical-align: bottom;
+  & p{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+.action-item__behavior{
+  display: inline-block;
+  text-align: center;
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  color: #ccc;
+  cursor: pointer;
+}
+.condition-item{
+  width: 90%;
+  border: 1px solid #eee;
+  padding: 0 10px;
+  font-size: 14px;
+  color: #777;
+}
 
+.condition-item + .condition-item{
+  margin-top: 6px;
+}
+.condition-item i{
+  position: relative;
+  line-height: 40px;
+  font-size: 14px;
+  padding-right: 5px;
+  z-index: 9;
+}
+.condition-item i:last-of-type{
+  cursor: pointer;
+}
+.condition-item p{
+  // padding: 0 30px 0 20px;
+  padding: 0 10px 0 10px;
+  margin-bottom: 0;
+  line-height: 40px;
+}
+.actions .header{
+  padding: 0 20px;
+  border-bottom: 1px solid #eee;
+}
+.actions .content{
+  padding: 10px 20px;
+}
+.footer{
+  padding: 18px 8px 0;
+  text-align: right;
+}
+.or{
+  position: absolute;
+  right: -25px;
+  top: 12px;
+  font-size: 12px;
+  font-family: Consolas;
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #000;
+  border-radius: 100%;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 21px;
+  background-color: #000;
+  color: #fff;
+  z-index: 9999;
+}
+.and{
+  position: absolute;
+  right: -40px;
+  top: 30px;
+  font-family: Consolas;
+  display: inline-block;
+  font-size: 11px;
+  transform: scale(1);
+  font-family: Consolas;
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #000;
+  border-radius: 100%;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 24px;
+  background-color: #000;
+  color: #fff;
+}
+.and::before,
+.and::after{
+  display: inline-block;
+  content: ' ';
+  width: 15px;
+  height: 8px;
+  border: 1px dashed #999;
+  position: absolute;
+  border-left: none;
+}
+.and::before{
+  top: -10px;
+  left: -3px;
+  border-bottom: none;
+}
+.and::after{
+  bottom: -10px;
+  left: -3px;
+  border-top: none;
+}
+.location .ant-select{
+  margin-right: 28px;
+}
+</style>
+<style lang="css">
+.condition-type.ant-tabs,
+.box-card .ant-tabs,
+.box-card.ant-card.is-always-shadow{
+  box-shadow: none;
+}
+.box-card .ant-card__header{
+  padding: 0 20px;
+}
+.box-card .ant-card__body{
+  padding: 10px 0 20px;
+}
+.condition-type > .ant-tabs-nav-wrap{
+  background: #f2f2f2;
+}
+.timing .ant-radio-button .ant-radio-button__inner{
+  border-left: 1px solid #DCDFE6;
+  width: 80px;
+  border-radius: 4px;
+}
+.timing .ant-radio-button__orig-radio:checked + .ant-radio-button__inner{
+  border-left-color: #409EFF;
+}
+.action-content .ant-input-number__increase, .action-content .ant-input-number__decrease{
+  width: 30px;
+}
+.action-content .ant-input-number.is-controls-right .ant-input__inner{
+  padding-left: 2px;
+  padding-right: 30px;
+}
 </style>

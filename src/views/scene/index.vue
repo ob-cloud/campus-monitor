@@ -68,7 +68,7 @@
         ref="table"
         bordered
         size="middle"
-        rowKey="id"
+        rowKey="sceneNumber"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"

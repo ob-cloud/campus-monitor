@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-26 17:33:08
+ * @Last Modified time: 2020-08-27 15:36:08
  */
 
 // import {request} from '@/common/request'
@@ -125,6 +125,10 @@ const delInfratedDevice = (deviceId) => getAction('/common', {
   CMD: 'delete_ali_dev',
   deviceId
 })
+const getIrCustomKeys = () => getAction('/common', {
+  CMD: 'get_custom_key',
+  tId: 0
+})
 
 // const DeviceAPI = {
 //   // getDeviceList (params) {
@@ -195,12 +199,7 @@ const delInfratedDevice = (deviceId) => getAction('/common', {
 
 
 
-//   // getIrCustomKeys () {
-//   //   return request.postForm('/consumer/common', {
-//   //     CMD: 'get_custom_key',
-//   //     tId: 0
-//   //   })
-//   // }
+
 // }
 
 
@@ -243,5 +242,6 @@ export {
   editIrDevice,
   getTransponderDevice,
   getInfratedDeviceList,
-  delInfratedDevice
+  delInfratedDevice,
+  getIrCustomKeys
 }
