@@ -2,10 +2,10 @@
  * @Author: eamiear
  * @Date: 2019-08-07 16:43:10
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-25 18:16:21
+ * @Last Modified time: 2020-08-27 18:36:16
  */
 
-import { getAction, postAction } from '@/utils/ajax'
+import { getAction, postFormAction } from '@/utils/ajax'
 
 const getRoomCascader = () => getAction('/common', {
   CMD: 'get_building_floor_room'
@@ -18,7 +18,7 @@ const getRoomList = (params) => getAction('/common', {
   CMD: 'get_room',
   room: JSON.stringify(params)
 })
-const addRoom = (params) => getAction('/common', {
+const addRoom = (params) => postFormAction('/common', {
   CMD: 'add_room',
   room: JSON.stringify(params)
 })
@@ -32,16 +32,16 @@ const delRoom = (id) => getAction('/common', {
     id
   })
 })
-const bindRoomDevice= (params = {}) => postAction('/common', {
+const bindRoomDevice= (params = {}) => postFormAction('/common', {
   CMD: 'bind_room_device',
   device: JSON.stringify(params)
 })
-const unbindRoomDevice = (params = {}) => postAction('/common', {
+const unbindRoomDevice = (params = {}) => postFormAction('/common', {
   CMD: 'unbind_room_device',
   device: JSON.stringify(params)
 })
 
-const handleLampPower = (params = {}) => postAction('/common', {
+const handleLampPower = (params = {}) => postFormAction('/common', {
   CMD: 'tigger_room_device',
   device: JSON.stringify(params)
 })
@@ -64,15 +64,15 @@ const getSelectBuildingList = () => getAction('/common', {
   CMD: 'get_select_building'
 })
 
-const addBuilding = (params = {}) => postAction('/common', {
+const addBuilding = (params = {}) => postFormAction('/common', {
   CMD: 'add_building',
   building: params
 })
-const editBuilding = (params = {}) => postAction('/common', {
+const editBuilding = (params = {}) => postFormAction('/common', {
   CMD: 'update_building',
   building: JSON.stringify(params)
 })
-const delBuilding = (id) => postAction('/common', {
+const delBuilding = (id) => postFormAction('/common', {
   CMD: 'delete_building',
   building: JSON.stringify({id})
 })
@@ -90,15 +90,15 @@ const getFloorByBuildingId = (buildingId) => getAction('/common', {
     buildingId
   })
 })
-const addFloor = (params = {}) => postAction('/common', {
+const addFloor = (params = {}) => postFormAction('/common', {
   CMD: 'add_floor',
   floor: params
 })
-const editFloor = (params = {}) => postAction('/common', {
+const editFloor = (params = {}) => postFormAction('/common', {
   CMD: 'update_floor',
   floor: JSON.stringify(params)
 })
-const delFloor = (id) => postAction('/common', {
+const delFloor = (id) => postFormAction('/common', {
   CMD: 'delete_floor',
   floor: JSON.stringify({id})
 })

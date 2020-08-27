@@ -3,7 +3,7 @@
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="楼栋">
-          <a-select placeholder="请选择楼栋" v-decorator="[ 'buildingId', validatorRules.buildingId]">
+          <a-select placeholder="请选择楼栋" v-decorator="[ 'buildingId', validatorRules.buildingId]" @change="handleBuildingChange">
             <a-select-option v-for="item in buildingList" :key="item.id" :value="item.id">
               {{ item.buildName }}
             </a-select-option>
@@ -80,6 +80,9 @@ export default {
         }
       })
     },
+    handleBuildingChange (buildingId) {
+      this.getLayerList(buildingId)
+    },
     // 确定
     handleOk () {
       const that = this
@@ -87,12 +90,10 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           that.confirmLoading = true
-          values.buildingId = (values.buildingId || '').trim()
-          values.floorId = (values.floorId || '').trim()
           values.roomName = (values.roomName || '').trim()
-          let formData = Object.assign(this.model, values)
+          let formData = Object.assign(that.model, values)
           console.log(formData)
-          let obj = !this.model.id ? addRoom(formData) : editRoom(formData)
+          let obj = !that.model.id ? addRoom(formData) : editRoom(formData)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
               that.$message.success(res.message)
@@ -114,6 +115,7 @@ export default {
     close () {
       this.$emit('close')
       this.visible = false
+      this.confirmLoading = false
     }
   },
 }

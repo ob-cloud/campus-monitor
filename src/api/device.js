@@ -2,11 +2,11 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-27 15:36:08
+ * @Last Modified time: 2020-08-27 18:36:31
  */
 
 // import {request} from '@/common/request'
-import { getAction, postAction } from '@/utils/ajax'
+import { getAction, postFormAction } from '@/utils/ajax'
 
 
 // device
@@ -17,7 +17,7 @@ const getDeviceList = (params) => getAction('/common', {
 
 const getAllBuildingDeviceList = (params) => getAction('/common', { CMD: 'get_building_devices', user: JSON.stringify(params) })
 
-const delDevice = (serialId, name) => postAction('/common', {
+const delDevice = (serialId, name) => postFormAction('/common', {
   CMD: 'modify_device',
   serialId,
   operate_type: '00',
@@ -39,13 +39,13 @@ const getOboxDeviceList = (params) => getAction('/common', {
   oboxdevice: JSON.stringify(params)
 })
 
-const delObox = (oboxSerialId) => postAction('/common', {
+const delObox = (oboxSerialId) => postFormAction('/common', {
   CMD: 'delete_obox',
   obox_serial_id: oboxSerialId,
   fForce_delete: '00'
 })
 
-const editOboxName = (oboxSerialId, name) => postAction('/common', {
+const editOboxName = (oboxSerialId, name) => postFormAction('/common', {
   CMD: 'update_obox_name',
   obox_serial_id: oboxSerialId,
   name
@@ -53,12 +53,12 @@ const editOboxName = (oboxSerialId, name) => postAction('/common', {
 
 // 开关
 
-const getSwitchStatus = (serialId) => postAction('/common', {
+const getSwitchStatus = (serialId) => postFormAction('/common', {
   CMD: 'query_node_real_status',
   serialId
 })
 
-const editSwitchStatus = (serialId, status) => postAction('/common', {
+const editSwitchStatus = (serialId, status) => postFormAction('/common', {
   CMD: 'setting_node_status',
   serialId,
   status
@@ -70,16 +70,16 @@ const getPanelGroupList = (params) => getAction('/common', {
   CMD: 'get_user_panel_group',
   ...params
 })
-const setPanelGroup = (params) => postAction('/common', {
+const setPanelGroup = (params) => postFormAction('/common', {
   CMD: 'set_panel_group',
   ...params
 })
-const delPanelGroup = (groupId) => postAction('/common', {
+const delPanelGroup = (groupId) => postFormAction('/common', {
   CMD: 'del_panel_group',
   group_id: groupId
 })
 
-const setPanelKey = (params) => postAction('/common', {
+const setPanelKey = (params) => postFormAction('/common', {
   CMD: 'set_panel_key',
   ...params
 })
@@ -107,7 +107,7 @@ const getDeviceStatusHistory = (serialId, fromDate, toDate, type = '02') => getA
 
 // 红外
 
-const editIrDevice = (serialId, name) => postAction('/common', {
+const editIrDevice = (serialId, name) => postFormAction('/common', {
   CMD: 'update_ir_name',
   device_serial_id: serialId,
   name

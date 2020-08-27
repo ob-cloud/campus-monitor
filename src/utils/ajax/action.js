@@ -17,6 +17,13 @@ export function httpAction (url, parameter = {}, method = '', extra = {}) {
   })
 }
 
+export function postFormAction (url, parameter = {}, extra = {}) {
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+  }
+  return httpAction(url, qs.stringify(parameter), 'post', { ...extra, headers})
+}
+
 export function postAction (url, parameter = {}, extra = {}) {
   return httpAction(url, parameter, 'post', extra)
 }

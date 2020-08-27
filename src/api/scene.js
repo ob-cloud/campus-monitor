@@ -2,11 +2,11 @@
  * @Author: eamiear
  * @Date: 2019-08-07 15:19:34
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-26 23:16:30
+ * @Last Modified time: 2020-08-27 18:36:44
  */
 
 // import {request} from '@/common/request'
-import { getAction, postAction } from '@/utils/ajax'
+import { getAction, postFormAction } from '@/utils/ajax'
 
 const getSmartSceneList = (params) => getAction('/common', {
   CMD: 'get_smart_scene',
@@ -20,28 +20,28 @@ const getSmartSceneById = (sceneNumber) => getAction('/common', {
   CMD: 'get_smart_single_scene',
   scene_number: sceneNumber
 })
-const execSmartScene = (sceneNumber) => postAction('/common', {
+const execSmartScene = (sceneNumber) => postFormAction('/common', {
   CMD: 'execute_smart_scene',
   scene_number: sceneNumber
 })
-const editSmartScene = (params) => postAction('/common', {
+const editSmartScene = (params) => postFormAction('/common', {
   CMD: 'modify_smart_scene',
   scene: JSON.stringify(params)
 })
-const addSmartScene = (params) => postAction('/common', {
+const addSmartScene = (params) => postFormAction('/common', {
   CMD: 'set_smart_scene',
   scene: JSON.stringify(params)
 })
-const setSceneInfo = (scene) => postAction('/common', {
+const setSceneInfo = (scene) => postFormAction('/common', {
   CMD: 'setting_sc_info',
   scene: scene
 })
-const delScene = (sceneNumber) => postAction('/common', {
+const delScene = (sceneNumber) => postFormAction('/common', {
   CMD: 'execute_sc',
   scene_status: '03',
   scene_number: sceneNumber
 })
-const editSceneStatus = (sceneStatus, sceneNumber) => postAction('/common', {
+const editSceneStatus = (sceneStatus, sceneNumber) => postFormAction('/common', {
   CMD: 'execute_sc',
   scene_status: sceneStatus,
   scene_number: sceneNumber
