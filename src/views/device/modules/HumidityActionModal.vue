@@ -127,17 +127,17 @@ export default {
 
       const toDate = parseInt(nowadayReset.getTime() / 1000)
       const fromDate = parseInt(weeksagoReset.getTime() / 1000)
-      const {data} = await getDeviceStatusHistory(serialId, fromDate, toDate, '02')
-      return this.parseHumidifierHistoryByDay(data.history, '{m}-{d}')
+      const response = await getDeviceStatusHistory(serialId, fromDate, toDate, '02')
+      return this.parseHumidifierHistoryByDay(response.result.history, '{m}-{d}')
     },
     async getHumidifierStatusHistoryByDay (serialId) {
       const date = new Date()
       const fromDate = parseInt(date.setHours(0, 0, 0, 0) / 1000)
       const toDate = parseInt(date.setHours(23, 59, 0, 0) / 1000)
       this.tableLoading = true
-      const {data} = await getDeviceStatusHistory(serialId, fromDate, toDate, '01')
+      const response = await getDeviceStatusHistory(serialId, fromDate, toDate, '01')
       this.tableLoading = false
-      return this.parseHumidifierHistoryByDay(data.history)
+      return this.parseHumidifierHistoryByDay(response.result.history)
     },
     parseHumidifierHistoryByDay (list, fmt) {
       return Array.from(list).map(item => {
