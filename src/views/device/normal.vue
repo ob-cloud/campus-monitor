@@ -47,7 +47,7 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
-      <a-button @click="handleAdd" type="primary" icon="plus">添加设备</a-button>
+      <a-button @click="handleScan" type="primary" icon="plus">添加设备</a-button>
     </div>
 
     <!-- table区域-begin -->
@@ -109,6 +109,7 @@
     <!-- table区域-end -->
 
     <normal-modal ref="modalForm" @ok="modalFormOk"></normal-modal>
+    <normal-device-modal ref="modalDeviceForm" @ok="modalDeviceFormOk"></normal-device-modal>
     <humidity-action-modal ref="humidityModal" @close="actionModalClose"></humidity-action-modal>
     <lamp-action-modal ref="lampModal" @close="actionModalClose"></lamp-action-modal>
     <keypanel-action-modal ref="keypanelModal" @ok="actionModalClose"></keypanel-action-modal>
@@ -117,6 +118,7 @@
 
 <script>
   import NormalModal from './modules/NormalModal'
+  import NormalDeviceModal from './modules/NormalDeviceModal'
   import LampActionModal from './modules/LampActionModal'
   import KeypanelActionModal from './modules/KeyPanelActionModal'
   import HumidityActionModal from './modules/HumidityActionModal'
@@ -130,6 +132,7 @@
     mixins: [ ProListMixin ],
     components: {
       NormalModal,
+      NormalDeviceModal,
       LampActionModal,
       KeypanelActionModal,
       HumidityActionModal
@@ -245,6 +248,12 @@
             this.$message.error(res.message)
           }
         })
+      },
+      handleScan () {
+        this.$refs.modalDeviceForm.edit({})
+      },
+      modalDeviceFormOk () {
+        this.loadData()
       }
     }
   }

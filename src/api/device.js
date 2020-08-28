@@ -2,11 +2,11 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-27 18:36:31
+ * @Last Modified time: 2020-08-28 10:20:40
  */
 
 // import {request} from '@/common/request'
-import { getAction, postFormAction } from '@/utils/ajax'
+import { getAction, postFormAction, deleteAction } from '@/utils/ajax'
 
 
 // device
@@ -23,6 +23,18 @@ const delDevice = (serialId, name) => postFormAction('/common', {
   operate_type: '00',
   name
 })
+
+/**
+ * // 扫描添加设备
+ * params {
+ *  deviceType=04&deviceChildType=17&countOfDevice=1&timeout=60
+ * }
+ */
+const scanAndSaveDevicesToObox = (oboxSerialId, params) => postFormAction(`/aliService/scanByUnRestart/${oboxSerialId}`, {
+  timeout: 60,
+  ...params
+})
+const pauseScanDevices = (oboxSerialId) => deleteAction(` /facade/scan/${oboxSerialId}`)
 
 // OBOX
 const getOboxList = (params) => getAction('/common', {
@@ -220,6 +232,8 @@ export {
   getDeviceList,
   getAllBuildingDeviceList,
   delDevice,
+  scanAndSaveDevicesToObox,
+  pauseScanDevices,
 
   getOboxList,
   getAllOboxList,
