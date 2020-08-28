@@ -30,10 +30,11 @@
                 bordered
                 size="middle"
                 rowKey="id"
-                :height="tableHeight + 'px'"
                 :columns="columns"
                 :dataSource="tableData"
                 :loading="tableLoading"
+                :pagination="false"
+                :scroll="{ y: 240 }"
               >
               </a-table>
             </a-tab-pane>
@@ -77,7 +78,6 @@ export default {
 
       activeName: '1',
       tableLoading: false,
-      tableHeight: 350,
       tableData: [],
       columns: [{title: '温度', dataIndex: 'temperature', align: 'center' }, {title: '湿度', dataIndex: 'humidifier', align: 'center' }, {title: '日期', dataIndex: 'time', align: 'center' }],
       isCharListValid: false,

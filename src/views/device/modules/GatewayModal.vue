@@ -40,7 +40,8 @@ export default {
     },
     edit (record) {
       this.form.resetFields()
-      this.model = Object.assign({}, {name: record.obox_name, serialId: record.serialId})
+      this.model = Object.assign({}, {name: record.obox_name, serialId: record.obox_serial_id})
+      console.log(record)
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.model, 'name'))
@@ -55,7 +56,7 @@ export default {
           that.confirmLoading = true
           let formData = Object.assign(this.model, values)
           console.log(formData)
-          let obj = editOboxName(formData)
+          let obj = editOboxName(formData.serialId, formData.name)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
               that.$message.success(res.message)
