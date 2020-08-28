@@ -45,9 +45,9 @@
     </div>
 
     <!-- 操作按钮区域 -->
-    <div class="table-operator" style="border-top: 5px">
+    <!-- <div class="table-operator" style="border-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus">添加设备</a-button>
-    </div>
+    </div> -->
 
     <!-- table区域-begin -->
     <div>

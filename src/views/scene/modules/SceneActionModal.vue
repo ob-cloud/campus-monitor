@@ -74,7 +74,7 @@
 
 <script>
 import { getTransponderDevice, getIrCustomKeys } from '@/api/device'
-import ActionMixin from '../ActionMixin'
+import ActionMixin from '@/utils/mixins/ActionMixin'
 import { TypeHints } from 'hardware-suit'
 export default {
   mixins: [ ActionMixin ],

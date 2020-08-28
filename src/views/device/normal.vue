@@ -113,6 +113,7 @@
     <humidity-action-modal ref="humidityModal" @close="actionModalClose"></humidity-action-modal>
     <lamp-action-modal ref="lampModal" @close="actionModalClose"></lamp-action-modal>
     <keypanel-action-modal ref="keypanelModal" @ok="actionModalClose"></keypanel-action-modal>
+    <power-switch-modal ref="powerModal" @ok="actionModalClose"></power-switch-modal>
   </a-card>
 </template>
 
@@ -122,6 +123,7 @@
   import LampActionModal from './modules/LampActionModal'
   import KeypanelActionModal from './modules/KeyPanelActionModal'
   import HumidityActionModal from './modules/HumidityActionModal'
+  import PowerSwitchModal from './modules/PowerSwitchModal'
   // import PasswordModal from './modules/PasswordModal'
   import { getOboxDeviceList, getAllOboxList, delDevice } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
@@ -135,7 +137,8 @@
       NormalDeviceModal,
       LampActionModal,
       KeypanelActionModal,
-      HumidityActionModal
+      HumidityActionModal,
+      PowerSwitchModal
       // PasswordModal
     },
     data() {
@@ -232,6 +235,7 @@
         })
       },
       handleAction (type, record) {
+        type === 0 && this.$refs.powerModal.show(record)
         type === 1 && this.$refs.humidityModal.show(record)
         type === 2 && this.$refs.keypanelModal.show(record)
         type === 3 && this.$refs.lampModal.show(record)

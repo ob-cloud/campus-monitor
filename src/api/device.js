@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-28 10:20:40
+ * @Last Modified time: 2020-08-28 15:32:26
  */
 
 // import {request} from '@/common/request'
@@ -257,5 +257,5 @@ export {
   getTransponderDevice,
   getInfratedDeviceList,
   delInfratedDevice,
-  getIrCustomKeys
+  getIrCustomKeys,
 }

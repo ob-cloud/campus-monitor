@@ -7,6 +7,7 @@
     :closable="true"
     @close="handleCancel"
     :visible="visible"
+    :destroyOnClose="true"
   >
     <a-layout>
       <a-layout-sider width="200px">
@@ -41,7 +42,7 @@
                 <a-slider v-model="bright" :marks="{0: '0', 100: '100'}" :disabled="!isPowerOn" input-size="mini" @afterChange="onBrightChange"></a-slider>
               </a-col>
             </a-row>
-            <a-row :gutter="40" class="card-content__item" v-if="isColorLamp()">
+            <a-row :gutter="40" class="card-content__item" v-if="isColorLamp">
               <a-col :span="3">
                 <span>色度</span>
               </a-col>
@@ -60,6 +61,7 @@
 <script>
 import Lamp from '@/components/IoT/Lamp'
 import { editSwitchStatus, getSwitchStatus } from '@/api/device'
+import { LedLampEquip } from 'hardware-suit'
 export default {
   components: { Lamp },
   data () {
@@ -81,12 +83,15 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
+      ledLampEquip: null,
+
       status: '',
       power: false,
       bright: 0,
       color: 0,
       lampColor: '#fff',
-      exception: ''
+      exception: '',
+      isColorLamp: false
     }
   },
   watch: {
@@ -123,11 +128,17 @@ export default {
     show (record) {
       this.model = Object.assign({}, record)
       this.visible = true
+      const ledLampEquip = this.ledLampEquip = new LedLampEquip(record.state, record.device_type, record.device_child_type)
       this.status = record.state
-      this.power = record.state.slice(0, 2) !== '00'
-      this.bright = this.getBrightDecimal()
-      this.color = this.getColorDecimal()
-      this.exception = record.state.slice(14) || '00'
+      // this.power = record.state.slice(0, 2) !== '00'
+      // this.bright = this.getBrightDecimal()
+      // this.color = this.getColorDecimal()
+      // this.exception = record.state.slice(14) || '00'
+      this.isColorLamp = ledLampEquip.isBicolor()
+      this.power = ledLampEquip.isPowerOn()
+      this.bright = ledLampEquip.getBrightness()
+      this.color = ledLampEquip.getColdColor()
+      this.exception = ledLampEquip.getLampExceptionStatus()
     },
     close () {
       this.$emit('close')
@@ -139,72 +150,79 @@ export default {
     },
     handleOk () {
     },
-    isColorLamp () {
-      return this.model.device_child_type === '02'
-    },
-    getBrightDecimal (status) {
-      const state = status || this.status
-      const brightValue = +parseInt(state.slice(0, 2), 16).toString(16)
-      return Math.ceil(brightValue / 255 * 100)
-    },
-    getBrightHex (bright) {
-      const hexValue = Math.ceil(bright * 255 / 100)
-      const hex = parseInt(hexValue, 10).toString(16)
-      return hex.length > 1 ? hex : '0' + hex
-    },
-    getColorHex (color = 0) {
-      const hexValue = Math.ceil(color * 254 / 100)
-      const hex = parseInt(hexValue, 10).toString(16)
-      return hex.length > 1 ? hex : '0' + hex
-    },
-    getColorDecimal (status) {
-      const state = status || this.status
-      const brightValue = +parseInt(state.slice(2, 4), 16).toString(16)
-      return Math.ceil(brightValue / 254 * 100)
-    },
+    // isColorLamp () {
+    //   // return this.model.device_child_type === '02'
+    //   // return this.ledLampEquip.isBicolor()
+    // },
+    // getBrightDecimal (status) {
+    //   const state = status || this.status
+    //   const brightValue = parseInt(state.slice(0, 2), 16)
+    //   return Math.ceil(brightValue / 255 * 100)
+    // },
+    // getBrightHex (bright) {
+    //   const hexValue = Math.ceil(bright * 255 / 100)
+    //   const hex = parseInt(hexValue, 10).toString(16)
+    //   return hex.length > 1 ? hex : '0' + hex
+    // },
+    // getColorHex (color = 0) {
+    //   const hexValue = Math.ceil(color * 254 / 100)
+    //   const hex = parseInt(hexValue, 10).toString(16)
+    //   return hex.length > 1 ? hex : '0' + hex
+    // },
+    // getColorDecimal (status) {
+    //   const state = status || this.status
+    //   const brightValue = parseInt(state.slice(2, 4), 16)
+    //   return Math.ceil(brightValue / 254 * 100)
+    // },
     onPowerChange (power) {
-      const powerHex = power ? 'ff' : '00'
-      let state = ''
+      // const powerHex = power ? 'ff' : '00'
+      // let state = ''
       this.bright = !power ? 0 : 100
-      if (this.isColorLamp()) {
-        const color = this.getColorHex(this.color)
-        state = powerHex + color + 'ff0000000200'
-      } else {
-        state = powerHex + '00000000000200'
-      }
-      this.setSwtich(state)
+      // if (this.isColorLamp()) {
+      //   const color = this.getColorHex(this.color)
+      //   state = powerHex + color + 'ff0000000200'
+      // } else {
+      //   state = powerHex + '00000000000200'
+      // }
+      // this.setSwtich(state)
+      const status = this.ledLampEquip.setBrightness(this.bright).setColdColor(this.color).getBytes()
+      this.setSwtich(status)
     },
     onBrightChange (bright) {
       if (bright === 0) (this.power = false)
-      const brightValue = this.getBrightHex(bright)
-      let state = ''
+      // const brightValue = this.getBrightHex(bright)
+      // let state = ''
 
-      if (this.isColorLamp()) {
-        // let color = (255 - Math.round(this.color * 2.55)).toString(16)
-        // color = color.length > 1 ? color : '0' + color
-        const color = this.getColorHex(this.color)
-        state = brightValue + color + 'ff0000000200'
-      } else {
-        state = brightValue + '00000000000200'
-      }
-      this.setSwtich(state)
+      // if (this.isColorLamp()) {
+      //   // let color = (255 - Math.round(this.color * 2.55)).toString(16)
+      //   // color = color.length > 1 ? color : '0' + color
+      //   const color = this.getColorHex(this.color)
+      //   state = brightValue + color + 'ff0000000200'
+      // } else {
+      //   state = brightValue + '00000000000200'
+      // }
+      // this.setSwtich(state)
+      const status = this.ledLampEquip.setBrightness(bright).getBytes()
+      this.setSwtich(status)
     },
     onColorChange (color) {
-      const brightValue = this.getBrightHex(this.bright)
-      let state = ''
-      if (this.isColorLamp()) {
-        const colorHex = this.getColorHex(color)
-        state = brightValue + colorHex + 'ff0000000200'
-      } else {
-        state = brightValue + '00000000000200'
-      }
-      this.setSwtich(state)
+      // const brightValue = this.getBrightHex(this.bright)
+      // let state = ''
+      // if (this.isColorLamp()) {
+      //   const colorHex = this.getColorHex(color)
+      //   state = brightValue + colorHex + 'ff0000000200'
+      // } else {
+      //   state = brightValue + '00000000000200'
+      // }
+      // this.setSwtich(state)
+      const status = this.ledLampEquip.setColdColor(color).getBytes()
+      this.setSwtich(status)
     },
     setSwtich (status) {
       editSwitchStatus(this.model.serialId, status).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('成功')
-          this.getSwitchStatus()
+          // this.getSwitchStatus()
         } else {
           this.$message.error('失败')
         }
