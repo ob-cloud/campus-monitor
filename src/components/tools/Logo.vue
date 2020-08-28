@@ -3,25 +3,32 @@
     <router-link :to="{name:'dashboard'}">
       <!-- <LogoSvg alt="logo" /> -->
       <!-- <Logo alt="logo" /> -->
-      <img :src="Logo" alt="logo">
-      <h1 v-if="showTitle">{{ title }}</h1>
+      <!-- <img :src="Logo" alt="logo">
+      <h1 v-if="showTitle">{{ title }}</h1> -->
+      <img :src="systemLogo" alt="logo">
+      <h1 v-if="showTitle">{{ systemTitle }}</h1>
     </router-link>
   </div>
 </template>
 
 <script>
 // import LogoSvg from '@/assets/logo.svg?inline'
-import Logo from '@/assets/logo.png'
-
+// import Logo from '@/assets/logo.png'
+import config from '@/config/defaultSettings'
 export default {
   name: 'Logo',
   data () {
     return {
-      Logo
+      // Logo
     }
   },
-  components: {
-    // Logo
+  computed: {
+    systemTitle () {
+      return config.pageOptions.title
+    },
+    systemLogo () {
+      return require('@/assets/' + config.pageOptions.logo)
+    },
   },
   props: {
     title: {

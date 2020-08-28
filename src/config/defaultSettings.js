@@ -16,7 +16,7 @@
 export default {
   primaryColor: '#52C41A', // primary color of ant design
   navTheme: 'light', // theme for nav menu
-  layout: 'topmenu', // nav menu position: sidemenu or topmenu
+  layout: 'sidemenu', // nav menu position: sidemenu or topmenu
   contentWidth: 'Fixed', // layout of content: Fluid or Fixed, only works when layout is topmenu
   fixedHeader: true, // sticky header
   fixSiderbar: true, // sticky siderbar /// when using topmenu layout, fixSiderbar should be false
@@ -27,15 +27,15 @@ export default {
   production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true',
   // vue-ls options
   storageOptions: {
-    namespace: 'PRO__', // key prefix
+    namespace: 'CM__', // key prefix
     name: 'ls', // name variable Vue.[ls] or this.[$ls],
     storage: 'local' // storage name session, local, memory
   },
   ///// 此下面配置忽略
   // TODO Delete
   pageOptions: {
-    logo: 'http://placehold.it/50x50/333/fff/?text=pro',
-    title: 'Admin-Pro',
+    logo: 'logo.png',
+    title: '校园监控系统',
     // description: 'On-Bright Admin Pro',
     hasFooter: false, // hasFooter 为 true 时， 下面脚注配置生效
     copyright: 'OnBright.tld',

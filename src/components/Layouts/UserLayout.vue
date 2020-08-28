@@ -14,6 +14,11 @@ export default {
   beforeDestroy () {
     document.body.classList.remove('userLayout', 'simple')
   },
+  computed: {
+    systemLogo () {
+      return require(`@/assets/` + config.pageOptions.logo)
+    }
+  },
   methods: {
     renderHeader () {
       return (
@@ -22,7 +27,7 @@ export default {
             <a href="/">
               {
                 config.pageOptions.logo && (
-                  <img src={config.pageOptions.logo} class="logo" alt="logo" />
+                  <img src={this.systemLogo} class="logo" alt="logo" />
                 )
               }
               <span class="title">{config.pageOptions.title || 'Admin-Pro'}</span>
