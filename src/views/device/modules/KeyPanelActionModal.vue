@@ -7,7 +7,6 @@
     :closable="true"
     @close="handleCancel"
     :visible="visible"
-    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;"
   >
     <a-layout>
       <a-layout-sider width="200px" theme="light">

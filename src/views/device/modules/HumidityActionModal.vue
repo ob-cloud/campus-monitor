@@ -7,7 +7,6 @@
     :closable="true"
     @close="handleCancel"
     :visible="visible"
-    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;"
   >
     <a-layout class="expand humidifier">
       <a-layout-sider width="200px" theme="light">
@@ -24,8 +23,8 @@
       </a-layout-sider>
       <a-layout-content>
         <a-card>
-          <a-tabs tab-position="right" default-active-key="1" class="humidifier-table">
-            <a-tab-pane tab="历史数据" key="1" style="height: 400px;">
+          <a-tabs v-model="activeName" tab-position="right" class="humidifier-table" style="height: 345px;">
+            <a-tab-pane tab="历史数据" key="1">
               <a-table
                 ref="table"
                 bordered
@@ -38,9 +37,9 @@
               >
               </a-table>
             </a-tab-pane>
-            <a-tab-pane tab="今日数据" key="2" style="width: 100%; height: 400px; position: relative; text-align: center;">
+            <a-tab-pane tab="今日数据" key="2">
               <Chart v-if="isCharListValid" :data="series" :xAxis="labels" :legend="['温度', '湿度']" style="margin: 0 auto;"></Chart>
-              <div v-else style="position: absolute; top: 30%; color: #999; width: 100%;">无数据</div>
+              <div v-else style="color: rgba(0, 0, 0, 0.25); text-align: center;">暂无数据</div>
             </a-tab-pane>
           </a-tabs>
         </a-card>
@@ -76,6 +75,7 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
+      activeName: '1',
       tableLoading: false,
       tableHeight: 350,
       tableData: [],
@@ -240,7 +240,7 @@ export default {
     .item {
       // display: inline-block;
       // width: 50%;
-      padding: 50px;
+      padding: 25px;
       text-align: center;
       // border-right: 1px solid #eee;
       // &:last-of-type{
