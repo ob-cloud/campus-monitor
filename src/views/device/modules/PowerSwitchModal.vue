@@ -9,18 +9,21 @@
     :visible="visible"
   >
     <div class="power-group">
-      <a-checkbox-group v-model="powers">
+      <!-- <a-checkbox-group v-model="powers">
         <a-checkbox v-for="(item, index) in 1" :value="index+1" :key="index" @change="handlePower">
           <i class="obicon obicon-power"></i>
         </a-checkbox>
-      </a-checkbox-group>
+      </a-checkbox-group> -->
+      <iot-switch v-model="powers" :serialId="serialId" :state="state"></iot-switch>
     </div>
   </a-drawer>
 </template>
 <script>
+import IotSwitch from '@/components/IoT/Switch'
 import ActionMixin from '@/utils/mixins/ActionMixin'
 import { editSwitchStatus } from '@/api/device'
 export default {
+  components: { IotSwitch },
   mixins: [ ActionMixin ],
   data () {
     return {
@@ -40,16 +43,26 @@ export default {
 
       confirmLoading: false,
       powers: [],
+      serialId: '',
+      state: '',
       powerStatus: [0, 0, 0]
+    }
+  },
+  watch: {
+    powers (val) {
+      // console.log('---- ', val)
+      this.handlePower(val[0])
     }
   },
   methods: {
     show (record) {
       this.model = Object.assign({}, record)
       this.visible = true
-      if (this.isLightActive(record.state)) {
-        this.powers = [1]
-      }
+      this.serialId = this.model.serialId
+      this.state = this.model.state
+      // if (this.isLightActive(record.state)) {
+      //   this.powers = [1]
+      // }
     },
     close () {
       this.$emit('close')
@@ -77,15 +90,15 @@ export default {
       editSwitchStatus(this.model.serialId, status).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('设置成功')
-          this.$emit('ok')
+          // this.$emit('ok')
         } else {
           this.$message.error(res.message)
           // reset powers when fail
           // this.powers = [+!item]
         }
       }).finally(() => {
-        this.powers = [+!item]
-        this.close()
+        // this.powers = [+!item]
+        // this.close()
       })
     }
   },
