@@ -101,7 +101,6 @@ export default {
       this.lampColor = power ? 'rgba(244, 255, 0, 0.6)' : '#666'
     },
     bright (bright) {
-      // console.log(' === ', bright)
       const alpha = (bright / 100 * 0.4) + 0.6
       this.lampColor = this.power ? `rgba(244, 255, 0, ${alpha})` : this.lampColor
     },
@@ -112,12 +111,7 @@ export default {
   computed: {
     isPowerOn () {
       return this.power
-    },
-    // exceptionText () {
-    //   const bits = this.exception.split('')
-    //   if (!bits || !bits.length) return '无异常'
-    //   return bits[0] === '1' ? '开路' : bits[1] === '1' ? '短路' : '无异常'
-    // }
+    }
   },
   mounted () {
 
