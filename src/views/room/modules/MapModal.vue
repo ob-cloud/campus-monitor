@@ -1,31 +1,15 @@
 <template>
   <a-drawer
     :title="title"
-    :maskClosable="true"
+    :maskClosable="false"
     :width="drawerWidth"
     placement="right"
     :closable="true"
     @close="handleCancel"
     :visible="visible"
-    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;"
   >
 
-    <!-- <template slot="title">
-      <div style="width: 100%;">
-        <span>{{ title }}</span>
-        <span style="display:inline-block;width:calc(100% - 51px);padding-right:10px;text-align: right">
-          <a-button icon="appstore" style="height:20px;width:20px;border:0px"></a-button>
-        </span>
-      </div>
-    </template> -->
-
     <a-spin :spinning="deviceLoading">
-      <!-- <a-form :form="form">
-
-        <a-form-item label="用户账号" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-input placeholder="请输入用户账号" />
-        </a-form-item>
-      </a-form> -->
       <div class="item" v-for="(item, index) in deviceList" :key="index">
         <div class="title">{{ getPanelTitle(item) }}</div>
         <div class="detail">
