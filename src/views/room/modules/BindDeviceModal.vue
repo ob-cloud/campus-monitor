@@ -31,7 +31,7 @@ export default {
   mixins: [ProListMixin],
   data() {
     return {
-      title: '操作',
+      title: '绑定设备',
       visible: false,
       queryParam: {
         oboxSerialId: '',
@@ -42,24 +42,20 @@ export default {
           title: '序列号',
           align: 'center',
           dataIndex: 'obox_serial_id',
-          width: 120
         },
         {
           title: 'obox序列号',
           align: 'center',
           dataIndex: 'serialId',
-          width: 120
         },
         {
           title: '设备名称',
           align: 'center',
-          width: 100,
           dataIndex: 'name',
         },
         {
           title: '设备类型',
           align: 'center',
-          width: 120,
           dataIndex: 'device_type',
           customRender(t) {
             return Descriptor.getEquipTypeDescriptor(t)
@@ -68,7 +64,6 @@ export default {
         {
           title: '子类型',
           align: 'center',
-          width: 80,
           dataIndex: 'device_child_type',
           customRender(t, row) {
              return Descriptor.getEquipTypeDescriptor(row.device_type, t)
@@ -77,21 +72,20 @@ export default {
         {
           title: '设备状态',
           align: 'center',
-          width: 180,
           dataIndex: 'deviceState',
           customRender() {
             return ''
           }
         },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          scopedSlots: {
-            customRender: 'action'
-          },
-          align: 'center',
-          width: 170
-        }
+        // {
+        //   title: '操作',
+        //   dataIndex: 'action',
+        //   scopedSlots: {
+        //     customRender: 'action'
+        //   },
+        //   align: 'center',
+        //   width: 170
+        // }
       ]
     }
   },

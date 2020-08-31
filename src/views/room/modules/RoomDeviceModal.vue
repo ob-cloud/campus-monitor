@@ -37,7 +37,7 @@ export default {
   components: { BindDeviceModal },
   data() {
     return {
-      title: '操作',
+      title: '已绑定设备',
       visible: false,
       queryParam: {
         roomId: ''
@@ -46,18 +46,15 @@ export default {
           title: '序列号',
           align: 'center',
           dataIndex: 'deviceSerialId',
-          width: 120
         },
         {
           title: '设备名称',
           align: 'center',
-          width: 100,
           dataIndex: 'deviceName',
         },
         {
           title: '设备类型',
           align: 'center',
-          width: 120,
           dataIndex: 'deviceType',
           customRender(t) {
             return Descriptor.getEquipTypeDescriptor(t)
@@ -67,7 +64,6 @@ export default {
         {
           title: '子类型',
           align: 'center',
-          width: 80,
           dataIndex: 'deviceChildType',
           customRender(t, row) {
              return Descriptor.getEquipTypeDescriptor(row.deviceType, t)
@@ -76,7 +72,6 @@ export default {
         {
           title: '设备状态',
           align: 'center',
-          width: 180,
           dataIndex: 'deviceState',
           customRender(t) {
             const statusMap = {
@@ -93,7 +88,6 @@ export default {
             customRender: 'action'
           },
           align: 'center',
-          width: 170
         }
       ]
     }
