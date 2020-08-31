@@ -9,11 +9,6 @@
     :visible="visible"
   >
     <div class="power-group">
-      <!-- <a-checkbox-group v-model="powers">
-        <a-checkbox v-for="(item, index) in 1" :value="index+1" :key="index" @change="handlePower">
-          <i class="obicon obicon-power"></i>
-        </a-checkbox>
-      </a-checkbox-group> -->
       <iot-switch v-model="powers" :serialId="serialId" :state="state"></iot-switch>
     </div>
   </a-drawer>
@@ -60,9 +55,6 @@ export default {
       this.visible = true
       this.serialId = this.model.serialId
       this.state = this.model.state
-      // if (this.isLightActive(record.state)) {
-      //   this.powers = [1]
-      // }
     },
     close () {
       this.$emit('close')
@@ -74,11 +66,6 @@ export default {
     handleOk () {
       this.$emit('ok')
       this.handleCancel()
-    },
-    isLightActive (status) {
-      if (!status) return false
-      const state = status.slice(0, 2)
-      return state !== '00'
     },
     changeStatus (power) {
       this.powerStatus.fill(power)

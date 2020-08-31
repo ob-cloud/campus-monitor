@@ -48,7 +48,7 @@
           <a-tooltip placement="top" v-for="(item, index) in points" :key="index">
             <div slot="title">
               <p style="padding: 5px; font-size: 16px; text-align: center;">{{ `${item.buildingName || '-'}楼${item.floorName || '-'}层${item.roomName || '-'}` }}</p>
-              <p style="padding: 5px; color: #333; text-align: center;">{{ `开关-${parseBuildingLabel(item.deviceState)}` }}</p>
+              <p style="padding: 5px; color: #f2f2f2; text-align: center;">{{ `开关-${parseBuildingLabel(item.deviceState)}` }}</p>
             </div>
             <div class="point" :style="{left: item.x + 'px', top: item.y + 'px', background: parseBuildingBackground(item.deviceState)}" @click="handlePoint(item, index)"></div>
           </a-tooltip>
@@ -60,7 +60,7 @@
         </div>
       </a-spin>
     </div>
-    <map-modal ref="modalForm" @ok="modalFormOk"></map-modal>
+    <map-modal ref="modalForm" @ok="modalFormOk" @close="modalClose"></map-modal>
   </a-card>
 </template>
 
@@ -329,6 +329,9 @@ export default {
       setTimeout(() => {
         this.getMapPoints()
       }, 2000)
+    },
+    modalClose () {
+      this.loadData()
     }
   },
 }

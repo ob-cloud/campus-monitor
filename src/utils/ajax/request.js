@@ -50,6 +50,9 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  // if (response.code === 'SYS009') {
+
+  // }
   return response.data
 }, err)
 

@@ -10,61 +10,69 @@
   >
 
     <a-spin :spinning="deviceLoading">
-      <div class="item" v-for="(item, index) in deviceList" :key="index">
-        <div class="title">{{ getPanelTitle(item) }}</div>
-        <div class="detail">
-          <template v-if="TypeHints.isThreeKeySocketSwitch(item.deviceChildType)">
-            <!-- <iSwitcher :state="item.deviceState" :serialId="item.deviceSerialId" :useDefaultStyle="false" @switcher-change="onSwitcherChange" styles="map power"></iSwitcher> -->
-          </template>
-          <template v-else-if="TypeHints.isHumidifierSensors(item.deviceChildType)">
-            <div class="sensors">
-              <p><i class="obicon obicon-temperature-o"></i><span>温度</span></p>
-              <span>℃</span>
+      <div class="map-drawer-content">
+        <div class="item" v-for="(item, index) in deviceList" :key="index">
+          <a-card>
+            <div slot="title">
+              {{ getPanelTitle(item.deviceType, item.deviceChildType) }}
             </div>
-            <div class="sensors">
-              <p><i class="obicon obicon-humidity"></i><span>湿度</span></p>
-              <span>%</span>
+            <div class="detail">
+              <template v-if="TypeHints.isXkeySocketSwitch(item.deviceChildType)">
+                <iot-switch :serialId="item.deviceSerialId" :state="item.deviceState"></iot-switch>
+              </template>
+              <template v-else-if="TypeHints.isHumidifierSensors(item.deviceChildType)">
+                <div class="sensors">
+                  <p><i class="obicon obicon-temperature-o"></i><span>温度</span></p>
+                  <span>{{ Temperature }}℃</span>
+                </div>
+                <div class="sensors">
+                  <p><i class="obicon obicon-humidity"></i><span>湿度</span></p>
+                  <span>{{ humidityfier }}%</span>
+                </div>
+              </template>
+              <template v-else-if="TypeHints.isTransponder(item.deviceType)">
+                <!-- <AireCondition class="map" :serialId="item.deviceSerialId"></AireCondition> -->
+              </template>
             </div>
-          </template>
-          <template v-else-if="TypeHints.isTransponder(item.deviceType)">
-            <!-- <AireCondition class="map" :serialId="item.deviceSerialId"></AireCondition> -->
-          </template>
+          </a-card>
+        </div>
+        <div class="item">
+          <a-card title="操作">
+            <div class="detail">
+              <a-tooltip title="删除房间节点" placement="bottom" effect="light">
+                <a-button type="danger" icon="delete" @click="handleRemove"></a-button>
+              </a-tooltip>
+            </div>
+          </a-card>
         </div>
       </div>
     </a-spin>
 
-    <div class="drawer-bootom-button" v-show="!disableSubmit">
+    <!-- <div class="drawer-bootom-button" v-show="!disableSubmit">
       <a-popconfirm title="确定放弃编辑？" @confirm="handleCancel" okText="确定" cancelText="取消">
         <a-button style="margin-right: .8rem">取消</a-button>
       </a-popconfirm>
       <a-button @click="handleOk" type="primary" :loading="confirmLoading">提交</a-button>
-    </div>
+    </div> -->
   </a-drawer>
 </template>
 
 <script>
 import { getRoomDeviceList } from '@/api/room'
-import { TypeHints } from 'hardware-suit'
+import { TypeHints, HumidityEquip } from 'hardware-suit'
+import ActionMixin from '@/utils/mixins/ActionMixin'
+import IotSwitch from '@/components/Bizz/BizzSwitch'
 export default {
   name: 'MapModal',
+  mixins: [ ActionMixin ],
+  components: { IotSwitch },
   data () {
     return {
       drawerWidth: 700,
-      treeData: [],
-      treeValue: '0-0-4',
       title: "操作",
       visible: false,
       disableSubmit: false,
       model: {},
-      localMenuType: 0,
-      alwaysShow: false, //表单元素-聚合路由
-      menuHidden: false, //表单元素-隐藏路由
-      routeSwitch: true, //是否路由菜单
-      internalOrExternal:false,//菜单打开方式
-      isKeepalive: true, //是否缓存路由
-      show: true, //根据菜单类型，动态显示隐藏表单元素
-      menuLabel: '菜单名称',
-      isRequrie: true, // 是否需要验证
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -73,29 +81,35 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 },
       },
-
       confirmLoading: false,
-      form: this.$form.createForm(this),
 
-      iconChooseVisible: false,
-      validateStatus: '',
       deviceList: [],
       deviceLoading: false,
-      TypeHints
+      TypeHints,
+
+      humidity: {}
+    }
+  },
+  computed: {
+    Temperature () {
+      return this.humidity.getTemperature()
+    },
+    humidityfier () {
+      return this.humidity.getHumidity()
     }
   },
   methods: {
     getPanelTitle (deviceType, deviceChildType) {
-      if (TypeHints.isThreeKeySocketSwitch(deviceChildType)) return '开关'
+      if (TypeHints.isXkeySocketSwitch(deviceChildType)) return '开关'
       if (TypeHints.isHumidifierSensors(deviceChildType)) return '温湿度'
       if (TypeHints.isTransponder(deviceType)) return '红外'
     },
     getDeviceList (id) {
       this.deviceLoading = true
       getRoomDeviceList({roomId: id}).then(res => {
-        if (res.status === 0) {
-          this.deviceList = Array.from(res.data.records).filter(item => {
-            const isKeyPanel = TypeHints.isThreeKeySocketSwitch(item.deviceChildType)
+        if (this.$isAjaxSuccess(res.code)) {
+          this.deviceList = Array.from(res.result.records).filter(item => {
+            const isKeyPanel = TypeHints.isXkeySocketSwitch(item.deviceChildType)
             const isHumidity = TypeHints.isHumidifierSensors(item.deviceChildType)
             const isTransponder = TypeHints.isTransponder(item.deviceType)
             return isKeyPanel || isHumidity || isTransponder
@@ -104,13 +118,17 @@ export default {
         this.deviceLoading = false
       }).catch(() => { this.deviceLoading = false })
     },
+    handleRemove () {
+
+    },
     add () {
       this.edit({})
     },
     edit (record) {
-      this.form.resetFields()
       this.model = Object.assign({}, record)
       this.visible = true
+      this.title = `${record.buildingName}栋-${record.floorName}层-${record.roomName}`
+      this.humidity = new HumidityEquip(record.deviceState)
       if (record.roomId) {
         this.getDeviceList(record.roomId)
       }
@@ -140,5 +158,45 @@ export default {
   left: 0;
   background: #fff;
   border-radius: 0 0 2px 2px;
+}
+.map-drawer-content {
+  .item{
+    // border-bottom: 1px solid #eee;
+    box-shadow: 0 1px 1px 0p #f2f2f2;
+    padding-bottom: 10px;
+  }
+  // .title{
+  //   margin-top: 10px;
+  //   padding: 10px 12px;
+  //   background-color: #eee;
+  //   color: #666;
+  //   font-size: 14px;
+  // }
+  .detail{
+    padding: 10px;
+    .sensors{
+      display: inline-block;
+      width: 50%;
+      text-align: center;
+    }
+  }
+  .sensors p{
+    padding: 20px;
+    color: #666;
+    span{
+      font-size: 12px;
+    }
+    i{
+      font-size: 30px;
+      color: rgba(5, 100, 184, 0.9);
+    }
+  }
+  // .power{
+  //   padding: 10px;
+  //   text-align: center;
+  // }
+  // .action{
+  //   padding: 10px;
+  // }
 }
 </style>

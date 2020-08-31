@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-28 15:32:26
+ * @Last Modified time: 2020-08-31 09:40:04
  */
 
 // import {request} from '@/common/request'
@@ -58,7 +58,7 @@ const delObox = (oboxSerialId) => postFormAction('/common', {
 })
 
 const editOboxName = (oboxSerialId, name) => postFormAction('/common', {
-  CMD: 'update_obox_name',
+  CMD: 'modify_obox_name',
   obox_serial_id: oboxSerialId,
   name
 })
