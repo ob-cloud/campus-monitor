@@ -12,28 +12,30 @@
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
           <a-button type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-button type="primary" icon="poweroff" title="开关" @confirm="handleAllPower"></a-button>
+          <a-button type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
 
         </a-button-group>
       </div>
       <div class="block-list">
-        <div class="block-item" v-for="item in dataList" :key="item.id">
-          <div class="toolbar">
-            <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
-              <i class="icon obicon obicon-power" title="电源"></i>
-            </a-popconfirm>
-            <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
-            <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
-              <a-icon class="icon" type="delete" />
-            </a-popconfirm>
+        <a-spin :spinning="loading">
+          <div class="block-item" v-for="item in dataList" :key="item.id">
+            <div class="toolbar">
+              <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
+                <i class="icon obicon obicon-power" title="电源"></i>
+              </a-popconfirm>
+              <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
+                <a-icon class="icon" type="delete" />
+              </a-popconfirm>
+            </div>
+            <div class="content">
+              <i class="building-sign obicon obicon-building" :class="{'is-active': item.allType}"></i>
+              <p class="text">
+                {{ item.buildingName }}栋{{ item.floorName }}层
+              </p>
+            </div>
           </div>
-          <div class="content">
-            <i class="building-sign obicon obicon-building" :class="{'is-active': item.allType}"></i>
-            <p class="text">
-              {{ item.buildingName }}栋{{ item.floorName }}层
-            </p>
-          </div>
-        </div>
+        </a-spin>
       </div>
       <floor-modal ref="modalForm" @ok="modalFormOk"></floor-modal>
     </a-card>
@@ -74,7 +76,7 @@ export default {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataList = res.result.records
         }
-      })
+      }).finally(() => this.loading = false)
     },
     handleDeviceModal (item) {
       this.$refs.deviceModal.show(item)
@@ -98,11 +100,13 @@ export default {
       }
       handleLampPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('操作成功')
           this.loadData()
-        }
+        } else this.$message.error(res.message)
       })
     },
     async handleAllPower () {
+      const that = this
       const res = await getPowerStatus()
       if (!this.$isAjaxSuccess(res.code)) return this.$message.warning('获取开关状态失败')
       this.$confirm({
@@ -110,9 +114,10 @@ export default {
         content: '是否' + (res.result ? '关闭' : '开启') + '电源?',
         onOk: function () {
           triggerAllPower(+!res.result ? 1 : 2).then(response => {
-            if (this.$isAjaxSuccess(response.code)) {
-              this.loadData()
-            }
+            if (that.$isAjaxSuccess(response.code)) {
+              that.$message.success('操作成功')
+              that.loadData()
+            } else that.$message.error(response.message)
           })
         }
       })
@@ -120,8 +125,9 @@ export default {
     handleRemove (id) {
       delFloor(id).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('删除成功')
           this.loadData()
-        }
+        } else this.$message.error(res.message)
       })
     }
   },
