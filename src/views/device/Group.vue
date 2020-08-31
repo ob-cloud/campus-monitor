@@ -145,12 +145,17 @@
       }
     },
     methods: {
-      loadData () {
-        this.getDataList()
+      loadData (arg) {
+        this.getDataList(arg)
       },
-      getDataList () {
-        this.loading = true
+      getDataList (arg) {
+        if (arg === 1) {
+          this.ipagination.current = 1
+        }
         const params = {...this.queryParam}
+        params.current = this.ipagination.current
+        params.size = this.ipagination.pageSize
+        this.loading = true
         getPanelGroupList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records

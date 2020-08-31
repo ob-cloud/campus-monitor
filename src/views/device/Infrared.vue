@@ -158,12 +158,17 @@
       }
     },
     methods: {
-      loadData () {
-        this.getDeviceList()
+      loadData (arg) {
+        this.getDeviceList(arg)
       },
-      getDeviceList () {
-        this.loading = true
+      getDeviceList (arg) {
+        if (arg === 1) {
+          this.ipagination.current = 1
+        }
         const params = {...this.queryParam}
+        params.pageNo = this.ipagination.current
+        params.pageSize = this.ipagination.pageSize
+        this.loading = true
         getInfratedDeviceList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records

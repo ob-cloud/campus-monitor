@@ -138,12 +138,17 @@
       }
     },
     methods: {
-      loadData () {
-        this.getDataList()
+      loadData (arg) {
+        this.getDataList(arg)
       },
-      getDataList () {
-        this.loading = true
+      getDataList (arg) {
+        if (arg === 1) {
+          this.ipagination.current = 1
+        }
         const params = {...this.queryParam}
+        params.pageNo = this.ipagination.current
+        params.pageSize = this.ipagination.pageSize
+        this.loading = true
         getOboxList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
