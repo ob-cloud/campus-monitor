@@ -180,7 +180,7 @@ export default {
 
 <style lang="less" scoped>
 .card-content__item{
-  padding: 30px 24px;
+  padding: 24px;
   // border-bottom: 1px solid #3A4257;
 
   > div{

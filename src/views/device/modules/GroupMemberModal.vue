@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="title" :width="900" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
+  <a-modal :title="title" :width="900" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭" :destroyOnClose="true">
     <a-layout class="expand humidifier">
       <a-layout-sider width="200px" theme="light">
         <ul class="list">
@@ -7,14 +7,14 @@
         </ul>
       </a-layout-sider>
       <a-layout-content>
-        <a-card>
+        <a-card style="min-height: 470px;">
           <a-spin :spinning="listLoading">
             <a-checkbox-group v-model="checkDeviceListId" class="checkbox-list">
-              <a-checkbox-button class="checkbox-list-item" v-for="item in deviceList" :label="item.serialId" :key="item.serialId">
+              <a-checkbox class="checkbox-list-item" v-for="item in deviceList" :value="item.serialId" :key="item.serialId">
                 <div>{{ item.name }}</div>
                 <div>{{ Descriptor.getTypeDescriptor(item.device_type) }}</div>
                 <div>{{ Descriptor.getTypeDescriptor(item.device_type, item.device_child_type) }}</div>
-              </a-checkbox-button>
+              </a-checkbox>
             </a-checkbox-group>
           </a-spin>
         </a-card>
@@ -53,6 +53,7 @@ export default {
       deviceList: [],
       checkDeviceListId: [],
       listLoading: false,
+      oboxSelectedKey: '',
       Descriptor
     }
   },
@@ -125,13 +126,48 @@ ul,li{
 .list-item{
   padding: 20px 16px;
   text-align: center;
-  border-bottom: 1px solid #000;
+  // border-bottom: 1px solid #000;
   transition: all .3s;
   cursor: pointer;
 
   &:hover,
   &.active{
-    background: #3A4257;
+    background: #e6f7ff;
+  }
+}
+
+
+</style>
+<style lang="less">
+.checkbox-list .ant-checkbox-wrapper span.ant-checkbox {
+  display: none;
+}
+.checkbox-list{
+
+  .checkbox-list-item + .checkbox-list-item{
+    margin: 0;
+  }
+  .checkbox-list-item span{
+    display: inline-block;
+    width: 160px;
+    height: 120px;
+    border: 1px solid #3A4257;
+    border-radius: 6px;
+    margin: 10px;
+    text-align: center;
+    padding: 10px;
+  }
+  .checkbox-list-item div{
+    &:first-child{
+      font-size: 16px;
+      padding: 10px;
+      color: #000;
+      font-weight: 600;
+    }
+    padding: 2px;
+  }
+  .checkbox-list-item.ant-checkbox-wrapper-checked span{
+    background: #e6f7ff;
   }
 }
 </style>

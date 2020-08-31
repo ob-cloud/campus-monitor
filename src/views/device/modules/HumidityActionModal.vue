@@ -34,7 +34,7 @@
                 :dataSource="tableData"
                 :loading="tableLoading"
                 :pagination="false"
-                :scroll="{ y: 240 }"
+                :scroll="{ y: 290 }"
               >
               </a-table>
             </a-tab-pane>

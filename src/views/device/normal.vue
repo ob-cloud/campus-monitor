@@ -169,7 +169,7 @@
             align: 'center',
             dataIndex: 'device_type',
             customRender (t) {
-              return Descriptor.getEquipTypeDescriptor(t)
+              return Descriptor.getTypeDescriptor(t)
             }
           },
           {
@@ -177,7 +177,7 @@
             align: 'center',
             dataIndex: 'device_child_type',
             customRender (t, row) {
-              return Descriptor.getEquipTypeDescriptor(row.device_type, t)
+              return Descriptor.getTypeDescriptor(row.device_type, t)
             }
           },
           {
@@ -224,8 +224,7 @@
           } else {
             this.$message.warning(res.message)
           }
-          this.loading = false
-        })
+        }).finally(() => this.loading = false)
       },
       getOboxList () {
         getAllOboxList().then(res => {
