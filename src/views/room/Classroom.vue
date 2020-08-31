@@ -13,29 +13,31 @@
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
           <a-button type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-button type="primary" icon="poweroff" title="开关" @confirm="handleAllPower"></a-button>
+          <a-button type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
 
         </a-button-group>
       </div>
       <div class="block-list">
-        <div class="block-item" v-for="item in roomList" :key="item.id">
-          <div class="toolbar">
-            <i class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
-            <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}教室灯?`" @confirm="() => handlePower(item)">
-              <i class="icon obicon obicon-power" title="电源"></i>
-            </a-popconfirm>
-            <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
-            <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
-              <a-icon class="icon" type="delete" />
-            </a-popconfirm>
+        <a-spin :spinning="loading">
+          <div class="block-item" v-for="item in roomList" :key="item.id">
+            <div class="toolbar">
+              <i class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
+              <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}教室灯?`" @confirm="() => handlePower(item)">
+                <i class="icon obicon obicon-power" title="电源"></i>
+              </a-popconfirm>
+              <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
+              <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
+                <a-icon class="icon" type="delete" />
+              </a-popconfirm>
+            </div>
+            <div class="content">
+              <i class="building-sign obicon obicon-classroom" :class="{'is-active': isLightActive(item.deviceState)}"></i>
+              <p class="text">
+                {{ item.buildingName }}栋{{ item.floorName }}层{{ item.roomName }}
+              </p>
+            </div>
           </div>
-          <div class="content">
-            <i class="building-sign obicon obicon-classroom" :class="{'is-active': isLightActive(item.deviceState)}"></i>
-            <p class="text">
-              {{ item.buildingName }}栋{{ item.floorName }}层{{ item.roomName }}
-            </p>
-          </div>
-        </div>
+        </a-spin>
       </div>
       <classroom-modal ref="modalForm" @ok="modalFormOk"></classroom-modal>
       <room-device-modal ref="deviceModal" @ok="deviceModalOk"></room-device-modal>
@@ -44,9 +46,6 @@
 </template>
 
 <script>
-// import RoomAPI from '@/api/room'
-// import { PAGINATION_PAGENO, PAGINATION_PAGESIZE } from '@/common/constants'
-// import Helper from '@/common/helper'
 import { getRoomList, delRoom, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
@@ -81,7 +80,7 @@ export default {
         if (this.$isAjaxSuccess(res.code)) {
           this.roomList = res.result.records
         }
-      })
+      }).finally(() => this.loading = false)
     },
     handleDeviceModal (item) {
       this.$refs.deviceModal.show(item)
@@ -108,11 +107,13 @@ export default {
       }
       handleLampPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('操作成功')
           this.loadData()
-        }
+        } else this.$message.error(res.message)
       })
     },
     async handleAllPower () {
+      const that = this
       const res = await getPowerStatus()
       if (!this.$isAjaxSuccess(res.code)) return this.$message.warning('获取开关状态失败')
       this.$confirm({
@@ -120,9 +121,10 @@ export default {
         content: '是否' + (res.result ? '关闭' : '开启') + '电源?',
         onOk: function () {
           triggerAllPower(+!res.result ? 1 : 2).then(response => {
-            if (this.$isAjaxSuccess(response.code)) {
-              this.loadData()
-            }
+            if (that.$isAjaxSuccess(response.code)) {
+              that.$message.success('操作成功')
+              that.loadData()
+            } else that.$message.error(response.message)
           })
         }
       })
@@ -130,8 +132,9 @@ export default {
     handleRemove (id) {
       delRoom(id).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('删除成功')
           this.loadData()
-        }
+        } else this.$message.error(res.message)
       })
     }
   },

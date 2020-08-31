@@ -25,7 +25,7 @@
         :headers="headers"
         :disabled="isEditing"
         accept=".png, .jpg, .jpeg"
-        action="/common/image/uploadSchoolMap"
+        action="/image/uploadSchoolMap"
         :before-upload="onBeforeUpload"
         @change="onUploadChange"
       >
@@ -306,7 +306,7 @@ export default {
       // }
       const { response } = info.file
       if (info.file.status === 'done') {
-        this.graph = response.data.picurl
+        this.graph = response.result.picurl
         this.setSpinning(false)
         this.$message.success('上传成功')
       } else if (info.file.status === 'error') {
@@ -388,6 +388,7 @@ export default {
   }
 
   .map-content{
+    // position: relative;
     text-align: center;
     margin-top: 10px;
     overflow: auto;

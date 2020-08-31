@@ -61,6 +61,7 @@ export default {
       this.form.resetFields()
       this.model = Object.assign({}, record)
       this.getBuildingList()
+      if (record.buildingId) this.getLayerList(record.buildingId)
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(pick(this.model, 'buildingId', 'floorId', 'roomName'))
@@ -81,6 +82,7 @@ export default {
       })
     },
     handleBuildingChange (buildingId) {
+      this.form.setFieldsValue({'floorId': ''})
       this.getLayerList(buildingId)
     },
     // 确定

@@ -85,6 +85,14 @@ module.exports = {
         pathRewrite: {
           '/pro': '/facade'  //默认所有请求都加了/pro前缀，需要去掉
         }
+      },
+      '/image': {
+        target: 'http://10.10.92.129',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '/image': '/image'  //默认所有请求都加了/pro前缀，需要去掉
+        }
       }
     }
   },
