@@ -1,16 +1,6 @@
 <template>
   <a-modal :title="title" :width="600" :visible="visible" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
     <div class="actionBar">
-      <!-- <a-date-picker
-        v-model="pickerValue"
-        type="datetimerange"
-        :picker-options="pickerOptions"
-        range-separator="-"
-        value-format="yyyy-MM-dd HH:mm:ss"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        align="right">
-      </a-date-picker> -->
       <a-range-picker
         v-model="pickerValue"
         format="YYYY-MM-DD HH:mm"
