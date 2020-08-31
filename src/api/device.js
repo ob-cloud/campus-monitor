@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-31 09:40:04
+ * @Last Modified time: 2020-08-31 15:31:05
  */
 
 // import {request} from '@/common/request'
@@ -60,7 +60,7 @@ const delObox = (oboxSerialId) => postFormAction('/common', {
 const editOboxName = (oboxSerialId, name) => postFormAction('/common', {
   CMD: 'modify_obox_name',
   obox_serial_id: oboxSerialId,
-  name
+  obox_name: name
 })
 
 // 开关
@@ -82,7 +82,7 @@ const getPanelGroupList = (params) => getAction('/common', {
   CMD: 'get_user_panel_group',
   ...params
 })
-const setPanelGroup = (params) => postFormAction('/common', {
+const setPanelGroup = (params) => getAction('/common', {
   CMD: 'set_panel_group',
   ...params
 })
@@ -91,7 +91,7 @@ const delPanelGroup = (groupId) => postFormAction('/common', {
   group_id: groupId
 })
 
-const setPanelKey = (params) => postFormAction('/common', {
+const setPanelKey = (params) => getAction('/common', {
   CMD: 'set_panel_key',
   ...params
 })

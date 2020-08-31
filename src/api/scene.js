@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-07 15:19:34
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-27 18:36:44
+ * @Last Modified time: 2020-08-31 15:44:06
  */
 
 // import {request} from '@/common/request'
@@ -20,8 +20,13 @@ const getSmartSceneById = (sceneNumber) => getAction('/common', {
   CMD: 'get_smart_single_scene',
   scene_number: sceneNumber
 })
+// const execSmartScene = (sceneNumber) => postFormAction('/common', {
+//   CMD: 'execute_smart_scene',
+//   scene_number: sceneNumber
+// })
 const execSmartScene = (sceneNumber) => postFormAction('/common', {
-  CMD: 'execute_smart_scene',
+  CMD: 'execute_sc',
+  scene_status: '02',
   scene_number: sceneNumber
 })
 const editSmartScene = (params) => postFormAction('/common', {
