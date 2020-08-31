@@ -156,6 +156,7 @@ ul,li{
     margin: 10px;
     text-align: center;
     padding: 10px;
+    overflow: hidden;
   }
   .checkbox-list-item div{
     &:first-child{

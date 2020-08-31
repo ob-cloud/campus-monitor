@@ -6,6 +6,12 @@
         <a-row :gutter="24">
 
           <a-col :md="6" :sm="12">
+            <a-form-item label="组名">
+              <a-input placeholder="请输入编组名称" v-model="queryParam.name"></a-input>
+            </a-form-item>
+          </a-col>
+
+          <!-- <a-col :md="6" :sm="12">
             <a-form-item label="序列号">
               <a-input placeholder="请输入组号" v-model="queryParam.group_id"></a-input>
 
@@ -19,25 +25,25 @@
                 <a-select-option :value="1">离线</a-select-option>
               </a-select>
             </a-form-item>
-          </a-col>
+          </a-col> -->
 
 
-          <template v-if="toggleSearchStatus">
+          <!-- <template v-if="toggleSearchStatus">
             <a-col :md="6" :sm="8">
               <a-form-item label="设备名称">
                 <a-input placeholder="请输入设备名称" v-model="queryParam.name"></a-input>
               </a-form-item>
             </a-col>
-          </template>
+          </template> -->
 
           <a-col :md="6" :sm="8">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
               <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
-              <a @click="handleToggleSearch" style="margin-left: 8px">
+              <!-- <a @click="handleToggleSearch" style="margin-left: 8px">
                 {{ toggleSearchStatus ? '收起' : '展开' }}
                 <a-icon :type="toggleSearchStatus ? 'up' : 'down'" />
-              </a>
+              </a> -->
             </span>
           </a-col>
         </a-row>
@@ -60,7 +66,7 @@
         ref="table"
         bordered
         size="middle"
-        rowKey="id"
+        rowKey="group_id"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
@@ -68,6 +74,10 @@
         @change="handleTableChange"
       >
 
+        <span slot="tags" slot-scope="panel_addr">
+          <a-tag color="geekblue">{{ panel_addr[0].addr }}</a-tag>
+          <a-tag color="green">{{ panel_addr[0].groupAddr }}</a-tag>
+        </span>
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
 
@@ -128,11 +138,7 @@
             title: '面板地址',
             align: 'center',
             dataIndex: 'panel_addr',
-            customRender (panelAddr) {
-              // const panelAddr = row.panel_addr
-              const cell = panelAddr && panelAddr.length ? <div><p style="text-align:left;">addr: {panelAddr[0].addr}</p><p style="text-align:left;">group_addr: {panelAddr[0].group_addr}</p></div> : <span>-</span>
-              return cell
-            }
+            scopedSlots: { customRender: 'tags' }
           },
           {
             title: '操作',

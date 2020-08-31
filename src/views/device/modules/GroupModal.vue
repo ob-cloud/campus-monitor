@@ -55,7 +55,13 @@ export default {
     },
     edit (record) {
       this.form.resetFields()
-      this.model = Object.assign({}, record)
+      this.model = {
+        group_id: record.group_id,
+        group_member: record.group_member,
+        group_name: record.group_name,
+        addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].addr : '',
+        group_addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].groupAddr : ''
+      }
       this.visible = true
       this.$nextTick(() => {
         this.form.setFieldsValue(this.model)
