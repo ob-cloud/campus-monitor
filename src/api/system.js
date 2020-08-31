@@ -90,6 +90,11 @@ const delBatchMessageTemplate = (params) => deleteAction('/message/sysMessageTem
 ///// 通过ajaxGetDictItems 使用
 const getSystemConfig = () => getAction('/sys/common/setting')
 
+const getSysLogList = (log = {}) => getAction('/common', {
+  CMD: 'get_sys_log',
+  log: JSON.stringify(log)
+})
+
 export {
   // Menu
   getMenuList,
@@ -145,5 +150,7 @@ export {
   delBatchMessageTemplate,
 
   // System
-  getSystemConfig
+  getSystemConfig,
+
+  getSysLogList
 }

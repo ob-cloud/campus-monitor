@@ -5,7 +5,6 @@
     @close="handleCancel"
     :visible="visible"
     :confirmLoading="confirmLoading"
-    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}"
   >
     <div :style="{width: '100%',border: '1px solid #e9e9e9',padding: '10px 16px',background: '#fff',}">
       <a-spin :spinning="confirmLoading">

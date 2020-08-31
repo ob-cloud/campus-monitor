@@ -7,7 +7,7 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="楼栋">
-              <a-select placeholder="请选择楼栋" v-model="queryParam.buildingId">
+              <a-select placeholder="请选择楼栋" v-model="queryParam.buildingId" allowClear>
                 <a-select-option v-for="item in buildingList" :key="item.buildingId" :value="item.buildingId">
                   {{ item.buildingName }}
                 </a-select-option>
@@ -17,7 +17,7 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="楼层">
-              <a-select placeholder="请选择楼层" v-model="queryParam.floorId">
+              <a-select placeholder="请选择楼层" v-model="queryParam.floorId" allowClear>
                 <a-select-option v-for="item in floorList" :key="item.floorId" :value="item.floorId">
                   {{ item.floorName }}
                 </a-select-option>
@@ -27,7 +27,7 @@
 
           <a-col :md="6" :sm="8">
             <a-form-item label="教室">
-              <a-select placeholder="请选择教室" v-model="queryParam.roomId">
+              <a-select placeholder="请选择教室" v-model="queryParam.roomId" allowClear>
                 <a-select-option v-for="item in roomList" :key="item.roomId" :value="item.roomId">
                   {{ item.roomName }}
                 </a-select-option>
@@ -122,6 +122,9 @@
       return {
         description: '这是用户管理页面',
         queryParam: {
+          buildingId: '',
+          floorId: '',
+          roomId: '',
           pageNo: 1,
           pageSize: 10
         },
@@ -164,12 +167,12 @@
     },
     watch: {
       'queryParam.buildingId' (val) {
-        this.search.floorId = ''
+        this.queryParam.floorId = ''
         this.floorList = []
         this.getFloorList(val)
       },
       'queryParam.floorId' (val) {
-        this.search.roomId = ''
+        this.queryParam.roomId = ''
         this.roomList = []
         this.getRoomList(val)
       },
