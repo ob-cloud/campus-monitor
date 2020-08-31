@@ -47,6 +47,9 @@
       </a-form>
     </div>
 
+    <div class="table-operator" style="border-top: 5px">
+      <a-button @click="handleExport" type="primary">导出日志</a-button>
+    </div>
     <!-- table区域-begin -->
     <div>
       <a-table
@@ -63,6 +66,7 @@
       </a-table>
     </div>
     <!-- table区域-end -->
+    <sys-log-modal ref="logMdal"></sys-log-modal>
   </a-card>
 </template>
 
@@ -70,9 +74,11 @@
 import { getSysLogList } from '@/api/system'
 import { parseTime } from '@/utils/util'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
+import SysLogModal from './modules/SysLogModal'
 export default {
   name: '',
   mixins: [ ProListMixin ],
+  components: { SysLogModal },
   data() {
     return {
       description: '这是用户管理页面',
@@ -133,6 +139,9 @@ export default {
         }
         this.loading = false
       })
+    },
+    handleExport () {
+      this.$refs.logMdal.edit()
     }
   }
 }

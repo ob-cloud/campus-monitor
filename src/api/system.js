@@ -1,4 +1,4 @@
-import { getAction, postAction, putAction, deleteAction } from '@/utils/ajax'
+import { getAction, postAction, putAction, deleteAction, getRequestUrl } from '@/utils/ajax'
 
 ////// Menu
 // 获取菜单、按钮权限列表
@@ -94,6 +94,9 @@ const getSysLogList = (log = {}) => getAction('/common', {
   CMD: 'get_sys_log',
   log: JSON.stringify(log)
 })
+const exportsLogs = (beginTime, endTime) => {
+  return getRequestUrl('/facade/getExportLog', {beginTime, endTime})
+}
 
 export {
   // Menu
@@ -152,5 +155,6 @@ export {
   // System
   getSystemConfig,
 
-  getSysLogList
+  getSysLogList,
+  exportsLogs
 }
