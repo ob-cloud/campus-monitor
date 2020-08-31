@@ -60,13 +60,13 @@
         </div>
       </a-spin>
     </div>
-    <map-modal ref="modalForm" @ok="modalFormOk" @close="modalClose"></map-modal>
+    <map-modal ref="modalForm" @ok="modalFormOk"></map-modal>
   </a-card>
 </template>
 
 <script>
 import graph from '../../assets/images/1080x720.png'
-import { getPointList, createPoint, removePoint, getMapInfo} from '@/api/map'
+import { getPointList, createPoint, getMapInfo} from '@/api/map'
 import { getRoomCascader } from '@/api/room'
 import { buildRoomCascaderTree } from '@/utils/util'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
@@ -95,7 +95,6 @@ export default {
       isAddFinished: false,
       isSetLocation: false,
       isEditing: false,
-      dialogVisible: false,
       currentDialogTitle: '',
       activePoint: {},
       activePointIndex: '',
@@ -196,43 +195,8 @@ export default {
     handlePoint (point, index) {
       if (!this.isAdd) {
         this.activePoint = point
-        this.activePointIndex = index
-        this.dialogVisible = true
-        // this.currentDialogTitle = `${point.buildingName || '-'}楼${point.floorName || '-'}层${point.roomName || '-'}`
-        // this.getRoomDeviceListByRoomId(point.roomId)
-        this.$refs.modalForm.edit(point)
+        this.$refs.modalForm.edit({...point, index})
       }
-    },
-    handleRemovePoint () {
-      if (this.activePointIndex === '') return
-      this.$confirm('确认删除教室节点？', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(() => {
-        this.setSpinning(true, '位置删除中..')
-        let point = this.points.splice(this.activePointIndex, 1)
-        point = (point && point.length) && point[0]
-        if (!point) return
-        removePoint(point.id).then(res => {
-          if (this.$isAjaxSuccess(res.code)) {
-            this.dialogVisible = false
-            this.$message.success('删除成功')
-          } else {
-            this.points.push(point)
-            this.$message.error('删除失败')
-          }
-          this.activePointIndex = ''
-          this.setSpinning(false, '')
-        }).catch(() => {
-          this.setSpinning(false, '')
-          this.points.push(point)
-          this.$message.error('服务异常')
-        })
-      }).catch(() => {
-        console.log('cancel')
-      })
     },
     handleCancelAdd () {
       this.isAdd = false

@@ -40,7 +40,10 @@
           <a-card title="操作">
             <div class="detail">
               <a-tooltip title="删除房间节点" placement="bottom" effect="light">
-                <a-button type="danger" icon="delete" @click="handleRemove"></a-button>
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove()">
+                  <!-- <a-icon class="delete" type="delete" /> -->
+                  <a-button type="danger" icon="delete"></a-button>
+                </a-popconfirm>
               </a-tooltip>
             </div>
           </a-card>
@@ -58,6 +61,7 @@
 </template>
 
 <script>
+import { removePoint } from '@/api/map'
 import { getRoomDeviceList } from '@/api/room'
 import { TypeHints, HumidityEquip } from 'hardware-suit'
 import ActionMixin from '@/utils/mixins/ActionMixin'
@@ -71,7 +75,6 @@ export default {
       drawerWidth: 700,
       title: "操作",
       visible: false,
-      disableSubmit: false,
       model: {},
       labelCol: {
         xs: { span: 24 },
@@ -87,7 +90,8 @@ export default {
       deviceLoading: false,
       TypeHints,
 
-      humidity: {}
+      humidity: {},
+      activePointIndex: ''
     }
   },
   computed: {
@@ -115,11 +119,19 @@ export default {
             return isKeyPanel || isHumidity || isTransponder
           })
         }
-        this.deviceLoading = false
-      }).catch(() => { this.deviceLoading = false })
+      }).finally(() => { this.deviceLoading = false })
     },
     handleRemove () {
-
+      this.deviceLoading = true
+      removePoint(this.model.id).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('删除成功')
+          this.$emit('ok')
+        } else this.$message.error(res.message)
+      }).finally(() => {
+        this.handleCancel()
+        this.deviceLoading = false
+      })
     },
     add () {
       this.edit({})
@@ -128,6 +140,7 @@ export default {
       this.model = Object.assign({}, record)
       this.visible = true
       this.title = `${record.buildingName}栋-${record.floorName}层-${record.roomName}`
+      this.activePointIndex = record.index
       this.humidity = new HumidityEquip(record.deviceState)
       if (record.roomId) {
         this.getDeviceList(record.roomId)
@@ -135,7 +148,6 @@ export default {
     },
     close () {
       this.$emit('close')
-      this.disableSubmit = false
       this.visible = false
     },
     handleCancel () {
