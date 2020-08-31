@@ -75,7 +75,9 @@
         :loading="loading"
         @change="handleTableChange"
       >
-
+        <span slot="status" slot-scope="status, record">
+          <a-switch checked-children="启用" un-checked-children="禁用" :checked="!!record.sceneStatus" @change="handleSceneStatus(record)" />
+        </span>
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
 
@@ -122,9 +124,9 @@
       return {
         description: '这是用户管理页面',
         queryParam: {
-          buildingId: '',
-          floorId: '',
-          roomId: '',
+          buildingId: undefined,
+          floorId: undefined,
+          roomId: undefined,
           pageNo: 1,
           pageSize: 10
         },
@@ -152,8 +154,8 @@
           {
             title: '场景状态',
             align: 'center',
-            customRender () {
-            }
+            dataIndex: 'sceneStatus',
+            scopedSlots: { customRender: 'status' }
           },
           {
             title: '操作',
@@ -167,12 +169,12 @@
     },
     watch: {
       'queryParam.buildingId' (val) {
-        this.queryParam.floorId = ''
+        this.queryParam.floorId = undefined
         this.floorList = []
         this.getFloorList(val)
       },
       'queryParam.floorId' (val) {
-        this.queryParam.roomId = ''
+        this.queryParam.roomId = undefined
         this.roomList = []
         this.getRoomList(val)
       },
@@ -197,9 +199,9 @@
           this.loading = false
         })
       },
-      handleSceneStatus (row) {
-        row.sceneStatus = 1 - row.sceneStatus
-        editSceneStatus(`0${row.sceneStatus}`, row.sceneNumber).then(res => {
+      handleSceneStatus (record) {
+        record.sceneStatus = 1 - record.sceneStatus
+        editSceneStatus(`0${record.sceneStatus}`, record.sceneNumber).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.$message.success('修改成功')
           } else {
