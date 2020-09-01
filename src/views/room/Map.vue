@@ -61,7 +61,7 @@
         </div>
       </a-spin>
     </div>
-    <map-modal ref="modalForm" @ok="modalFormOk"></map-modal>
+    <map-modal ref="modalForm" @ok="modalFormOk" @close="modalFormOk"></map-modal>
   </a-card>
 </template>
 
