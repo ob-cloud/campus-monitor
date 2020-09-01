@@ -17,7 +17,7 @@
 
         </a-button-group>
       </div>
-      <div class="block-list">
+      <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
           <div class="block-item" v-for="item in roomList" :key="item.id">
             <div class="toolbar">
@@ -38,6 +38,7 @@
             </div>
           </div>
         </a-spin>
+        <a-pagination simple style="position: absolute; right: 0; bottom: 10px;" :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" :showSizeChanger="true" @change="handlePageChange" />
       </div>
       <classroom-modal ref="modalForm" @ok="modalFormOk"></classroom-modal>
       <room-device-modal ref="deviceModal" @ok="deviceModalOk"></room-device-modal>
@@ -60,11 +61,14 @@ export default {
       containerHeight: 500,
       roomList: [],
       queryParam: {
+        pageNo: 1,
+        pageSize: 10
       },
-      buildingTotal: 0,
+      total: 0
     }
   },
   mounted () {
+    this.calculateContentHeight()
     // Helper.windowOnResize(this, this.fixLayout)
   },
   methods: {
@@ -72,6 +76,7 @@ export default {
       this.getDataList()
     },
     fixLayout () {
+      // document.body.clientHeight - 64 - 40 - 85
       // this.containerHeight = Helper.calculateTableHeight() - 20
     },
     getDataList () {
@@ -79,6 +84,7 @@ export default {
       getRoomList(this.queryParam).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.roomList = res.result.records
+          this.total = res.result.total
         }
       }).finally(() => this.loading = false)
     },
@@ -136,6 +142,11 @@ export default {
           this.loadData()
         } else this.$message.error(res.message)
       })
+    },
+    handlePageChange (pageNo, pageSize) {
+      this.queryParam.pageNo = pageNo
+      this.queryParam.pageSize = pageSize
+      this.loadData()
     }
   },
 }

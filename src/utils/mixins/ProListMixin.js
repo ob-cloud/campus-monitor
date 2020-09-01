@@ -49,13 +49,16 @@ export const ProListMixin = {
       /* 高级查询条件生效状态 */
       superQueryFlag: false,
       /* 高级查询条件 */
-      superQueryParams: ''
+      superQueryParams: '',
+      /* 内容窗口高度 */
+      contentHeight: 400
     }
   },
   created () {
     this.loadData()
     //初始化字典配置 在自己页面定义
     this.initDictConfig()
+    // 初始化高度
   },
   methods: {
     loadData (arg) {
@@ -286,5 +289,8 @@ export const ProListMixin = {
       }
       window.open(window._CONFIG['domianURL'] + '/sys/common/download/' + text)
     },
+    calculateContentHeight () {
+      this.contentHeight = document.body.clientHeight - 64 - 40 - 85/* search */ - 48/* margin */ - 48/* padding */
+    }
   }
 }

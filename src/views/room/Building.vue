@@ -14,7 +14,7 @@
           <a-button type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
         </a-button-group>
       </div>
-      <div class="block-list">
+      <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
           <div class="block-item" v-for="item in dataList" :key="item.id">
             <div class="toolbar">
@@ -34,6 +34,7 @@
             </div>
           </div>
         </a-spin>
+        <a-pagination style="position: absolute; right: 0; bottom: 10px;" simple :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" @change="handlePageChange" />
       </div>
       <building-modal ref="modalForm" @ok="modalFormOk"></building-modal>
     </a-card>
@@ -54,11 +55,14 @@ export default {
       containerHeight: 500,
       dataList: [],
       queryParam: {
+        pageNo: 1,
+        pageSize: 10
       },
-      buildingTotal: 0,
+      total: 0
     }
   },
   mounted () {
+    this.calculateContentHeight()
     // Helper.windowOnResize(this, this.fixLayout)
   },
   methods: {
@@ -73,6 +77,7 @@ export default {
       getBuildingList(this.queryParam).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataList = res.result.records
+          this.total = res.result.total
         }
       }).finally(() => this.loading = false)
     },
@@ -127,6 +132,11 @@ export default {
           this.loadData()
         } else this.$message.error(res.message)
       })
+    },
+    handlePageChange (pageNo, pageSize) {
+      this.queryParam.pageNo = pageNo
+      this.queryParam.pageSize = pageSize
+      this.loadData()
     }
   },
 }
