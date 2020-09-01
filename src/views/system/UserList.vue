@@ -222,12 +222,13 @@
           {
             title: '手机号码',
             align: 'center',
-            width: 100,
+            width: 160,
             dataIndex: 'phone'
           },
           {
             title: '邮箱',
             align: 'center',
+            width: 160,
             dataIndex: 'email'
           },
           {

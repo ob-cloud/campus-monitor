@@ -20,6 +20,10 @@ import MultiTab from '@/components/MultiTab'
 // util
 import { isAjaxSuccess } from '@/utils/util'
 
+// permission
+import isPermitted from '@/directive/permission'
+import { $isPermitted } from '@/directive/permission/button'
+
 // global filter
 import '@/utils/filter'
 
@@ -27,5 +31,8 @@ Vue.use(Antd)
 // Vue.use(Viser)
 Vue.use(MultiTab)
 Vue.use(VueStorage, config.storageOptions)
+Vue.use(isPermitted)
 
 Vue.prototype.$isAjaxSuccess = isAjaxSuccess
+
+Vue.prototype.$isPermitted = $isPermitted

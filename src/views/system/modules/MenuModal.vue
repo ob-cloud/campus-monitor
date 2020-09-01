@@ -70,7 +70,11 @@
           </a-form-item> -->
 
           <a-form-item v-show="!show" :labelCol="labelCol" :wrapperCol="wrapperCol" label="状态">
-            <dict-select-tag v-decorator="['status', {initialValue: ''}]" placeholder="请选择状态" :type="'radio'" :triggerChange="true" dictCode="valid_status" />
+            <!-- <dict-select-tag v-decorator="['status', {initialValue: ''}]" placeholder="请选择状态" :type="'radio'" :triggerChange="true" dictCode="valid_status" /> -->
+            <a-radio-group v-decorator="['status', {initialValue: ''}]">
+              <a-radio value="0">无效</a-radio>
+              <a-radio value="1">有效</a-radio>
+            </a-radio-group>
           </a-form-item>
 
           <a-form-item v-show="show" :labelCol="labelCol" :wrapperCol="wrapperCol" label="菜单图标">
@@ -121,12 +125,12 @@
 <script>
   import { addMenu, editMenu, queryTreeList } from '@/api/system'
   import IconPicker from '@/components/IconPicker'
-  import DictSelectTag from '@/components/Pro/DictSelectTag'
+  // import DictSelectTag from '@/components/Pro/DictSelectTag'
   import pick from 'lodash.pick'
 
   export default {
     name: 'MenuModal',
-    components: { IconPicker, DictSelectTag },
+    components: { IconPicker },
     data () {
       return {
         drawerWidth: 700,

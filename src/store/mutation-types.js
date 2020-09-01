@@ -14,6 +14,7 @@ export const DEFAULT_FIXED_MULTITAB = 'DEFAULT_FIXED_MULTITAB'
 export const USER_NAME = 'USER_NAME'
 export const USER_INFO = 'USER_INFO'
 export const USER_AUTH = 'USER_AUTH'
+export const SYS_BUTTON_AUTH = 'SYS_BUTTON_AUTH'
 
 export const SYSTEM_SETTING = 'SYSTEM_SETTING'
 
