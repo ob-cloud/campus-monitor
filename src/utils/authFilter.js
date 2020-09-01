@@ -1,5 +1,76 @@
 import { USER_AUTH, SYS_BUTTON_AUTH } from "@/store/mutation-types"
 
+// export function authFilter(code) {
+//   return globalAuth(code)
+//   // if(nodeAuth(code,formData)){
+//   //   return true;
+//   // }else{
+//   //   return globalAuth(code);
+//   // }
+// }
+
+export function nodeAuth(code, formData) {
+  let permissionList = [];
+  try {
+    if (formData) {
+      let bpmList = formData.permissionList;
+      permissionList = bpmList.filter(item => item.type === '1')
+    } else {
+      return false;
+    }
+  } catch (e) { console.log(e) }
+  if (permissionList.length ===  0) {
+    return false;
+  }
+
+  let permissions = [];
+  for (let item of permissionList) {
+    if(item.type == '1') {
+      permissions.push(item.action);
+    }
+  }
+  if (permissions.includes(code)) {
+    return true;
+  }else{
+    for (let item2 of permissionList) {
+      if(code === item2.action){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+export function globalAuth(code) {
+  let permissionList = [];
+  let authList = JSON.parse(sessionStorage.getItem(USER_AUTH) || "[]");
+  for (let auth of authList) {
+    if(auth.type == '1') {
+      permissionList.push(auth);
+    }
+  }
+  //设置全局配置是否有命中
+  if (permissionList === null || permissionList === "" || permissionList === undefined || permissionList.length <= 0) {
+    return false;
+  }
+  let permissions = [];
+  for (let item of permissionList) {
+    if(item.type == '1') {
+      permissions.push(item.action);
+    }
+  }
+  if (permissions.includes(code)) {
+    return true;
+  }else{
+    for (let item2 of permissionList) {
+      if(code === item2.action){
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 export function disabledAuthFilter(code,formData) {
   if(nodeDisabledAuth(code,formData)){
     return true;
@@ -61,7 +132,7 @@ function globalDisabledAuth(code){
   //let authList = Vue.ls.get(USER_AUTH);
   let authList = JSON.parse(sessionStorage.getItem(USER_AUTH) || "[]");
   for (let auth of authList) {
-    if(auth.type == '1') {
+    if(auth.type == '2') {
       permissionList.push(auth);
     }
   }
@@ -96,7 +167,7 @@ function globalDisabledAuth(code){
   }
   let permissions = [];
   for (let item of permissionList) {
-    if(item.type == '1') {
+    if(item.type == '2') {
       permissions.push(item.action);
     }
   }

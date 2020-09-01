@@ -1,11 +1,11 @@
-import { disabledAuthFilter } from '@/utils/authFilter'
+import { globalAuth } from '@/utils/authFilter'
 
-export function isPermitted(code, permissions = null) {
-  return !disabledAuthFilter(code, permissions)
+export function isPermitted(code) {
+  return globalAuth(code)
 }
 
-export function $isPermitted(code, permissions) {
-  return isPermitted(code, permissions)
+export function $isPermitted(code) {
+  return isPermitted(code)
 }
 
 export default {
