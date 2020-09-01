@@ -115,7 +115,7 @@
   import { ACCESS_TOKEN } from '@/store/mutation-types'
   import { addUser, editUser, queryUserRole, queryAllRole } from '@/api/system'
   // import { disabledAuthFilter } from "@/utils/authFilter"
-  import { duplicateCheck } from '@/api/system'
+  // import { duplicateCheck } from '@/api/system'
   import { isEmail } from '@/utils/validator'
   import md5 from 'md5'
 
@@ -327,19 +327,20 @@
           callback()
         } else {
           if (new RegExp(/^1[3|4|5|7|8][0-9]\d{8}$/).test(value)) {
-            var params = {
-              tableName: 'sys_user',
-              fieldName: 'phone',
-              fieldVal: value,
-              dataId: this.userId
-            };
-            duplicateCheck(params).then((res) => {
-              if (this.$isAjaxSuccess(res.code)) {
-                callback()
-              } else {
-                callback('手机号已存在!')
-              }
-            })
+            callback()
+            // var params = {
+            //   tableName: 'sys_user',
+            //   fieldName: 'phone',
+            //   fieldVal: value,
+            //   dataId: this.userId
+            // };
+            // duplicateCheck(params).then((res) => {
+            //   if (this.$isAjaxSuccess(res.code)) {
+            //     callback()
+            //   } else {
+            //     callback('手机号已存在!')
+            //   }
+            // })
           } else {
             callback('请输入正确格式的手机号码!')
           }
@@ -350,38 +351,40 @@
           callback()
         } else {
           if (isEmail(value)) {
-            var params = {
-              tableName: 'sys_user',
-              fieldName: 'email',
-              fieldVal: value,
-              dataId: this.userId
-            };
-            duplicateCheck(params).then((res) => {
-              if (this.$isAjaxSuccess(res.code)) {
-                callback()
-              } else {
-                callback('邮箱已存在!')
-              }
-            })
+            callback()
+            // var params = {
+            //   tableName: 'sys_user',
+            //   fieldName: 'email',
+            //   fieldVal: value,
+            //   dataId: this.userId
+            // };
+            // duplicateCheck(params).then((res) => {
+            //   if (this.$isAjaxSuccess(res.code)) {
+            //     callback()
+            //   } else {
+            //     callback('邮箱已存在!')
+            //   }
+            // })
           } else {
             callback('请输入正确格式的邮箱!')
           }
         }
       },
       validateUsername(rule, value, callback) {
-        var params = {
-          tableName: 'sys_user',
-          fieldName: 'username',
-          fieldVal: value,
-          dataId: this.userId
-        };
-        duplicateCheck(params).then((res) => {
-          if (this.$isAjaxSuccess(res.code)) {
-            callback()
-          } else {
-            callback('用户名已存在!')
-          }
-        })
+        callback()
+        // var params = {
+        //   tableName: 'sys_user',
+        //   fieldName: 'username',
+        //   fieldVal: value,
+        //   dataId: this.userId
+        // };
+        // duplicateCheck(params).then((res) => {
+        //   if (this.$isAjaxSuccess(res.code)) {
+        //     callback()
+        //   } else {
+        //     callback('用户名已存在!')
+        //   }
+        // })
       },
       handleConfirmBlur (e) {
         const value = e.target.value
