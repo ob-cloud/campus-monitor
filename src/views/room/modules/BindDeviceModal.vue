@@ -92,13 +92,16 @@ export default {
   methods: {
     loadData (arg) {
       if (arg === 1) {
-        this.ipagination.current = 1
-      }
+          this.ipagination.current = 1
+        }
+      const params = {...this.queryParam}
+      params.pageNo = this.ipagination.current
+      params.pageSize = this.ipagination.pageSize
       this.loading = true
-      getAllBuildingDeviceList(this.queryParam).then(res => {
+      getAllBuildingDeviceList(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataSource = res.result.records
-          // this.ipagination.total = res.result.total
+          this.ipagination.total = res.result.total
         }
         this.loading = false
       })
@@ -112,7 +115,7 @@ export default {
       console.log(id)
     },
      handleOk () {
-      if (!this.selectionRows.length) return this.$message.warnning('请选择设备')
+      if (!this.selectionRows.length) return this.$message.warning('请选择设备')
       this.$emit('ok', this.selectionRows[0])
       this.handleCancel()
     },

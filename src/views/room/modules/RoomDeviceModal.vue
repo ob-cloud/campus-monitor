@@ -93,14 +93,18 @@ export default {
     }
   },
   methods: {
-    loadData () {
-    },
-    loadDataList () {
+    loadData (arg) {
+      if (arg === 1) {
+          this.ipagination.current = 1
+        }
+      const params = {...this.queryParam}
+      params.pageNo = this.ipagination.current
+      params.pageSize = this.ipagination.pageSize
       this.loading = true
-      getRoomDeviceList(this.queryParam).then(res => {
+      getRoomDeviceList(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataSource = res.result.records
-          // this.ipagination.total = res.result.total
+          this.ipagination.total = res.result.total
         }
         this.loading = false
       })
@@ -109,7 +113,7 @@ export default {
       console.log(record)
       this.queryParam.roomId = record.id
       this.visible = true
-      this.loadDataList()
+      this.loadData()
     },
     bindModalOk (selection) {
       const params = {
@@ -121,7 +125,7 @@ export default {
       }
       bindRoomDevice(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.loadDataList()
+          this.loadData()
         }
       })
     },
@@ -138,7 +142,7 @@ export default {
       }
       unbindRoomDevice(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.loadDataList()
+          this.loadData()
         }
       })
     },
