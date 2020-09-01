@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-07 16:43:10
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-27 18:36:16
+ * @Last Modified time: 2020-09-01 10:20:24
  */
 
 import { getAction, postFormAction } from '@/utils/ajax'
@@ -66,7 +66,7 @@ const getSelectBuildingList = () => getAction('/common', {
 
 const addBuilding = (params = {}) => postFormAction('/common', {
   CMD: 'add_building',
-  building: params
+  building: JSON.stringify(params)
 })
 const editBuilding = (params = {}) => postFormAction('/common', {
   CMD: 'update_building',
@@ -80,9 +80,7 @@ const delBuilding = (id) => postFormAction('/common', {
 // floor
 const getFloorList = (params = {}) => getAction('/common', {
   CMD: 'get_floor',
-  floor: JSON.stringify({
-    params
-  })
+  floor: JSON.stringify(params)
 })
 const getFloorByBuildingId = (buildingId) => getAction('/common', {
   CMD: 'get_building_floor',
@@ -92,7 +90,7 @@ const getFloorByBuildingId = (buildingId) => getAction('/common', {
 })
 const addFloor = (params = {}) => postFormAction('/common', {
   CMD: 'add_floor',
-  floor: params
+  floor: JSON.stringify(params)
 })
 const editFloor = (params = {}) => postFormAction('/common', {
   CMD: 'update_floor',

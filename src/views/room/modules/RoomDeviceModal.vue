@@ -94,6 +94,7 @@ export default {
   },
   methods: {
     loadData (arg) {
+      if (!this.queryParam.roomId) return
       if (arg === 1) {
           this.ipagination.current = 1
         }
@@ -110,7 +111,6 @@ export default {
       })
     },
     show (record) {
-      console.log(record)
       this.queryParam.roomId = record.id
       this.visible = true
       this.loadData()
