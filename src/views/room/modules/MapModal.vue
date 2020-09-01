@@ -42,7 +42,7 @@
               <a-tooltip title="删除房间节点" placement="bottom" effect="light">
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove()">
                   <!-- <a-icon class="delete" type="delete" /> -->
-                  <a-button type="danger" icon="delete"></a-button>
+                  <a-button type="danger" icon="delete" v-isPermitted="'room:map:delete'"></a-button>
                 </a-popconfirm>
               </a-tooltip>
             </div>

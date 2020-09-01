@@ -19,6 +19,7 @@
     <div slot="extra" class="extra">
       <a-button type="primary" icon="sync" :disabled="isEditing" @click="handleRefresh()" title="刷新"></a-button>
       <a-upload
+        v-isPermitted="'room:map:upload'"
         class="upload-btn"
         name="file"
         :showUploadList="false"
@@ -39,7 +40,7 @@
         </a-tooltip>
         <!-- <a-button icon="upload" type="primary">上传配置图</a-button> -->
       </a-upload>
-      <a-button type="primary" icon="edit" :disabled="isEditing" @click="handleEdit()" title="编辑"></a-button>
+      <a-button v-isPermitted="'room:map:edit'" type="primary" icon="edit" :disabled="isEditing" @click="handleEdit()" title="编辑"></a-button>
     </div>
     <div class="map-content">
       <a-spin :spinning="contentSpinning" :tip="contentSpinTips">
