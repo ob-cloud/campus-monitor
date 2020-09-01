@@ -135,10 +135,10 @@ export default {
     handleUnbind (selection) {
       const params = {
         roomId: this.queryParam.roomId,
-        deviceId: selection.id,
-        deviceSerialId: selection.serialId,
-        deviceType: selection.device_type,
-        deviceChildType: selection.device_child_type
+        deviceId: selection.deviceId,
+        deviceSerialId: selection.deviceSerialId,
+        deviceType: selection.deviceType,
+        deviceChildType: selection.deviceChildType
       }
       unbindRoomDevice(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
@@ -148,6 +148,7 @@ export default {
     },
     handleOk () {
       this.$emit('ok')
+      this.handleCancel()
     },
     // 关闭
     handleCancel () {
