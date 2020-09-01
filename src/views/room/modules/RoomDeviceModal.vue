@@ -2,7 +2,7 @@
   <a-modal :title="title" :width="900" :visible="visible" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
     <a-card :bordered="false">
       <div class="table-operator" style="border-top: 5px">
-        <a-button @click="handleBind" type="primary"><i class="obicon obicon-bangding"></i>绑定</a-button>
+        <a-button v-isPermitted="'room:classroom:device:bind'" @click="handleBind" type="primary"><i class="obicon obicon-bangding"></i>绑定</a-button>
       </div>
       <a-table
         ref="table"
@@ -17,7 +17,7 @@
       >
         <span slot="action" slot-scope="text, record">
           <a-popconfirm title="确定解绑吗?" @confirm="() => handleUnbind(record)">
-            <a><i class="obicon obicon-unbind"></i></a>
+            <a v-isPermitted="'room:classroom:device:unbind'"><i class="obicon obicon-unbind"></i></a>
           </a-popconfirm>
         </span>
       </a-table>

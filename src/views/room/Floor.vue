@@ -11,8 +11,8 @@
       <div slot="extra">
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
-          <a-button type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-button type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
+          <a-button v-isPermitted="'room:floor:add'" type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
+          <a-button v-isPermitted="'room:floor:power'" type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
 
         </a-button-group>
       </div>
@@ -21,11 +21,11 @@
           <div class="block-item" v-for="item in dataList" :key="item.id">
             <div class="toolbar">
               <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
-                <i class="icon obicon obicon-power" title="电源"></i>
+                <i v-isPermitted="'room:floor:power'" class="icon obicon obicon-power" title="电源开关"></i>
               </a-popconfirm>
-              <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
+              <a-icon v-isPermitted="'room:floor:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
-                <a-icon class="icon" type="delete" />
+                <a-icon v-isPermitted="'room:floor:delete'" class="icon" type="delete" />
               </a-popconfirm>
             </div>
             <div class="content">

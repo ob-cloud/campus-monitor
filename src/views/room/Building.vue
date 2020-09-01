@@ -10,8 +10,8 @@
       <div slot="extra">
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
-          <a-button type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-button type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
+          <a-button v-isPermitted="'room:building:add'" type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
+          <a-button v-isPermitted="'room:building:power'" type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
         </a-button-group>
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
@@ -19,11 +19,11 @@
           <div class="block-item" v-for="item in dataList" :key="item.id">
             <div class="toolbar">
               <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼栋电源?`" @confirm="() => handlePower(item)">
-                <i class="icon obicon obicon-power" title="电源"></i>
+                <i v-isPermitted="'room:building:power'" class="icon obicon obicon-power" title="电源开关"></i>
               </a-popconfirm>
-              <a-icon class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
+              <a-icon v-isPermitted="'room:building:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
-                <a-icon class="icon" type="delete" />
+                <a-icon v-isPermitted="'room:building:delete'" class="icon" type="delete" />
               </a-popconfirm>
             </div>
             <div class="content">
