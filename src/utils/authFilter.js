@@ -61,7 +61,7 @@ function globalDisabledAuth(code){
   //let authList = Vue.ls.get(USER_AUTH);
   let authList = JSON.parse(sessionStorage.getItem(USER_AUTH) || "[]");
   for (let auth of authList) {
-    if(auth.type == '2') {
+    if(auth.type == '1') {
       permissionList.push(auth);
     }
   }
@@ -96,7 +96,7 @@ function globalDisabledAuth(code){
   }
   let permissions = [];
   for (let item of permissionList) {
-    if(item.type == '2') {
+    if(item.type == '1') {
       permissions.push(item.action);
     }
   }

@@ -1,7 +1,7 @@
 import { disabledAuthFilter } from '@/utils/authFilter'
 
 export function isPermitted(code, permissions = null) {
-  return disabledAuthFilter(code, permissions)
+  return !disabledAuthFilter(code, permissions)
 }
 
 export function $isPermitted(code, permissions) {
