@@ -7,7 +7,6 @@
     :closable="true"
     @close="handleCancel"
     :visible="visible"
-    style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;"
   >
 
     <template slot="title">
@@ -456,7 +455,7 @@
 
   .drawer-bootom-button {
     position: absolute;
-    bottom: -8px;
+    bottom: 0;
     width: 100%;
     border-top: 1px solid #e8e8e8;
     padding: 10px 16px;

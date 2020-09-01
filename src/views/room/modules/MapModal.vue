@@ -162,7 +162,7 @@ export default {
 <style lang="less" scoped>
 .drawer-bootom-button {
   position: absolute;
-  bottom: -8px;
+  bottom: 0;
   width: 100%;
   border-top: 1px solid #e8e8e8;
   padding: 10px 16px;
