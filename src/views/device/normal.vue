@@ -47,7 +47,7 @@
 
     <!-- 操作按钮区域 -->
     <div class="table-operator" style="border-top: 5px">
-      <a-button @click="handleScan" type="primary" icon="plus">添加设备</a-button>
+      <a-button v-isPermitted="'device:normal:add'" @click="handleScan" type="primary" icon="plus">添加设备</a-button>
     </div>
 
     <!-- table区域-begin -->
@@ -70,32 +70,32 @@
       >
 
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a v-isPermitted="'device:normal:edit'" @click="handleEdit(record)">编辑</a>
 
-          <a-divider type="vertical" />
+          <a-divider v-isPermitted="'device:normal:edit'" type="vertical" />
 
           <a-dropdown>
             <a class="ant-dropdown-link">
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-if="TypeHints.isXkeySocketSwitch(record.device_child_type)">
+              <a-menu-item v-isPermitted="'device:normal:control'" v-if="TypeHints.isXkeySocketSwitch(record.device_child_type)">
                 <a @click="handleAction(0, record)">开关</a>
               </a-menu-item>
 
-              <a-menu-item v-if="TypeHints.isHumidifierSensors(record.device_child_type)">
+              <a-menu-item v-isPermitted="'device:normal:control'" v-if="TypeHints.isHumidifierSensors(record.device_child_type)">
                 <a @click="handleAction(1, record)">温湿度</a>
               </a-menu-item>
 
-              <a-menu-item v-if="TypeHints.isSettableSceneSocketSwitch(record.device_child_type)">
+              <a-menu-item v-isPermitted="'device:normal:control'" v-if="TypeHints.isSettableSceneSocketSwitch(record.device_child_type)">
                 <a @click="handleAction(2, record)">设置</a>
               </a-menu-item>
 
-              <a-menu-item v-if="TypeHints.isSimpleLed(record.device_child_type)">
+              <a-menu-item v-isPermitted="'device:normal:control'" v-if="TypeHints.isSimpleLed(record.device_child_type)">
                 <a @click="handleAction(3, record)">灯控</a>
               </a-menu-item>
 
-              <a-menu-item>
+              <a-menu-item v-isPermitted="'device:normal:delete'">
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record)">
                   <a>删除</a>
                 </a-popconfirm>

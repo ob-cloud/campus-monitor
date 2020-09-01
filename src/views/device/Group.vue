@@ -51,7 +51,7 @@
     </div>
 
     <!-- 操作按钮区域 -->
-    <div class="table-operator" style="border-top: 5px">
+    <div v-isPermitted="'device:group:add'" class="table-operator" style="border-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus">添加编组</a-button>
     </div>
 
@@ -79,16 +79,16 @@
           <a-tag color="green">{{ panel_addr[0].groupAddr }}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a v-isPermitted="'device:group:edit'" @click="handleEdit(record)">编辑</a>
 
-          <a-divider type="vertical" />
+          <a-divider v-isPermitted="'device:group:edit'" type="vertical" />
 
           <a-dropdown>
             <a class="ant-dropdown-link">
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item>
+              <a-menu-item v-isPermitted="'device:group:delete'">
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.group_id)">
                   <a>删除</a>
                 </a-popconfirm>

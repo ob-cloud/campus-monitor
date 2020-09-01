@@ -59,7 +59,7 @@
     </div>
 
     <!-- 操作按钮区域 -->
-    <div class="table-operator" style="border-top: 5px">
+    <div v-isPermitted="'scene:add'" class="table-operator" style="border-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus">添加场景</a-button>
     </div>
     <!-- table区域-begin -->
@@ -79,19 +79,19 @@
           <a-switch checked-children="启用" un-checked-children="禁用" :checked="!!record.sceneStatus" @change="handleSceneStatus(record)" />
         </span>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a v-isPermitted="'scene:edit'" @click="handleEdit(record)">编辑</a>
 
-          <a-divider type="vertical" />
+          <a-divider v-isPermitted="'scene:edit'" type="vertical" />
 
           <a-dropdown>
             <a class="ant-dropdown-link">
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item>
+              <a-menu-item v-isPermitted="'scene:control'">
                 <a @click="handleExecute(record.sceneNumber)">执行</a>
               </a-menu-item>
-              <a-menu-item>
+              <a-menu-item v-isPermitted="'scene:delete'">
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.sceneNumber)">
                   <a>删除</a>
                 </a-popconfirm>
