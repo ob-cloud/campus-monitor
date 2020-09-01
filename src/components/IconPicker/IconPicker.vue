@@ -55,6 +55,14 @@
           </li>
         </ul>
       </a-tab-pane>
+      <a-tab-pane tab="硬件图标" key="7">
+        <ul>
+          <li v-for="icon in icons.iotIcons" :key="icon">
+            <!-- <a-icon :type="icon" :title="icon" @click="chooseIcon(icon)" :class="{'active': activeIndex === icon}" /> -->
+            <i :title="icon" @click="chooseIcon(icon)" :class="{'active': activeIndex === icon, 'obicon': true, [icon]: icon}"></i>
+          </li>
+        </ul>
+      </a-tab-pane>
     </a-tabs>
   </a-modal>
 </template>
@@ -66,6 +74,7 @@ const editIcons = ['edit', 'form', 'copy', 'scissor', 'delete', 'snippets', 'dif
 const dataIcons = ['area-chart', 'pie-chart', 'bar-chart', 'dot-chart', 'line-chart', 'radar-chart', 'heat-map', 'fall', 'rise', 'stock', 'box-plot', 'fund', 'sliders']
 const webIcons = ['lock', 'unlock', 'bars', 'book', 'calendar', 'cloud', 'cloud-download', 'code', 'copy', 'credit-card', 'delete', 'desktop', 'download', 'ellipsis', 'file', 'file-text', 'file-unknown', 'file-pdf', 'file-word', 'file-excel', 'file-jpg', 'file-ppt', 'file-markdown', 'file-add', 'folder', 'folder-open', 'folder-add', 'hdd', 'frown', 'meh', 'smile', 'inbox', 'laptop', 'appstore', 'link', 'mail', 'mobile', 'notification', 'paper-clip', 'picture', 'poweroff', 'reload', 'search', 'setting', 'share-alt', 'shopping-cart', 'tablet', 'tag', 'tags', 'to-top', 'upload', 'user', 'video-camera', 'home', 'loading', 'loading-3-quarters', 'cloud-upload', 'star', 'heart', 'environment', 'eye', 'camera', 'save', 'team', 'solution', 'phone', 'filter', 'exception', 'export', 'customer-service', 'qrcode', 'scan', 'like', 'dislike', 'message', 'pay-circle', 'calculator', 'pushpin', 'bulb', 'select', 'switcher', 'rocket', 'bell', 'disconnect', 'database', 'compass', 'barcode', 'hourglass', 'key', 'flag', 'layout', 'printer', 'sound', 'usb', 'skin', 'tool', 'sync', 'wifi', 'car', 'schedule', 'user-add', 'user-delete', 'usergroup-add', 'usergroup-delete', 'man', 'woman', 'shop', 'gift', 'idcard', 'medicine-box', 'red-envelope', 'coffee', 'copyright', 'trademark', 'safety', 'wallet', 'bank', 'trophy', 'contacts', 'global', 'shake', 'api', 'fork', 'dashboard', 'table', 'profile', 'alert', 'audit', 'branches', 'build', 'border', 'crown', 'experiment', 'fire', 'money-collect', 'property-safety', 'read', 'reconciliation', 'rest', 'security-scan', 'insurance', 'interation', 'safety-certificate', 'project', 'thunderbolt', 'block', 'cluster', 'deployment-unit', 'dollar', 'euro', 'pound', 'file-done', 'file-exclamation', 'file-protect', 'file-search', 'file-sync', 'gateway', 'gold', 'robot', 'shopping']
 const logoIcons = ['android', 'apple', 'windows', 'ie', 'chrome', 'github', 'aliwangwang', 'dingding', 'weibo-square', 'weibo-circle', 'taobao-circle', 'html5', 'weibo', 'twitter', 'wechat', 'youtube', 'alipay-circle', 'taobao', 'skype', 'qq', 'medium-workmark', 'gitlab', 'medium', 'linkedin', 'google-plus', 'dropbox', 'facebook', 'codepen', 'amazon', 'google', 'codepen-circle', 'alipay', 'ant-design', 'aliyun', 'zhihu', 'slack', 'slack-square', 'behance', 'behance-square', 'dribbble', 'dribbble-square', 'instagram', 'yuque', 'alibaba', 'yahoo']
+const iotIcons = ['obicon-socket-square', 'obicon-curtain', 'obicon-ac-fill', 'obicon-socket-line', 'obicon-mode', 'obicon-mode-o', 'obicon-battery-full', 'obicon-battery-o', 'obicon-battery', 'obicon-wifi-off', 'obicon-classroom', 'obicon-board', 'obicon-steering-wheel', 'obicon-electric-sensor', 'obicon-temperature-humidity-sensor', 'obicon-pressure-sensor', 'obicon-scene', 'obicon-device']
 
 export default {
   name: 'IconPicker',
@@ -83,7 +92,8 @@ export default {
         editIcons,
         dataIcons,
         webIcons,
-        logoIcons
+        logoIcons,
+        iotIcons
       },
       choosedIcon: '',
       activeIndex: ''

@@ -150,6 +150,11 @@ export default {
           <img src={icon} alt="icon"></img>
         )
       }
+      if (icon.includes('obicon')) {
+        return (
+          <i class={'anticon obicon ' + icon} style="color: #000;" alt="icon"></i>
+        )
+      }
       const props = {}
       typeof (icon) === 'object' ? props.component = icon : props.type = icon
       return (
