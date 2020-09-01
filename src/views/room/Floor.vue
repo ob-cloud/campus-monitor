@@ -18,7 +18,7 @@
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
-          <div class="block-item" v-for="item in dataList" :key="item.id">
+          <div class="block-item" :class="{'active': item.allType}" v-for="item in dataList" :key="item.id">
             <div class="toolbar">
               <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
                 <i v-isPermitted="'room:floor:power'" class="icon obicon obicon-power" title="电源开关"></i>
@@ -29,7 +29,7 @@
               </a-popconfirm>
             </div>
             <div class="content">
-              <i class="building-sign obicon obicon-building" :class="{'is-active': item.allType}"></i>
+              <i class="building-sign obicon obicon-building"></i>
               <p class="text">
                 {{ item.buildingName }}栋{{ item.floorName }}层
               </p>
@@ -190,11 +190,23 @@ export default {
   padding: 20px;
   background: #fff;
   margin: 10px;
-  width: 190px;
-  height: 142px;
+  // width: 190px;
+  // height: 142px;
+  width: 218px;
+  height: 156px;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0px 0px 3px 1px #c0c4cc;
+
+  &.active{
+    background: #fff4d3;
+    box-shadow: 0px 0px 3px 1px #ebdbac;
+
+    .building-sign{
+      color: #353535;
+      text-shadow: 0 0 3px #626262;
+    }
+  }
 
   .toolbar{
     position: absolute;

@@ -19,7 +19,7 @@
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
-          <div class="block-item" v-for="item in roomList" :key="item.id">
+          <div class="block-item" :class="{'active': isLightActive(item.deviceState)}" v-for="item in roomList" :key="item.id">
             <div class="toolbar">
               <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
               <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}教室灯?`" @confirm="() => handlePower(item)">
@@ -31,7 +31,7 @@
               </a-popconfirm>
             </div>
             <div class="content">
-              <i class="building-sign obicon obicon-classroom" :class="{'is-active': isLightActive(item.deviceState)}"></i>
+              <i class="building-sign obicon obicon-classroom"></i>
               <p class="text">
                 {{ item.buildingName }}栋{{ item.floorName }}层{{ item.roomName }}
               </p>
@@ -198,11 +198,23 @@ export default {
   padding: 20px;
   background: #fff;
   margin: 10px;
-  width: 190px;
-  height: 142px;
+  // width: 190px;
+  // height: 142px;
+  width: 218px;
+  height: 156px;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0px 0px 3px 1px #c0c4cc;
+
+  &.active{
+    background: #fff4d3;
+    box-shadow: 0px 0px 3px 1px #ebdbac;
+
+    .building-sign{
+      color: #353535;
+      text-shadow: 0 0 3px #626262;
+    }
+  }
 
   .toolbar{
     position: absolute;

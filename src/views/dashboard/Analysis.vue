@@ -1,6 +1,6 @@
 <template>
   <div>
-    Analysis
+    校园监控管理系统
   </div>
 </template>
 
