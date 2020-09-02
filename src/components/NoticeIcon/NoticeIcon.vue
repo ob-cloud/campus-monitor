@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     noticeTotal () {
-      return +this.noticeCount + this.sysMsgCount
+      return +this.noticeCount + +this.sysMsgCount
     }
   },
   mounted () {
