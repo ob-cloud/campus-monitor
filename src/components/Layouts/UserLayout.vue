@@ -2,7 +2,7 @@
 import RouteView from '@layout/RouteView'
 import { mixinDevice } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
-
+const background = require('@/assets/images/background.svg')
 export default {
   name: 'UserLayout',
   components: { RouteView },
@@ -66,7 +66,7 @@ export default {
   },
   render () {
     return (
-      <div id="userLayout" class={['user-layout-wrapper', this.device]}>
+      <div id="userLayout" class={['user-layout-wrapper', this.device]} style={{'background-image': `url(${background})`}}>
         <div class="container">
           {this.renderHeader()}
           <route-view></route-view>
