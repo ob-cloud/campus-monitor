@@ -17,7 +17,7 @@
       >
         <span slot="action" slot-scope="text, record">
           <a-popconfirm title="确定解绑吗?" @confirm="() => handleUnbind(record)">
-            <a v-isPermitted="'room:classroom:device:unbind'"><i class="obicon obicon-unbind"></i></a>
+            <a v-isPermitted="'room:classroom:device:unbind'" title="解绑"><i class="obicon obicon-unbind"></i></a>
           </a-popconfirm>
         </span>
       </a-table>

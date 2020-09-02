@@ -24,6 +24,8 @@ import { isAjaxSuccess } from '@/utils/util'
 import isPermitted from '@/directive/permission'
 import { $isPermitted } from '@/directive/permission/button'
 
+import vueBus from '@/utils/vueBus'
+
 // global filter
 import '@/utils/filter'
 
@@ -32,6 +34,7 @@ Vue.use(Antd)
 Vue.use(MultiTab)
 Vue.use(VueStorage, config.storageOptions)
 Vue.use(isPermitted)
+Vue.use(vueBus)
 
 Vue.prototype.$isAjaxSuccess = isAjaxSuccess
 
