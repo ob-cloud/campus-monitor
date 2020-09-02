@@ -43,6 +43,15 @@ export default {
         return '256px'
       }
       return '80px'
+    },
+    multiTabWidth () {
+      if (!this.fixSidebar || this.isMobile()) {
+        return '0'
+      }
+      if (this.sidebarOpened) {
+        return 'calc(100% - 256px)'
+      }
+      return 'calc(100% - 80px)'
     }
   },
   watch: {
@@ -140,7 +149,7 @@ export default {
           {/* <!-- layout content --> */}
           <a-layout-content style={{ height: '100%', margin: '24px 24px 0', paddingTop: this.fixedHeader ? '64px' : '0' }}>
             {
-              this.multiTab && (<multi-tab isHomeTabFix={this.tabConfig.fix} homeIndex={this.tabConfig.index}></multi-tab>)
+              this.multiTab && (<multi-tab isHomeTabFix={this.tabConfig.fix} homeIndex={this.tabConfig.index} style={{width: this.multiTabWidth}}></multi-tab>)
             }
             <transition name="page-transition">
               <route-view />

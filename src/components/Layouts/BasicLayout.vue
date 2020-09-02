@@ -1,6 +1,6 @@
 <template>
   <global-layout>
-    <multi-tab v-if="!isMobile() && multiTab" :class="this.fixedMultiTab && 'ant-multitab-fixedMultiTab'" :isHomeTabFix="tabConfig.fix" :homeIndex="tabConfig.index"></multi-tab>
+    <multi-tab v-if="!isMobile() && multiTab" :class="this.fixedMultiTab && 'ant-multitab-fixedMultiTab'" :style="{width: this.multiTabWidth}" :isHomeTabFix="tabConfig.fix" :homeIndex="tabConfig.index"></multi-tab>
     <transition name="page-transition">
       <IRouteView :style="{'margin-top': !isMobile() && this.fixedMultiTab ? '41px' : '0'}" />
     </transition>
@@ -19,6 +19,17 @@ export default {
   components: {
     GlobalLayout,
     IRouteView
+  },
+  computed: {
+    multiTabWidth () {
+      if (!this.fixSidebar || this.isMobile()) {
+        return '0'
+      }
+      if (this.sidebarOpened) {
+        return 'calc(100% - 256px)'
+      }
+      return 'calc(100% - 80px)'
+    }
   },
   data () {
     return {
