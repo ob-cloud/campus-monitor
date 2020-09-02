@@ -3,10 +3,11 @@
     <a-card>
       <div slot="title" class="search-bar">
         <div class="caption">
-          <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.buildName" placeholder="楼栋"></a-input>
-          <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.floorName" placeholder="楼层"></a-input>
-          <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.roomName" placeholder="教室"></a-input>
+          <a-input allowClear class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.buildName" placeholder="楼栋"></a-input>
+          <a-input allowClear class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.floorName" placeholder="楼层"></a-input>
+          <a-input allowClear class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.roomName" placeholder="教室"></a-input>
           <a-button type="primary" icon="el-icon-search" @click="handleSearch">查询</a-button>
+          <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
         </div>
       </div>
       <div slot="extra">
@@ -38,7 +39,7 @@
             </div>
           </div>
         </a-spin>
-        <a-pagination simple style="position: absolute; right: 0; bottom: 10px;" :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" :showSizeChanger="true" @change="handlePageChange" />
+        <a-pagination simple style="position: fixed; right: 70px; bottom: 30px;" :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" :showSizeChanger="true" @change="handlePageChange" />
       </div>
       <classroom-modal ref="modalForm" @ok="modalFormOk"></classroom-modal>
       <room-device-modal ref="deviceModal" @ok="deviceModalOk"></room-device-modal>
@@ -72,14 +73,21 @@ export default {
     // Helper.windowOnResize(this, this.fixLayout)
   },
   methods: {
-    loadData () {
-      this.getDataList()
+    searchReset () {
+      this.queryParam = { pageNo: 1, pageSize: 10 }
+      this.loadData(1)
+    },
+    loadData (arg) {
+      this.getDataList(arg)
     },
     fixLayout () {
       // document.body.clientHeight - 64 - 40 - 85
       // this.containerHeight = Helper.calculateTableHeight() - 20
     },
-    getDataList () {
+    getDataList (arg) {
+      if (arg === 1) {
+        this.queryParam.pageNo = 1
+      }
       this.loading = true
       getRoomList(this.queryParam).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
@@ -171,7 +179,7 @@ export default {
   }
 
   .caption-item{
-    width: 200px;
+    width: 130px;
     margin-right: 12px;
   }
 }

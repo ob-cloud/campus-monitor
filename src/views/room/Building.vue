@@ -3,8 +3,9 @@
     <a-card>
       <div slot="title" class="search-bar">
         <div class="caption">
-          <a-input clearable class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.buildName" placeholder="楼栋"></a-input>
+          <a-input allowClear class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.buildName" placeholder="楼栋"></a-input>
           <a-button type="primary" icon="el-icon-search" @click="handleSearch">查询</a-button>
+          <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
         </div>
       </div>
       <div slot="extra">
@@ -34,7 +35,7 @@
             </div>
           </div>
         </a-spin>
-        <a-pagination style="position: absolute; right: 0; bottom: 10px;" simple :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" @change="handlePageChange" />
+        <a-pagination style="position: fixed; right: 70px; bottom: 30px;" simple :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" @change="handlePageChange" />
       </div>
       <building-modal ref="modalForm" @ok="modalFormOk"></building-modal>
     </a-card>
@@ -66,13 +67,20 @@ export default {
     // Helper.windowOnResize(this, this.fixLayout)
   },
   methods: {
-    loadData () {
-      this.getDataList()
+    searchReset () {
+      this.queryParam = { pageNo: 1, pageSize: 10 }
+      this.loadData(1)
+    },
+    loadData (arg) {
+      this.getDataList(arg)
     },
     fixLayout () {
       // this.containerHeight = Helper.calculateTableHeight() - 20
     },
-    getDataList () {
+    getDataList (arg) {
+      if (arg === 1) {
+        this.queryParam.pageNo = 1
+      }
       this.loading = true
       getBuildingList(this.queryParam).then(res => {
         if (this.$isAjaxSuccess(res.code)) {

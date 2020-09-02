@@ -72,7 +72,7 @@ export default {
   components: { IotSwitch },
   data () {
     return {
-      drawerWidth: 700,
+      drawerWidth: 500,
       title: "操作",
       visible: false,
       model: {},
