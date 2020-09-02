@@ -27,7 +27,6 @@ export default {
   },
   watch: {
     powers (val) {
-      console.log('---- ', val)
       this.handlePower(val[0])
     }
   },

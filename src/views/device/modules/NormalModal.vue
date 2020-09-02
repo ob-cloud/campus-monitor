@@ -54,7 +54,6 @@ export default {
         if (!err) {
           that.confirmLoading = true
           let formData = Object.assign(this.model, values)
-          console.log(formData)
           let obj = editOboxName(formData)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {

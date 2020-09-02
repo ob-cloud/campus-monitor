@@ -94,7 +94,6 @@ export default {
           that.confirmLoading = true
           values.roomName = (values.roomName || '').trim()
           let formData = Object.assign(that.model, values)
-          console.log(formData)
           let obj = !that.model.id ? addRoom(formData) : editRoom(formData)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {

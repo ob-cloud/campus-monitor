@@ -56,7 +56,6 @@ export default {
         if (!err) {
           that.confirmLoading = true
           let formData = Object.assign(this.model, values)
-          console.log(formData)
           let obj = !this.model.id ? addBuilding(formData) : editBuilding(formData)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
