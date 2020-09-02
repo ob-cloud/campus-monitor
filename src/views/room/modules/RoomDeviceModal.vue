@@ -73,12 +73,8 @@ export default {
           title: '设备状态',
           align: 'center',
           dataIndex: 'deviceState',
-          customRender(t) {
-            const statusMap = {
-              1: '正常',
-              2: '冻结'
-            }
-            return statusMap[t] || ''
+          customRender(status, row) {
+            return Descriptor.getStatusDescriptor(status, row.deviceType, row.deviceChildType)
           }
         },
         {

@@ -72,9 +72,9 @@ export default {
         {
           title: '设备状态',
           align: 'center',
-          dataIndex: 'deviceState',
-          customRender() {
-            return ''
+          dataIndex: 'state',
+          customRender(status, row) {
+            return Descriptor.getStatusDescriptor(status, row.device_type, row.device_child_type)
           }
         },
         // {
