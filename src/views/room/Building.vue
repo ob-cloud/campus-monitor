@@ -4,7 +4,7 @@
       <div slot="title" class="search-bar">
         <div class="caption">
           <a-input allowClear class="caption-item" @keyup.enter.native="handleSearch" v-model="queryParam.buildName" placeholder="楼栋"></a-input>
-          <a-button type="primary" icon="el-icon-search" @click="handleSearch">查询</a-button>
+          <a-button type="primary" @click="handleSearch" icon="search">查询</a-button>
           <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
         </div>
       </div>
