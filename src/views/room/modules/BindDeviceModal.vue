@@ -106,13 +106,9 @@ export default {
         this.loading = false
       })
     },
-    show (record) {
-      console.log(record)
+    show () {
       this.visible = true
       this.loadData()
-    },
-    handleUnbind (id) {
-      console.log(id)
     },
      handleOk () {
       if (!this.selectionRows.length) return this.$message.warning('请选择设备')

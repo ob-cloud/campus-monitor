@@ -1,6 +1,6 @@
 <template>
   <a-modal :title="title" :width="600" :visible="visible" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
-    <div class="actionBar">
+    <div class="actionBar" style="text-align: center;">
       <a-range-picker
         v-model="pickerValue"
         format="YYYY-MM-DD HH:mm"
