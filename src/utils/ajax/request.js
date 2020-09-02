@@ -55,11 +55,11 @@ service.interceptors.response.use((response) => {
       message: 'Unauthorized',
       description: 'Authorization verification failed'
     })
-    store.dispatch('Logout').then(() => {
-      setTimeout(() => {
-        window.location.reload()
-      }, 1500)
-    })
+    // store.dispatch('Logout').then(() => {
+    //   setTimeout(() => {
+    //     window.location.reload()
+    //   }, 1500)
+    // })
   }
   return response.data
 }, err)
