@@ -50,7 +50,7 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  if (response.code === 'SYS009') {
+  if (response.data && response.data.code === 'SYS009') {
     notification.error({
       message: 'Unauthorized',
       description: 'Authorization verification failed'
