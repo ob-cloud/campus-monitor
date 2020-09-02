@@ -50,9 +50,17 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  // if (response.code === 'SYS009') {
-
-  // }
+  if (response.code === 'SYS009') {
+    notification.error({
+      message: 'Unauthorized',
+      description: 'Authorization verification failed'
+    })
+    store.dispatch('Logout').then(() => {
+      setTimeout(() => {
+        window.location.reload()
+      }, 1500)
+    })
+  }
   return response.data
 }, err)
 

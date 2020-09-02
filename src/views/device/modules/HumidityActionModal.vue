@@ -53,8 +53,8 @@
 <script>
 import Chart from '@/components/IoT/Chart'
 import { getDeviceStatusHistory } from '@/api/device'
-
 import { parseTime } from '@/utils/util'
+import { Descriptor } from 'hardware-suit'
 export default {
   components: { Chart },
   data () {
@@ -98,7 +98,7 @@ export default {
       const tempValue = +parseInt(record.state.slice(2, 4), 16).toString(10)
       this.temperature = tempValue ? tempValue - 30 : 0
       this.humidifier = +parseInt(record.state.slice(6, 8), 16).toString(10)
-      this.title = `温湿度${record.name}-${record.serialId}）`
+      this.title = `${Descriptor.getTypeDescriptor(record.device_type, record.device_child_type)}(${record.serialId})`
     },
     close () {
       this.$emit('close')
@@ -146,6 +146,7 @@ export default {
         const humidifier = +parseInt(item.status.slice(6, 8), 16).toString(10)
         const time = parseTime(new Date(item.time * 1000), fmt || '{h}:{i}')
         return {
+          id: Math.random(10000),
           temperature,
           humidifier,
           time

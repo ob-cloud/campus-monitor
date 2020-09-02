@@ -17,6 +17,7 @@
 import IotSwitch from '@/components/IoT/Switch'
 import ActionMixin from '@/utils/mixins/ActionMixin'
 import { editSwitchStatus } from '@/api/device'
+import { Descriptor } from 'hardware-suit'
 export default {
   components: { IotSwitch },
   mixins: [ ActionMixin ],
@@ -53,6 +54,7 @@ export default {
     show (record) {
       this.model = Object.assign({}, record)
       this.visible = true
+      this.title = `开关 - ${Descriptor.getTypeDescriptor(record.device_type, record.device_child_type)}(${record.serialId})`
       this.serialId = this.model.serialId
       this.state = this.model.state
     },

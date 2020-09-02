@@ -10,13 +10,14 @@
     :destroyOnClose="true"
   >
     <a-layout>
-      <a-layout-sider width="200px">
+      <a-layout-sider width="200px" style="background: #132436;">
         <lamp :color="lampColor"></lamp>
       </a-layout-sider>
       <a-layout-content>
         <a-card class="box-card" shadow="never">
-          <div slot="title" class="clearfix">
-            <span>异常状态：{{ this.exceptionText }}</span>
+          <div slot="extra" class="clearfix">
+            <a-icon style="color: #ff4d4f;" type="warning" />
+            <span style="font-size: 12px; margin-left: 5px">{{ this.exceptionText }}</span>
           </div>
           <div class="card-content">
             <a-row :gutter="40" class="card-content__item">
@@ -61,13 +62,13 @@
 <script>
 import Lamp from '@/components/IoT/Lamp'
 import { editSwitchStatus, getSwitchStatus } from '@/api/device'
-import { LedLampEquip } from 'hardware-suit'
+import { LedLampEquip, Descriptor } from 'hardware-suit'
 export default {
   components: { Lamp },
   data () {
     return {
       drawerWidth: 500,
-      title: "操作",
+      title: "灯控",
       visible: false,
       disableSubmit: false,
       model: {},
@@ -123,6 +124,7 @@ export default {
     show (record) {
       this.model = Object.assign({}, record)
       this.visible = true
+      this.title = `灯控 - ${Descriptor.getTypeDescriptor(record.device_type, record.device_child_type)}(${record.serialId})`
       const ledLampEquip = this.ledLampEquip = new LedLampEquip(record.state, record.device_type, record.device_child_type)
       this.isColorLamp = ledLampEquip.isBicolor()
       this.power = ledLampEquip.isPowerOn()
@@ -179,8 +181,11 @@ export default {
 
 
 <style lang="less" scoped>
+.box-card{
+  margin: 10px;
+}
 .card-content__item{
-  padding: 24px;
+  padding: 20px;
   // border-bottom: 1px solid #3A4257;
 
   > div{
