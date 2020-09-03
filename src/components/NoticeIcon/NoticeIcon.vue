@@ -51,11 +51,11 @@
         </a-tabs>
       </a-spin>
     </template>
-    <span @click="fetchNotice" class="header-notice" ref="noticeRef" style="padding: 0 18px">
+    <!-- <span @click="fetchNotice" class="header-notice" ref="noticeRef" style="padding: 0 18px">
       <a-badge :count="noticeTotal">
         <a-icon style="font-size: 16px; padding: 4px" type="bell" />
       </a-badge>
-    </span>
+    </span> -->
     <show-announcement ref="ShowAnnouncement"></show-announcement>
   </a-popover>
 </template>
@@ -89,7 +89,7 @@ export default {
   mounted () {
     this.initWebSocket(this.$store.getters.userInfo.id)
     this.websocket.onmessage = this.onWebSocketMessage
-    this.loadData()
+    // this.loadData()
   },
   methods: {
     loadData () {
