@@ -5,6 +5,7 @@
     :height="drawerWidth"
     placement="bottom"
     :closable="true"
+    :destroyOnClose="true"
     @close="handleCancel"
     :visible="visible"
   >
@@ -13,19 +14,19 @@
         <key-panel @on-selected="onKeySelected"></key-panel>
       </a-layout-sider>
       <a-layout-content>
-        <a-row>
+        <a-row :gutter="0">
           <a-col :span="10">
             <a-card class="box-card" shadow="never">
-              <div slot="header" class="clearfix">
+              <div slot="title" class="clearfix">
                 <span>灯组</span>
               </div>
               <div class="card-content" style="height: 290px; overflow-y:auto;">
                 <a-spin :spinning="lampGroupLoading">
-                  <a-checkbox-group v-model="checkboxGroup">
-                    <a-checkbox-button class="card-item" v-for="(item, index) in lampGroupList" :label="item.groupNum" :key="index" @click.native="onClickLampItem(item)">
+                  <a-checkbox-group v-model="checkboxGroup" class="checkbox-list">
+                    <a-checkbox class="checkbox-list-item" v-for="(item, index) in lampGroupList" :value="item.groupNum" :key="index" @click.native="onClickLampItem(item)">
                       <p><i class="el-icon-s-opportunity"></i></p>
                       <p>{{ item.name }}</p>
-                    </a-checkbox-button>
+                    </a-checkbox>
                   </a-checkbox-group>
                 </a-spin>
               </div>
@@ -33,16 +34,16 @@
           </a-col>
           <a-col :span="14">
             <a-card shadow="never" class="slider-wrapper">
-              <div slot="header" class="clearfix">
+              <div slot="title" class="clearfix">
                 <span>设置</span>
               </div>
               <div class="card-footer" style="height: 290px; overflow-y:auto;">
                 <a-spin :spinning="lampGroupLoading">
                   <div class="wrapper" v-for="(item, index) in checkboxGroupList" :key="index">
-                    <a-row :gutter="40">
+                    <a-row :gutter="40" style="margin: 0;">
                       <a-col :span="12">
                         <span class="text">亮度</span>
-                        <a-slider class="slider" v-model="item.light" :marks="{0: '0', 100: '100'}"></a-slider>
+                        <a-slider class="slider" v-model="item.light" :min="0" :max="100" :marks="{0: '0', 100: '100'}"></a-slider>
                       </a-col>
                       <a-col :span="12">
                         <span class="text">色度</span>
@@ -71,6 +72,7 @@
 <script>
 import KeyPanel from '@/components/IoT/KeyPanel'
 import { getGroupListByPanelId, getGrouplListPanelKey, setPanelKey } from '@/api/device'
+import { Descriptor } from 'hardware-suit'
 export default {
   components: { KeyPanel },
   data () {
@@ -144,7 +146,7 @@ export default {
     show (record) {
       this.model = Object.assign({}, record)
       this.visible = true
-      this.title = `面板配置（${record.name}-${record.serialId}）`
+      this.title = `${Descriptor.getTypeDescriptor(record.device_type, record.device_child_type)}（${record.serialId}）`
     },
     close () {
       this.$emit('close')
@@ -194,7 +196,7 @@ export default {
       this.lampGroupLoading = true
       return getGroupListByPanelId(this.model.serialId).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.lampGroupList = res.result.records
+          this.lampGroupList = res.result
         }
         this.lampGroupLoading = false
       })
@@ -202,7 +204,7 @@ export default {
     getGrouplListPanelKey (index) {
       getGrouplListPanelKey(this.model.serialId, index).then(res => {
          if (this.$isAjaxSuccess(res.code)) {
-          const result = res.result.records
+          const result = res.result
           this.keyList = result
           this.lampGroupList = this.extendsGroupList(result, this.lampGroupList)
           this.checkboxGroup = result.map(item => item.groupNum)
@@ -232,5 +234,41 @@ export default {
   left: 0;
   background: #fff;
   border-radius: 0 0 2px 2px;
+}
+</style>
+<style lang="less">
+.checkbox-list{
+  .checkbox-list-item + .checkbox-list-item{
+    margin: 0;
+  }
+  .checkbox-list-item span{
+    display: inline-block;
+    width: 150px;
+    height: 120px;
+    border: 1px solid #3A4257;
+    border-radius: 6px;
+    margin: 10px;
+    text-align: center;
+    padding: 10px;
+    overflow: hidden;
+  }
+  .checkbox-list-item p{
+    &:first-child{
+      font-size: 16px;
+      padding: 10px;
+      color: #000;
+      font-weight: 600;
+    }
+    padding: 2px;
+  }
+  .checkbox-list-item.ant-checkbox-wrapper-checked span{
+    background: #e6f7ff;
+  }
+  .ant-checkbox-wrapper span.ant-checkbox {
+    display: none;
+  }
+  .ant-checkbox-wrapper-checked span{
+    background: #e6f7ff;
+  }
 }
 </style>

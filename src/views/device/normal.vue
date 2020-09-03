@@ -217,8 +217,8 @@
           this.ipagination.current = 1
         }
         const params = {...this.queryParam}
-        params.start_index = this.ipagination.current
-        params.count = this.ipagination.pageSize
+        params.pageNo = this.ipagination.current
+        params.pageSize = this.ipagination.pageSize
         this.loading = true
         getOboxDeviceList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {

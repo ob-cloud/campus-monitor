@@ -8,8 +8,9 @@
     @close="handleCancel"
     :visible="visible"
     :destroyOnClose="true"
+    :bodyStyle="{height: 'calc(100% - 60px)'}"
   >
-    <a-layout>
+    <a-layout style="height: 100%">
       <a-layout-sider width="200px" style="background: #132436;">
         <lamp :color="lampColor"></lamp>
       </a-layout-sider>
