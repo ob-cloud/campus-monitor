@@ -76,7 +76,7 @@
 
         <span slot="tags" slot-scope="panel_addr">
           <a-tag color="geekblue">{{ panel_addr[0].addr }}</a-tag>
-          <a-tag color="green">{{ panel_addr[0].groupAddr }}</a-tag>
+          <a-tag color="green">{{ panel_addr[0].group_addr }}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
           <a v-isPermitted="'device:group:edit'" @click="handleEdit(record)">编辑</a>

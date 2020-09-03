@@ -30,7 +30,7 @@ import { Descriptor } from 'hardware-suit'
 export default {
   data () {
     return {
-      title: '操作',
+      title: '选择编组成员',
       visible: false,
       model: {},
       labelCol: {

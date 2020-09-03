@@ -60,7 +60,7 @@ export default {
         group_member: record.group_member,
         group_name: record.group_name,
         addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].addr : '',
-        group_addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].groupAddr : ''
+        group_addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].group_addr : ''
       }
       this.visible = true
       this.$nextTick(() => {
@@ -106,7 +106,7 @@ export default {
       this.visible = false
     },
     handleMember () {
-      this.$refs.memberModal.edit({})
+      this.$refs.memberModal.edit({members: this.form.getFieldValue('group_member')})
     },
     modalOk (member) {
       this.form.setFieldsValue({group_member: member})
