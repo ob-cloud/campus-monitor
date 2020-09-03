@@ -41,6 +41,7 @@
                 <a-spin :spinning="lampGroupLoading">
                   <div class="wrapper" v-for="(item, index) in checkboxGroupList" :key="index">
                     <a-row :gutter="40" style="margin: 0;">
+                      <!-- <a-col :span="2"><span>{{ item.name }}</span></a-col> -->
                       <a-col :span="12">
                         <span class="text">亮度</span>
                         <a-slider class="slider" v-model="item.light" :min="0" :max="100" :marks="{0: '0', 100: '100'}"></a-slider>
@@ -129,14 +130,16 @@ export default {
           return t || {groupNum: item}
         })
       }
+      if (groupList && groupList.length && groupList[0]) {
+        this.checkboxGroupList = groupList.map(item => {
+          const target = this.lampGroupList.find(it => it.groupNum === item.groupNum)
+          return {
+            ...item,
+            ...target
+          }
+        })
+      }
 
-      this.checkboxGroupList = groupList.map(item => {
-        const target = this.lampGroupList.find(it => it.groupNum === item.groupNum)
-        return {
-          ...item,
-          ...target
-        }
-      })
     }
   },
   methods: {
@@ -158,7 +161,7 @@ export default {
     },
     handleOk () {
       const params = {
-        serialId: this.serialId,
+        serialId: this.model.serialId,
         index: this.selectedPanelKeyIndex
       }
       const groupStatus = this.checkboxGroupList.map(item => {
@@ -172,13 +175,14 @@ export default {
       setPanelKey(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('设置成功')
-          this.$emit('ok')
+          // this.$emit('ok')
         } else {
           this.$message.warning(res.message)
         }
       }).finally(() => {
         this.confirmLoading = false
-        this.close()
+        setTimeout(() => this.close(), 2000)
+
       })
     },
     onClickLampItem (item) {

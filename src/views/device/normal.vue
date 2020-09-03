@@ -112,7 +112,7 @@
     <normal-device-modal ref="modalDeviceForm" @ok="modalDeviceFormOk"></normal-device-modal>
     <humidity-action-modal ref="humidityModal" @close="actionModalClose"></humidity-action-modal>
     <lamp-action-modal ref="lampModal" @close="actionModalClose"></lamp-action-modal>
-    <keypanel-action-modal ref="keypanelModal" @ok="actionModalClose"></keypanel-action-modal>
+    <keypanel-action-modal ref="keypanelModal" @ok="actionModalClose" @close="actionModalClose"></keypanel-action-modal>
     <power-switch-modal ref="powerModal" @close="actionModalClose"></power-switch-modal>
   </a-card>
 </template>
