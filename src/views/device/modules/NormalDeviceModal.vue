@@ -41,10 +41,10 @@
         </a-row>
       </a-form>
     </div>
-    <a-card style="height: 400px; overflow-y: auto; text-align: center;" class="ant-spin-nested-loading">
-      <div v-if="!confirmLoading && !scanDeviceListFromWebsocket.length">暂无设备</div>
+    <a-card style="height: 400px; overflow-y: auto;" class="ant-spin-nested-loading">
+      <div style="text-align: center;" v-if="!confirmLoading && !scanDeviceListFromWebsocket.length">暂无设备</div>
       <a-spin :spinning="confirmLoading" :tip="scanTips">
-        <a-card size="small" style="width: 300px" v-for="(item, index) in scanDeviceListFromWebsocket" :key="index">
+        <a-card class="box" size="small" v-for="(item, index) in scanDeviceListFromWebsocket" :key="index">
           <p>{{ item.deviceId }}</p>
           <p>{{ Descriptor.getTypeDescriptor(item.deviceType) }}</p>
           <p>{{ Descriptor.getTypeDescriptor(item.deviceType, item.deviceChildType) }}</p>
@@ -106,6 +106,7 @@ export default {
     },
     searchQuery () {
       const that = this
+      this.scanDeviceListFromWebsocket = []
       // 触发表单验证
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -182,5 +183,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
+.box {
+  width: 180px;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 0 10px 10px 0;
+  text-align: center;
+}
 </style>
