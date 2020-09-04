@@ -30,7 +30,7 @@
           <a-col :md="8" :sm="8">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">扫描</a-button>
-              <a-button type="primary" @click="searchPause" icon="stop" style="margin-left: 8px">停止</a-button>
+              <a-button type="primary" :disabled="!confirmLoading" @click="searchPause" icon="stop" style="margin-left: 8px">停止</a-button>
               <!-- <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button> -->
               <!-- <a @click="handleToggleSearch" style="margin-left: 8px">
                 {{ toggleSearchStatus ? '收起' : '展开' }}
