@@ -41,9 +41,15 @@
         </a-row>
       </a-form>
     </div>
-    <a-card style="height: 400px; overflow-y: auto;">
-      <a-spin :spinning="confirmLoading">
-
+    <a-card style="height: 400px; overflow-y: auto; text-align: center;" class="ant-spin-nested-loading">
+      <div v-if="!confirmLoading && !scanDeviceListFromWebsocket.length">暂无设备</div>
+      <a-spin :spinning="confirmLoading" :tip="scanTips">
+        <a-card size="small" style="width: 300px" v-for="(item, index) in scanDeviceListFromWebsocket" :key="index">
+          <p>{{ item.deviceId }}</p>
+          <p>{{ Descriptor.getTypeDescriptor(item.deviceType) }}</p>
+          <p>{{ Descriptor.getTypeDescriptor(item.deviceType, item.deviceChildType) }}</p>
+        </a-card>
+        <!-- <div v-else>暂无设备</div> -->
       </a-spin>
     </a-card>
   </a-modal>
@@ -51,6 +57,7 @@
 
 <script>
 import { scanAndSaveDevicesToObox, pauseScanDevices, getAllOboxList } from '@/api/device'
+import { Descriptor } from 'hardware-suit'
 export default {
   data () {
     return {
@@ -71,8 +78,19 @@ export default {
         oboxSerialId: { rules: [{ required: true, message: '请选择网关!' }] },
       },
       oboxList: [],
-      oboxSerialId: ''
+      oboxSerialId: '',
+      scanDeviceListFromWebsocket: [],
+      scanTimeout: 6000,
+      scanTips: '扫描设备中...',
+      Descriptor
     }
+  },
+  mounted () {
+    // 订阅WebSocket设备扫描信息
+    this.$bus.$on('scan', (record) => {
+      if (!record.result) this.confirmLoading = false
+      this.scanDeviceListFromWebsocket.push(record.result)
+    })
   },
   methods: {
     getOboxList () {
@@ -90,20 +108,27 @@ export default {
           that.confirmLoading = true
           let formData = Object.assign(that.model, values)
           that.oboxSerialId = formData.oboxSerialId
-          console.log(formData)
           scanAndSaveDevicesToObox(formData.oboxSerialId, formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
-              console.log('scan  ', res)
-              that.$message.success(`设备已扫描并添加到OBox(${that.oboxSerialId})中`)
+              // console.log('scan  ', res)
+              // that.$message.success(`设备已扫描并添加到OBox(${that.oboxSerialId})中`)
               // that.handleOk()
+              // that.scanTips = '扫描设备中...'
+              that.clearScanLoading()
             } else {
               that.$message.warning(res.message)
             }
-          }).finally(() => {
-            that.confirmLoading = false
-          })
+          }).catch(() => that.confirmLoading = false)
+          // .finally(() => {
+          //   that.confirmLoading = false
+          // })
         }
       })
+    },
+    clearScanLoading () {
+      setTimeout(() => {
+        this.confirmLoading = false
+      }, this.scanTimeout);
     },
     searchPause () {
       if (!this.oboxSerialId) return

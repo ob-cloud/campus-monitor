@@ -62,7 +62,7 @@
 
 <script>
 import { getAnnouncementListByUser, editAnnouncementStatus, queryAnnouncementDetail } from '@/api/system'
-import { WebSocketMixin } from '@/utils/websocket'
+import { WebSocketMixin, SocketMessageCmdEvent } from '@/utils/websocket'
 import ShowAnnouncement from '@components/tools/ShowAnnouncement'
 
 export default {
@@ -87,7 +87,8 @@ export default {
     }
   },
   mounted () {
-    this.initWebSocket(this.$store.getters.userInfo.id)
+    // this.initWebSocket(this.$store.getters.userInfo.id)
+    this.initWebSocket()
     this.websocket.onmessage = this.onWebSocketMessage
     // this.loadData()
   },
@@ -128,12 +129,18 @@ export default {
     },
     onWebSocketMessage (e) {
       const data = eval(`(${e.data})`)
-      if (data.cmd !== 'heartcheck') {
-        this.loadData()
-        this.handleNotification(data)
-      }
+      // if (data.cmd !== 'heartcheck') {
+      //   this.loadData()
+      //   this.handleNotification(data)
+      // }
       //心跳重置检测
-      this.startHeartBeat()
+      // this.startHeartBeat()
+
+      // 广播 websocket 事件
+      console.log('eeeeeee ', data)
+      if (SocketMessageCmdEvent[data.cmd]) {
+        this.$bus.$emit(SocketMessageCmdEvent[data.cmd], data)
+      }
     },
     handleNotification (data) {
       const text = data.msgTxt

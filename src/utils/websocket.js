@@ -1,6 +1,6 @@
 import { WEBSOCKET_URL } from '@/config/env.config'
 
-export function initWebSocket (topic, url) {
+export function initWebSocket (topic = '', url) {
   url = url || WEBSOCKET_URL
   url = url.replace('https://', 'wss://').replace('http://', 'ws://').format({topic})
   const websocket = new WebSocket(url)
@@ -26,6 +26,12 @@ export function onWebSocketError () {
 export function onWebSocketMessage (e) {
   console.log('WebSocket Receive Data.\n')
   console.log(e.data)
+}
+
+// websocket 消息cmd对应事件
+export const SocketMessageCmdEvent = {
+  'a100': 'state',
+  '2003': 'scan'
 }
 
 // 20s 心跳检测一次
@@ -57,9 +63,10 @@ export const WebSocketMixin = {
     }
   },
   methods: {
-    initWebSocket (topic, url) {
+    initWebSocket (topic = '', url) {
       url = url || WEBSOCKET_URL
       url = url.replace('https://', 'wss://').replace('http://', 'ws://').format({topic})
+      url = !topic ? url.slice(0, -1) : url
       const websocket = new WebSocket(url)
       websocket.onopen = this.onWebSocketOpen
       websocket.onclose = this.onWebSocketClose

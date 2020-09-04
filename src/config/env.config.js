@@ -14,7 +14,8 @@ const envConfig = {
 }
 
 // export const WEBSOCKET_URL = 'https://aliiot.on-bright.com/pro/websocket/{topic}'
-export const WEBSOCKET_URL = 'https://aliiot.on-bright.com/nurseTest/websocket/{topic}'
+// export const WEBSOCKET_URL = 'https://aliiot.on-bright.com/nurseTest/websocket/{topic}'
+export const WEBSOCKET_URL = 'http://10.10.92.129:80/websocket/{topic}'
 
 export function isProEnv () {
   return process.env.NODE_ENV === 'production'
