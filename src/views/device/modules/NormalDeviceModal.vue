@@ -143,7 +143,7 @@ export default {
     clearScanLoading () {
       this.timePicker = setTimeout(() => {
         this.confirmLoading = false
-      }, this.scanTimeout);
+      }, this.scanTimeout)
     },
     searchPause () {
       if (!this.oboxSerialId) return

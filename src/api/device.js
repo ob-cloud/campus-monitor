@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-31 15:31:05
+ * @Last Modified time: 2020-09-04 16:51:31
  */
 
 // import {request} from '@/common/request'
@@ -34,7 +34,7 @@ const scanAndSaveDevicesToObox = (oboxSerialId, params) => postFormAction(`/aliS
   timeout: 60,
   ...params
 })
-const pauseScanDevices = (oboxSerialId) => deleteAction(` /facade/scan/${oboxSerialId}`)
+const pauseScanDevices = (oboxSerialId) => deleteAction(`/facade/scan/${oboxSerialId}`)
 
 // OBOX
 const getOboxList = (params) => getAction('/common', {
