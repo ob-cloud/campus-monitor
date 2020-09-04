@@ -135,7 +135,7 @@ export default {
       })
     },
     getMapPoints () {
-      this.contentSpinning = true
+      this.contentSpinning = false
       getPointList().then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.points = res.result.records
