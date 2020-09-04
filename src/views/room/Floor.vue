@@ -107,10 +107,10 @@ export default {
       this.loadData()
     },
     handlePower (item) {
-      const isPowerOn = this.isLightActive(item.deviceState)
+      // const isPowerOn = this.isLightActive(item.deviceState)
       const params = {
         floorId: item.id,
-        deviceType: isPowerOn ? 2 : 1
+        deviceType: item.allType === 1 ? 2 : 1
       }
       handleLampPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
