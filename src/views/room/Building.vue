@@ -65,6 +65,7 @@ export default {
   mounted () {
     this.calculateContentHeight()
     // Helper.windowOnResize(this, this.fixLayout)
+    this.$bus.$on('state', () => this.loadData())
   },
   methods: {
     searchReset () {
