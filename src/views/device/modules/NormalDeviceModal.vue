@@ -81,6 +81,7 @@ export default {
       oboxSerialId: '',
       scanDeviceListFromWebsocket: [],
       scanTimeout: 6000,
+      timePicker: null,
       scanTips: '扫描设备中...',
       Descriptor
     }
@@ -88,7 +89,10 @@ export default {
   mounted () {
     // 订阅WebSocket设备扫描信息
     this.$bus.$on('scan', (record) => {
-      if (!record.result) this.confirmLoading = false
+      if (!record.result) {
+        this.timePicker && clearTimeout(this.timePicker)
+        return this.confirmLoading = false
+      }
       this.scanDeviceListFromWebsocket.push(record.result)
     })
   },
@@ -108,7 +112,7 @@ export default {
           that.confirmLoading = true
           let formData = Object.assign(that.model, values)
           that.oboxSerialId = formData.oboxSerialId
-          scanAndSaveDevicesToObox(formData.oboxSerialId, formData).then(res => {
+          scanAndSaveDevicesToObox(that.deSerial(formData.oboxSerialId), formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
               // console.log('scan  ', res)
               // that.$message.success(`设备已扫描并添加到OBox(${that.oboxSerialId})中`)
@@ -125,8 +129,19 @@ export default {
         }
       })
     },
+    deSerial (serialId) {
+      const serial = serialId.split('').reverse()
+      serial.forEach((item, index) => {
+        if((index + 1) % 2 === 0) {
+          var t = serial[index-1]
+          serial[index-1] = item
+          serial[index] = t
+        }
+      })
+      return serial.join('')
+    },
     clearScanLoading () {
-      setTimeout(() => {
+      this.timePicker = setTimeout(() => {
         this.confirmLoading = false
       }, this.scanTimeout);
     },

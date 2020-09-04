@@ -109,13 +109,13 @@ export default {
     handlePower (item) {
       const isPowerOn = this.isLightActive(item.deviceState)
       const params = {
-        roomId: item.id,
+        floorId: item.id,
         deviceType: isPowerOn ? 2 : 1
       }
       handleLampPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
-          this.loadData()
+          // this.loadData()
         } else this.$message.error(res.message)
       })
     },
@@ -130,7 +130,7 @@ export default {
           triggerAllPower(+!res.result ? 1 : 2).then(response => {
             if (that.$isAjaxSuccess(response.code)) {
               that.$message.success('操作成功')
-              that.loadData()
+              // that.loadData()
             } else that.$message.error(response.message)
           })
         }

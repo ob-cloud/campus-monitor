@@ -23,7 +23,7 @@
           <div class="block-item" :class="{'active': isLightActive(item.deviceState)}" v-for="item in roomList" :key="item.id">
             <div class="toolbar">
               <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
-              <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}教室灯?`" @confirm="() => handlePower(item)">
+              <a-popconfirm :title="`${isLightActive(item.deviceState) ? '关闭' : '开启'}教室灯?`" @confirm="() => handlePower(item)">
                 <i v-isPermitted="'room:classroom:power'" class="icon obicon obicon-power" title="电源开关"></i>
               </a-popconfirm>
               <a-icon v-isPermitted="'room:classroom:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
@@ -123,7 +123,7 @@ export default {
       handleLampPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
-          this.loadData()
+          // this.loadData()
         } else this.$message.error(res.message)
       })
     },
@@ -138,7 +138,7 @@ export default {
           triggerAllPower(+!res.result ? 1 : 2).then(response => {
             if (that.$isAjaxSuccess(response.code)) {
               that.$message.success('操作成功')
-              that.loadData()
+              // that.loadData()
             } else that.$message.error(response.message)
           })
         }

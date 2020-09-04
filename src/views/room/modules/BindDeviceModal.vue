@@ -5,7 +5,7 @@
         ref="table"
         bordered
         size="middle"
-        rowKey="deviceSerialId"
+        rowKey="serialId"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"

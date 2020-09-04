@@ -109,6 +109,7 @@ export default {
   },
   mounted () {
     this.initLayout()
+    this.$bus.$on('state', () => this.getMapPoints())
   },
   computed: {
     ...mapGetters([

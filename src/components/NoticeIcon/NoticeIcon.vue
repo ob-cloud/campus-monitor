@@ -88,7 +88,7 @@ export default {
   },
   mounted () {
     // this.initWebSocket(this.$store.getters.userInfo.id)
-    this.initWebSocket()
+    this.initWebSocket(this.$store.getters.token)
     this.websocket.onmessage = this.onWebSocketMessage
     // this.loadData()
   },
@@ -136,8 +136,8 @@ export default {
       //心跳重置检测
       // this.startHeartBeat()
 
+      console.log('socket message ', data)
       // 广播 websocket 事件
-      console.log('eeeeeee ', data)
       if (SocketMessageCmdEvent[data.cmd]) {
         this.$bus.$emit(SocketMessageCmdEvent[data.cmd], data)
       }

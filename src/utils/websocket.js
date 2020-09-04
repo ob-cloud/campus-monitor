@@ -59,8 +59,12 @@ export const WebSocketMixin = {
       lockReconect: false,
       isForceClose: false,
       websocket: null,
-      heartBeat: HeartBeat
+      heartBeat: HeartBeat,
+      topic: ''
     }
+  },
+  mounted () {
+    // this.initWebSocket()
   },
   methods: {
     initWebSocket (topic = '', url) {
@@ -72,11 +76,12 @@ export const WebSocketMixin = {
       websocket.onclose = this.onWebSocketClose
       websocket.onerror = this.onWebSocketError
       websocket.onmessage = this.onWebSocketMessage
+      this.topic = topic
 
       this.websocket = websocket
     },
     onWebSocketOpen () {
-      this.startHeartBeat()
+      // this.startHeartBeat()
     },
     onWebSocketClose () {
       this.isForceClose && this.reconnectWebSocket()
@@ -96,7 +101,7 @@ export const WebSocketMixin = {
       this.lockReconect = true
       setTimeout(() => {
         console.log('reconnect websocket...')
-        this.initWebSocket()
+        this.initWebSocket(this.topic)
         this.lockReconect = false
       }, 5000)
     },
