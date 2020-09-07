@@ -52,8 +52,8 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use((response) => {
   if (response.data && response.data.code === 'SYS009') {
     notification.error({
-      message: 'Unauthorized',
-      description: 'Authorization verification failed'
+      message: '无权限',
+      description: '权限验证失败'
     })
     // store.dispatch('Logout').then(() => {
     //   setTimeout(() => {
