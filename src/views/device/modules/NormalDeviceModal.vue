@@ -112,8 +112,8 @@ export default {
         if (!err) {
           that.confirmLoading = true
           let formData = Object.assign(that.model, values)
-          that.oboxSerialId = formData.oboxSerialId
-          scanAndSaveDevicesToObox(that.deSerial(formData.oboxSerialId), formData).then(res => {
+          // that.oboxSerialId = formData.oboxSerialId
+          scanAndSaveDevicesToObox(formData.oboxSerialId, formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
               // console.log('scan  ', res)
               // that.$message.success(`设备已扫描并添加到OBox(${that.oboxSerialId})中`)
@@ -130,6 +130,7 @@ export default {
         }
       })
     },
+    // 反序列号，123456 --> 563412| eeec1ea281 -> 81a21eecee
     deSerial (serialId) {
       const serial = serialId.split('').reverse()
       serial.forEach((item, index) => {
