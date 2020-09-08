@@ -1,8 +1,8 @@
 <template>
   <a-modal :title="title" :width="800" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
     <div class="action-container">
-      <div v-if="is3KeyPanel()" class="list">
-        <a-checkbox-group v-model="powers" class="power-group">
+      <div v-if="is3KeyPanel()" class="list power-group">
+        <a-checkbox-group v-model="powers" class="">
           <a-checkbox v-for="(item, index) in 1" :value="index+1" :key="index">
             <i class="obicon obicon-power"></i>
           </a-checkbox>
@@ -461,22 +461,64 @@ export default {
       font-size: 30px;
     }
 
-    .power-group .ant-checkbox-wrapper span.ant-checkbox {
-      display: none;
+    // .power-group .ant-checkbox-wrapper span.ant-checkbox {
+    //   display: none;
+    // }
+    // .power-group .ant-checkbox-wrapper span{
+    //   display: inline-block;
+    //   border: 1px solid;
+    //   border-radius: 2px;
+    //   transition: all .3s;
+    // }
+    // .power-group .ant-checkbox-wrapper-checked span{
+    //   color: #fff;
+    //   background-color: #1890FE;
+    //   border-color: #1890ff;
+    //   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+    //   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+    // }
+  }
+  .power-group{
+    width: 360px;
+    height: 300px;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+    text-align: center;
+    padding: 40px 10px;
+    -webkit-box-shadow: 1px 1px 1px 1px #f5f5f5;
+    box-shadow: 1px 1px 1px 1px #f5f5f5;
+    background-color: #f7f7f7;
+    border-radius: 12px;
+    position: relative;
+
+    .ant-checkbox-group{
+      position: absolute;
+      left: 50%;
+      top: 40%;
+      transform: translateX(-50%)
     }
-    .power-group .ant-checkbox-wrapper span{
-      display: inline-block;
-      border: 1px solid;
-      border-radius: 2px;
-      transition: all .3s;
+  }
+  .power-group .ant-checkbox-wrapper span.ant-checkbox {
+    display: none;
+  }
+  .power-group .ant-checkbox-wrapper span{
+    display: inline-block;
+    border: 1px solid;
+    border-radius: 2px;
+    transition: all .3s;
+
+    > i{
+      font-size: 30px;
     }
-    .power-group .ant-checkbox-wrapper-checked span{
-      color: #fff;
-      background-color: #1890FE;
-      border-color: #1890ff;
-      text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
-      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
-    }
+  }
+  .power-group .ant-checkbox-wrapper-checked span{
+    color: #dd0b0b;
+    background-color: #fff;
+    border-color: #d8d815;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+    // box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+    text-shadow: 0 -2px 0 #d8d815;
+    // box-shadow: 0px -4px 7px 2px #d8d815;
   }
 }
 .tabPicker,
