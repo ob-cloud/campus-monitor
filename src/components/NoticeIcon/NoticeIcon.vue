@@ -62,12 +62,13 @@
 
 <script>
 import { getAnnouncementListByUser, editAnnouncementStatus, queryAnnouncementDetail } from '@/api/system'
-import { WebSocketMixin, SocketMessageCmdEvent } from '@/utils/websocket'
+import { WebSocketMixin } from '@/utils/websocket'
+import { BroadcastMixin } from '@/utils/broadcast'
 import ShowAnnouncement from '@components/tools/ShowAnnouncement'
 
 export default {
   name: 'NoticeIcon',
-  mixins: [ WebSocketMixin ],
+  mixins: [ WebSocketMixin, BroadcastMixin ],
   components: { ShowAnnouncement },
   data () {
     return {
@@ -138,9 +139,10 @@ export default {
 
       console.log('socket message ', data)
       // 广播 websocket 事件
-      if (SocketMessageCmdEvent[data.cmd]) {
-        this.$bus.$emit(SocketMessageCmdEvent[data.cmd], data)
-      }
+      // if (data.type === 0 && SocketMessageCmdEvent[data.cmd]) {
+      //   this.$bus.$emit(SocketMessageCmdEvent[data.cmd], data)
+      // }
+      this.broadcast(data)
     },
     handleNotification (data) {
       const text = data.msgTxt

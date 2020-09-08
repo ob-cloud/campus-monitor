@@ -35,7 +35,8 @@ export function onWebSocketMessage (e) {
 // websocket 消息cmd对应事件
 export const SocketMessageCmdEvent = {
   'a100': 'state',
-  '2003': 'scan'
+  '2003': 'scan',
+  '2': 'obox'
 }
 
 // 20s 心跳检测一次
