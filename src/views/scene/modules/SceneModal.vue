@@ -381,8 +381,8 @@ export default {
       })
     },
     getLocation () { // get validable location
-      // const location = {...this.sceneModel.location}
-      const location = { buildingId: this.buildingId, floorId: this.floorId, roomId: this.roomId}
+      const location = {...this.sceneModel.location}
+      // const location = { buildingId: this.buildingId, floorId: this.floorId, roomId: this.roomId}
       location.buildingId === '' && delete location.buildingId
       location.floorId === '' && delete location.floorId
       location.roomId === '' && delete location.roomId

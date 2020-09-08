@@ -183,12 +183,28 @@
       this.getSceneDeviceList()
     },
     methods: {
-      loadData () {
-        this.getDataList()
+      searchReset () {
+        this.queryParam = {
+          buildingId: undefined,
+          floorId: undefined,
+          roomId: undefined,
+          pageNo: 1,
+          pageSize: 10
+        }
+        this.loadData(1)
       },
-      getDataList () {
-        this.loading = true
+      loadData (arg) {
+        this.getDataList(arg)
+      },
+      getDataList (arg) {
+        if (arg === 1) {
+          this.ipagination.current = 1
+        }
         const params = {...this.queryParam}
+        params.pageNo = this.ipagination.current
+        params.pageSize = this.ipagination.pageSize
+
+        this.loading = true
         getSmartSceneList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
