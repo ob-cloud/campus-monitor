@@ -49,7 +49,7 @@
                 <span>色度</span>
               </a-col>
               <a-col :span="16">
-                <a-slider v-model="color" :min="0" :max="254" :disabled="!isPowerOn" :marks="{0: '0', 254: '254'}" input-size="mini" @afterChange="onColorChange"></a-slider>
+                <a-slider v-model="color" :min="0" :max="255" :disabled="!isPowerOn" :marks="{0: '0', 255: '255'}" input-size="mini" @afterChange="onColorChange"></a-slider>
               </a-col>
             </a-row>
           </div>
