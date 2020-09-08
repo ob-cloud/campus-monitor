@@ -1,7 +1,11 @@
 import { WEBSOCKET_URL } from '@/config/env.config'
 
+const getUrl = (url) => {
+  return url.includes('http') ? url : window.location.origin + url
+}
+
 export function initWebSocket (topic = '', url) {
-  url = url || WEBSOCKET_URL
+  url = getUrl(url || WEBSOCKET_URL)
   url = url.replace('https://', 'wss://').replace('http://', 'ws://').format({topic})
   const websocket = new WebSocket(url)
   websocket.onopen = onWebSocketOpen
@@ -67,8 +71,11 @@ export const WebSocketMixin = {
     // this.initWebSocket()
   },
   methods: {
+    getUrl (url) {
+      return url.includes('http') ? url : window.location.origin + url
+    },
     initWebSocket (topic = '', url) {
-      url = url || WEBSOCKET_URL
+      url = url = this.getUrl(url || WEBSOCKET_URL)
       url = url.replace('https://', 'wss://').replace('http://', 'ws://').format({topic})
       url = !topic ? url.slice(0, -1) : url
       const websocket = new WebSocket(url)
