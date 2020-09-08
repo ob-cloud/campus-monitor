@@ -199,17 +199,19 @@ export default {
   padding: 20px;
   background: #fff;
   margin: 10px;
-  // width: 190px;
-  // height: 142px;
-  width: 218px;
-  height: 156px;
+  // width: 218px;
+  // height: 156px;
+  width: 230px;
+  height: 164px;
   border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0px 0px 3px 1px #c0c4cc;
+  // box-shadow: 0px 0px 3px 1px #c0c4cc;
+  box-shadow: 0px 0px 4px 0px #c0c4cc;
 
   &.active{
     background: #fff4d3;
-    box-shadow: 0px 0px 3px 1px #ebdbac;
+    // box-shadow: 0px 0px 3px 1px #ebdbac;
+    box-shadow: 0px 0px 4px 1px #ebdbac;
 
     .building-sign{
       color: #353535;
@@ -230,6 +232,7 @@ export default {
 
       &:hover{
         color: #000;
+        font-weight: 700;
       }
       & + .icon{
         right: 5px;
