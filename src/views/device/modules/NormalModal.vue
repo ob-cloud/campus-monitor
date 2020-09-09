@@ -12,7 +12,7 @@
 
 <script>
 import pick from 'lodash.pick'
-import { editOboxName } from '@/api/device'
+import { editDevice } from '@/api/device'
 export default {
   data () {
     return {
@@ -54,7 +54,7 @@ export default {
         if (!err) {
           that.confirmLoading = true
           let formData = Object.assign(this.model, values)
-          let obj = editOboxName(formData)
+          let obj = editDevice(formData.serialId, formData.name)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
               that.$message.success(res.message)
