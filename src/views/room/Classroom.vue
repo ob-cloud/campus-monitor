@@ -22,13 +22,13 @@
         <a-spin :spinning="loading">
           <div class="block-item" :class="{'active': item.lightState}" v-for="item in roomList" :key="item.id">
             <div class="toolbar left">
-              <span>{{ getHumidity(item.deviceState) }}</span>
+              <span title="温度/湿度">{{ getHumidity(item.deviceState) }}</span>
               <!-- <span><i class="obicon obicon-icon-temperature" style="color: #f66c32;"></i>35℃</span>
               <span><i class="obicon obicon-humidity" style="color: #73d1f0;"></i>40%</span> -->
             </div>
             <div class="toolbar">
               <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
-              <a-popconfirm :title="`${item.lightState ? '关' : '开'}灯?`" @confirm="() => handleLamp(1 - item.lightState)">
+              <a-popconfirm :title="`${item.lightState ? '关' : '开'}灯?`" @confirm="() => handleLamp(item)">
                 <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="教室灯"></i>
               </a-popconfirm>
               <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}教室开关?`" @confirm="() => handlePower(item)">
@@ -56,13 +56,13 @@
 </template>
 
 <script>
-import { getRoomList, delRoom, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
+import { getRoomList, delRoom, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 // import { editSwitchStatus } from '@/api/device'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
 import ClassroomModal from './modules/ClassroomModal'
 import RoomDeviceModal from './modules/RoomDeviceModal'
-import { HumidityEquip, LedLampEquip } from 'hardware-suit'
+import { HumidityEquip } from 'hardware-suit'
 export default {
   components: { ClassroomModal, RoomDeviceModal },
   mixins: [ProListMixin],
@@ -129,26 +129,36 @@ export default {
     handleSearch () {
       this.loadData(1)
     },
-    handleLamp (state) {
-      console.log(state)
-      const val = state ? 100 : 0
-      const ledLampEquip = new LedLampEquip('')
-      ledLampEquip.setBrightness(val).setColdColor(0).setWarmColor().getBytes()
-      // editSwitchStatus(this.model.serialId, status).then(res => {
-      //   if (this.$isAjaxSuccess(res.code)) {
-      //     this.$message.success('成功')
-      //   } else {
-      //     this.$message.error('失败')
-      //   }
-      // })
-    },
-    handlePower (item) {
-      const isPowerOn = this.isLightActive(item.deviceState)
+    handleLamp (item) {
+      // console.log(state)
+      // const val = state ? 100 : 0
+      // const ledLampEquip = new LedLampEquip('')
+      // ledLampEquip.setBrightness(val).setColdColor(0).setWarmColor().getBytes()
+      // // editSwitchStatus(this.model.serialId, status).then(res => {
+      // //   if (this.$isAjaxSuccess(res.code)) {
+      // //     this.$message.success('成功')
+      // //   } else {
+      // //     this.$message.error('失败')
+      // //   }
+      // // })
       const params = {
         roomId: item.id,
-        deviceType: isPowerOn ? 2 : 1
+        deviceType: item.lightState ? 2 : 1
       }
       handleLampPower(params).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('操作成功')
+        } else this.$message.error(res.message)
+      })
+
+    },
+    handlePower (item) {
+      // const isPowerOn = this.isLightActive(item.deviceState)
+      const params = {
+        roomId: item.id,
+        deviceType: item.switchState ? 2 : 1
+      }
+      handleSwitchPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
           // this.loadData()
