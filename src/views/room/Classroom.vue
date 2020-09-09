@@ -20,19 +20,19 @@
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
-          <div class="block-item" :class="{'active': isLightActive(item.deviceState)}" v-for="item in roomList" :key="item.id">
+          <div class="block-item" :class="{'active': item.lightState}" v-for="item in roomList" :key="item.id">
             <div class="toolbar left">
-              <span>35℃/40%</span>
+              <span>{{ getHumidity(item.deviceState) }}</span>
               <!-- <span><i class="obicon obicon-icon-temperature" style="color: #f66c32;"></i>35℃</span>
               <span><i class="obicon obicon-humidity" style="color: #73d1f0;"></i>40%</span> -->
             </div>
             <div class="toolbar">
               <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
-              <a-popconfirm :title="`${isLightActive(item.deviceState) ? '关' : '开'}灯?`" @confirm="() => handleLamp(item)">
-                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" title="教室灯"></i>
+              <a-popconfirm :title="`${item.lightState ? '关' : '开'}灯?`" @confirm="() => handleLamp(1 - item.lightState)">
+                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="教室灯"></i>
               </a-popconfirm>
-              <a-popconfirm :title="`${isLightActive(item.deviceState) ? '关闭' : '开启'}教室电源?`" @confirm="() => handlePower(item)">
-                <i v-isPermitted="'room:classroom:power'" class="icon obicon obicon-power" title="电源开关"></i>
+              <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}教室开关?`" @confirm="() => handlePower(item)">
+                <i v-isPermitted="'room:classroom:power'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="教室开关"></i>
               </a-popconfirm>
               <a-icon v-isPermitted="'room:classroom:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
@@ -57,10 +57,12 @@
 
 <script>
 import { getRoomList, delRoom, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
+// import { editSwitchStatus } from '@/api/device'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
 import ClassroomModal from './modules/ClassroomModal'
 import RoomDeviceModal from './modules/RoomDeviceModal'
+import { HumidityEquip, LedLampEquip } from 'hardware-suit'
 export default {
   components: { ClassroomModal, RoomDeviceModal },
   mixins: [ProListMixin],
@@ -82,6 +84,11 @@ export default {
     this.$bus.$on('state', () => this.loadData())
   },
   methods: {
+    getHumidity (state) {
+      if (!state) return ''
+      const humidity = new HumidityEquip(state)
+      return `${humidity.getTemperature()}℃/${humidity.getHumidity()}%`
+    },
     searchReset () {
       this.queryParam = { pageNo: 1, pageSize: 10 }
       this.loadData(1)
@@ -122,8 +129,18 @@ export default {
     handleSearch () {
       this.loadData()
     },
-    handleLamp (item) {
-      console.log(item)
+    handleLamp (state) {
+      console.log(state)
+      const val = state ? 100 : 0
+      const ledLampEquip = new LedLampEquip('')
+      ledLampEquip.setBrightness(val).setColdColor(0).setWarmColor().getBytes()
+      // editSwitchStatus(this.model.serialId, status).then(res => {
+      //   if (this.$isAjaxSuccess(res.code)) {
+      //     this.$message.success('成功')
+      //   } else {
+      //     this.$message.error('失败')
+      //   }
+      // })
     },
     handlePower (item) {
       const isPowerOn = this.isLightActive(item.deviceState)
@@ -256,11 +273,16 @@ export default {
       & + .icon{
         right: 5px;
       }
+
+      &.active{
+        color: #0cadf8;
+        font-weight: bolder;
+      }
     }
   }
   .toolbar.left{
     left: 10px;
-    // top: 10px;
+    top: 8px;
     font-size: 12px;
     span {
       // display: block;

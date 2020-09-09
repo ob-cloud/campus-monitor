@@ -19,13 +19,14 @@
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
-          <div class="block-item" :class="{'active': item.allType}" v-for="item in dataList" :key="item.id">
+          <div class="block-item" :class="{'active': item.lightState}" v-for="item in dataList" :key="item.id">
             <div class="toolbar">
-              <a-popconfirm :title="`${item.allType ? '关' : '开'}楼层灯?`" @confirm="() => handleLamp(item)">
-                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" title="楼层灯"></i>
+              <a-popconfirm :title="`${item.lightState ? '关' : '开'}楼层灯?`" @confirm="() => handleLamp(item)">
+                <!-- <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" :class="{active: item.lightState}" title="楼层灯"></i> -->
+                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="楼层灯"></i>
               </a-popconfirm>
-              <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
-                <i v-isPermitted="'room:floor:power'" class="icon obicon obicon-power" title="电源开关"></i>
+              <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
+                <i v-isPermitted="'room:floor:power'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="电源开关"></i>
               </a-popconfirm>
               <a-icon v-isPermitted="'room:floor:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
@@ -239,6 +240,11 @@ export default {
       }
       & + .icon{
         right: 5px;
+      }
+
+      &.active{
+        color: #0cadf8;
+        font-weight: bolder;
       }
     }
   }
