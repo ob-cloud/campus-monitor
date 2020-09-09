@@ -520,7 +520,7 @@ export default {
       const that = this
       this.$refs.sceneForm.validate(valid => {
         if (valid) {
-          let obj = model.sceneNumber ? editSmartScene(model) : addSmartScene(model)
+          let obj = model.scene_number ? editSmartScene(model) : addSmartScene(model)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
               that.$message.success(res.message)
