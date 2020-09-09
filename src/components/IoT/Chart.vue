@@ -86,6 +86,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="less">
+.echarts{
+  height: 370px;
+}
 </style>

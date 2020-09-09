@@ -7,6 +7,7 @@
     :closable="true"
     @close="handleCancel"
     :visible="visible"
+    :destroyOnClose="true"
   >
     <a-layout class="expand humidifier">
       <a-layout-sider width="200px" theme="light">
@@ -88,9 +89,6 @@ export default {
     }
   },
   methods: {
-    add () {
-      this.edit({})
-    },
     show (record) {
       this.model = Object.assign({}, record)
       this.visible = true
@@ -165,6 +163,7 @@ export default {
         this.labels = chartList.map(item => item.time)
         const temperature = chartList.map(item => item.temperature)
         const humidifier = chartList.map(item => item.humidifier)
+        this.series = []
         this.series.push({
           name: '温度',
           type: 'line',
