@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-04 16:51:31
+ * @Last Modified time: 2020-09-09 15:37:09
  */
 
 // import {request} from '@/common/request'
@@ -21,6 +21,12 @@ const delDevice = (serialId, name) => postFormAction('/common', {
   CMD: 'modify_device',
   serialId,
   operate_type: '00',
+  name
+})
+const editDevice = (serialId, name) => getAction('/common', {
+  CMD: 'modify_device',
+  serialId,
+  operate_type: '01',
   name
 })
 
@@ -232,6 +238,7 @@ export {
   getDeviceList,
   getAllBuildingDeviceList,
   delDevice,
+  editDevice,
   scanAndSaveDevicesToObox,
   pauseScanDevices,
 
