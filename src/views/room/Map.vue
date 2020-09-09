@@ -222,8 +222,11 @@ export default {
         if (!that.isAdd) return
         const offsetLeft = this.offsetLeft
         const offsetTop = this.offsetTop
-        const x = event.clientX - offsetLeft // - 20
-        const y = event.clientY - offsetTop // - 102
+        // 滚动条
+        const wrapper = document.querySelector('.map-wrapper')
+        const content = document.querySelector('.map-content')
+        const x = event.clientX - offsetLeft + content.scrollLeft // - 20
+        const y = event.clientY - offsetTop + wrapper.scrollTop // - 102
         if (event.offsetX < 0 || event.offsetY < 0 || x > (1080 - that.radius) || y > (720 - that.radius)) return false
         that.editPoint.x = x
         that.editPoint.y = y
