@@ -14,7 +14,7 @@
         <div class="item" v-for="(item, index) in deviceList" :key="index">
           <a-card>
             <div slot="title">
-              {{ getPanelTitle(item.deviceType, item.deviceChildType) }}
+              {{ getPanelTitle(item.deviceType, item.deviceChildType, item.deviceSerialId) }}
             </div>
             <div class="detail">
               <template v-if="TypeHints.isXkeySocketSwitch(item.deviceChildType)">
@@ -63,7 +63,7 @@
 <script>
 import { removePoint } from '@/api/map'
 import { getRoomDeviceList } from '@/api/room'
-import { TypeHints, HumidityEquip } from 'hardware-suit'
+import { TypeHints, HumidityEquip, Descriptor } from 'hardware-suit'
 import ActionMixin from '@/utils/mixins/ActionMixin'
 import IotSwitch from '@/components/Bizz/BizzSwitch'
 export default {
@@ -103,10 +103,11 @@ export default {
     }
   },
   methods: {
-    getPanelTitle (deviceType, deviceChildType) {
-      if (TypeHints.isXkeySocketSwitch(deviceChildType)) return '开关'
-      if (TypeHints.isHumidifierSensors(deviceChildType)) return '温湿度'
-      if (TypeHints.isTransponder(deviceType)) return '红外'
+    getPanelTitle (deviceType, deviceChildType, deviceSerialId) {
+      // if (TypeHints.isXkeySocketSwitch(deviceChildType)) return '开关'
+      // if (TypeHints.isHumidifierSensors(deviceChildType)) return '温湿度'
+      // if (TypeHints.isTransponder(deviceType)) return '红外'
+      return `${Descriptor.getTypeDescriptor(deviceType, deviceChildType)}(${deviceSerialId})`
     },
     getDeviceList (id) {
       this.deviceLoading = true
@@ -115,6 +116,9 @@ export default {
           this.deviceList = Array.from(res.result.records).filter(item => {
             const isKeyPanel = TypeHints.isXkeySocketSwitch(item.deviceChildType)
             const isHumidity = TypeHints.isHumidifierSensors(item.deviceChildType)
+            if (isHumidity) {
+              this.humidity = new HumidityEquip(item.deviceState)
+            }
             const isTransponder = TypeHints.isTransponder(item.deviceType)
             return isKeyPanel || isHumidity || isTransponder
           })
@@ -141,7 +145,7 @@ export default {
       this.visible = true
       this.title = `${record.buildingName}栋-${record.floorName}层-${record.roomName}`
       this.activePointIndex = record.index
-      this.humidity = new HumidityEquip(record.deviceState)
+      // this.humidity = new HumidityEquip(record.deviceState)
       if (record.roomId) {
         this.getDeviceList(record.roomId)
       }
