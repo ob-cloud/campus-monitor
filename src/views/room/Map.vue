@@ -259,8 +259,8 @@ export default {
       return point1.x + w > point2.x && point1.x < point2.x + w && point1.y + w > point2.y && point1.y < point2.y + w
     },
     onBeforeUpload (file) {
-      const suffix = file.name && file.name.slice(file.name.lastIndexOf('.') + 1)
-      if (!['png', 'jpg', 'jpeg'].includes(suffix)) {
+      const suffix = file.name ? file.name.slice(file.name.lastIndexOf('.') + 1) : ''
+      if (!['png', 'jpg', 'jpeg'].includes(suffix.toLowerCase())) {
         this.$message.error('图片格式仅支持jpg/jpeg/png')
         return false
       }
