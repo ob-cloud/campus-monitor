@@ -158,12 +158,16 @@ export default {
       return status && status.slice(0, 2) !== '00'
     },
     parseBuildingBackground (status) {
-      if (!status) return '#a9a6a6'
-      return status.slice(0, 2) !== '00' ? '#1fe650' : 'rgb(223, 45, 45)'
+      // if (!status) return '#a9a6a6'
+      // return status.slice(0, 2) !== '00' ? '#1fe650' : 'rgb(223, 45, 45)'
+      if (status === '') return '#a9a6a6'
+      return status === '1' ? '#1fe650' : 'rgb(223, 45, 45)'
     },
     parseBuildingLabel (status) {
-      if (!status) return '无设备'
-      return status.slice(0, 2) !== '00' ? '开' : '关'
+      // if (!status) return '无设备'
+      // return status.slice(0, 2) !== '00' ? '开' : '关'
+      if (status === '') return '无设备'
+      return status === '1' ? '开' : '关'
     },
     handleEdit () {
       this.isAdd = true
