@@ -127,7 +127,7 @@ export default {
       this.loadData()
     },
     handleSearch () {
-      this.loadData()
+      this.loadData(1)
     },
     handleLamp (state) {
       console.log(state)
