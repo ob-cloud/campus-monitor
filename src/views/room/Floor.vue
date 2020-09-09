@@ -21,6 +21,9 @@
         <a-spin :spinning="loading">
           <div class="block-item" :class="{'active': item.allType}" v-for="item in dataList" :key="item.id">
             <div class="toolbar">
+              <a-popconfirm :title="`${item.allType ? '关' : '开'}楼层灯?`" @confirm="() => handleLamp(item)">
+                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" title="楼层灯"></i>
+              </a-popconfirm>
               <a-popconfirm :title="`${item.allType ? '关闭' : '开启'}楼层电源?`" @confirm="() => handlePower(item)">
                 <i v-isPermitted="'room:floor:power'" class="icon obicon obicon-power" title="电源开关"></i>
               </a-popconfirm>

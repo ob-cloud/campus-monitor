@@ -21,6 +21,11 @@
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
           <div class="block-item" :class="{'active': isLightActive(item.deviceState)}" v-for="item in roomList" :key="item.id">
+            <div class="toolbar left">
+              <span>35℃/40%</span>
+              <!-- <span><i class="obicon obicon-icon-temperature" style="color: #f66c32;"></i>35℃</span>
+              <span><i class="obicon obicon-humidity" style="color: #73d1f0;"></i>40%</span> -->
+            </div>
             <div class="toolbar">
               <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
               <a-popconfirm :title="`${isLightActive(item.deviceState) ? '关' : '开'}灯?`" @confirm="() => handleLamp(item)">
@@ -251,6 +256,21 @@ export default {
       & + .icon{
         right: 5px;
       }
+    }
+  }
+  .toolbar.left{
+    left: 10px;
+    // top: 10px;
+    font-size: 12px;
+    span {
+      // display: block;
+      font-family: Consola;
+      color: #999;
+    }
+    i{
+      font-size: 14px;
+      margin-right: 2px;
+      margin-bottom: 2px;
     }
   }
   .content{
