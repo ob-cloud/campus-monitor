@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { getBuildingList, delBuilding, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
+import { getBuildingList, delBuilding, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
 import BuildingModal from './modules/BuildingModal'
@@ -108,13 +108,45 @@ export default {
     handleSearch () {
       this.loadData(1)
     },
-    handlePower (item) {
-      // const isPowerOn = this.isLightActive(item.deviceState)
+    handleLamp (item) {
+      // console.log(state)
+      // const val = state ? 100 : 0
+      // const ledLampEquip = new LedLampEquip('')
+      // ledLampEquip.setBrightness(val).setColdColor(0).setWarmColor().getBytes()
+      // // editSwitchStatus(this.model.serialId, status).then(res => {
+      // //   if (this.$isAjaxSuccess(res.code)) {
+      // //     this.$message.success('成功')
+      // //   } else {
+      // //     this.$message.error('失败')
+      // //   }
+      // // })
       const params = {
-        buildingId: item.id,
-        deviceType: item.allType === 1 ? 2 : 1
+        roomId: item.id,
+        deviceType: item.lightState ? 2 : 1
       }
       handleLampPower(params).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('操作成功')
+        } else this.$message.error(res.message)
+      })
+    },
+    handlePower (item) {
+      // const isPowerOn = this.isLightActive(item.deviceState)
+      // const params = {
+      //   buildingId: item.id,
+      //   deviceType: item.allType === 1 ? 2 : 1
+      // }
+      // handleLampPower(params).then(res => {
+      //   if (this.$isAjaxSuccess(res.code)) {
+      //     this.$message.success('操作成功')
+      //     // this.loadData()
+      //   } else this.$message.error(res.message)
+      // })
+      const params = {
+        roomId: item.id,
+        deviceType: item.switchState ? 2 : 1
+      }
+      handleSwitchPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
           // this.loadData()

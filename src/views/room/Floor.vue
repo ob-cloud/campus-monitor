@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { getFloorList, delFloor, handleLampPower, getPowerStatus, triggerAllPower } from '@/api/room'
+import { getFloorList, delFloor, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
 import FloorModal from './modules/FloorModal'
@@ -110,16 +110,36 @@ export default {
     handleSearch () {
       this.loadData(1)
     },
-    handlePower (item) {
-      // const isPowerOn = this.isLightActive(item.deviceState)
+    handleLamp (item) {
       const params = {
-        floorId: item.id,
-        deviceType: item.allType === 1 ? 2 : 1
+        roomId: item.id,
+        deviceType: item.lightState ? 2 : 1
       }
       handleLampPower(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
-          // this.loadData()
+        } else this.$message.error(res.message)
+      })
+    },
+    handlePower (item) {
+      // const isPowerOn = this.isLightActive(item.deviceState)
+      // const params = {
+      //   floorId: item.id,
+      //   deviceType: item.allType === 1 ? 2 : 1
+      // }
+      // handleLampPower(params).then(res => {
+      //   if (this.$isAjaxSuccess(res.code)) {
+      //     this.$message.success('操作成功')
+      //     // this.loadData()
+      //   } else this.$message.error(res.message)
+      // })
+      const params = {
+        roomId: item.id,
+        deviceType: item.switchState ? 2 : 1
+      }
+      handleSwitchPower(params).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('操作成功')
         } else this.$message.error(res.message)
       })
     },

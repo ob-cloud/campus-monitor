@@ -150,7 +150,6 @@ export default {
           this.$message.success('操作成功')
         } else this.$message.error(res.message)
       })
-
     },
     handlePower (item) {
       // const isPowerOn = this.isLightActive(item.deviceState)
