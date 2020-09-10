@@ -134,7 +134,7 @@ export default {
       //   } else this.$message.error(res.message)
       // })
       const params = {
-        roomId: item.id,
+        floorId: item.id,
         deviceType: item.switchState ? 2 : 1
       }
       handleSwitchPower(params).then(res => {
