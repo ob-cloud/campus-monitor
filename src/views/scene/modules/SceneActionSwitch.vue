@@ -37,8 +37,13 @@ export default {
     handlePower (item) {
       this.powerStatus.fill(+item)
       const status = this.getSwitchButtonStatus(this.powerStatus)
+      console.log('satus ', status)
       this.$emit('change', status)
     },
+  },
+  destroyed () {
+    this.powers = []
+    this.powerStatus = [0, 0, 0]
   },
 }
 </script>
