@@ -1,4 +1,5 @@
 import { getSceneDeviceList } from '@/api/scene'
+import { TypeHints } from 'hardware-suit'
 export default {
   data () {
     return {
@@ -47,6 +48,30 @@ export default {
     },
     findRoomById (id) {
       return this.roomList.find(item => item.roomId === id)
+    },
+    // 设备是否有动作行为
+    isActionDevice (deviceType, deviceSubType) { // only some device can be set action
+      return !TypeHints.isSensors(deviceType)
+        && !TypeHints.isFinger(deviceType)
+        && !TypeHints.isDoorLock(deviceType)
+        && !TypeHints.isCamera(deviceType)
+        && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isSceneSocketSwitch(deviceSubType))
+        && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isMixSocketSwitch(deviceSubType))
+    },
+    // 初始化设备类型
+    initDeviceType () { // for building or floor location
+      return [{
+        name: '三键开关',
+        deviceType: '04',
+        deviceChildType: '17'
+      }, {
+        name: '双色灯',
+        deviceType: '01',
+        deviceChildType: '02'
+      }, {
+        name: '红外转发器',
+        deviceType: '51'
+      }]
     },
   },
 }

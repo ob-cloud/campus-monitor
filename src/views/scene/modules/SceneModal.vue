@@ -33,47 +33,49 @@
         </a-form-model-item>
 
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="设备条件" class="box-card">
-          <a-tabs class="condition w8" v-model="conditionsTab" :animated="false">
-            <a-tab-pane key="c1" class="panel">
-              <span slot="tab">条件1<span class="or">OR</span></span>
-              <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c1']" :key="index">
-                <i class="obicon obicon-node fl"></i>
-                <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
-                <!-- <i class="el-icon-close fr" ></i> -->
-                <p>
-                  {{ parseCondition(condition) }}
-                  <span class="and" v-if="conditionMapList['c1'].length !== 1 && index !== conditionMapList['c1'].length - 1">AND</span>
-                </p>
-              </div>
-              <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
-            </a-tab-pane>
+          <a-card>
+            <a-tabs class="condition" v-model="conditionsTab" :animated="false">
+              <a-tab-pane key="c1" class="panel">
+                <span slot="tab">条件1<span class="or">OR</span></span>
+                <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c1']" :key="index">
+                  <i class="obicon obicon-node fl"></i>
+                  <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
+                  <!-- <i class="el-icon-close fr" ></i> -->
+                  <p>
+                    {{ parseCondition(condition) }}
+                    <span class="and" v-if="conditionMapList['c1'].length !== 1 && index !== conditionMapList['c1'].length - 1">AND</span>
+                  </p>
+                </div>
+                <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
+              </a-tab-pane>
 
-            <a-tab-pane key="c2" class="panel">
-              <span slot="tab">条件2<span class="or">OR</span></span>
-              <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c2']" :key="index">
-                <i class="obicon obicon-node fl"></i>
-                <!-- <i class="el-icon-close fr" @click="removeCondition(index)"></i> -->
-                <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
-                <p>
-                  {{ parseCondition(condition) }}
-                  <span class="and" v-if="conditionMapList['c2'].length !== 1 && index !== conditionMapList['c2'].length - 1">AND</span>
-                </p>
-              </div>
-              <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
-            </a-tab-pane>
-            <a-tab-pane tab="条件3" key="c3" class="panel">
-              <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c3']" :key="index">
-                <i class="obicon obicon-node fl"></i>
-                <!-- <i class="el-icon-close fr" @click="removeCondition(index)"></i> -->
-                <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
-                <p>
-                  {{ parseCondition(condition) }}
-                  <span class="and" v-if="conditionMapList['c3'].length !== 1 && index !== conditionMapList['c3'].length - 1">AND</span>
-                </p>
-              </div>
-              <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
-            </a-tab-pane>
-          </a-tabs>
+              <a-tab-pane key="c2" class="panel">
+                <span slot="tab">条件2<span class="or">OR</span></span>
+                <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c2']" :key="index">
+                  <i class="obicon obicon-node fl"></i>
+                  <!-- <i class="el-icon-close fr" @click="removeCondition(index)"></i> -->
+                  <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
+                  <p>
+                    {{ parseCondition(condition) }}
+                    <span class="and" v-if="conditionMapList['c2'].length !== 1 && index !== conditionMapList['c2'].length - 1">AND</span>
+                  </p>
+                </div>
+                <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
+              </a-tab-pane>
+              <a-tab-pane tab="条件3" key="c3" class="panel">
+                <div class="condition-item clearfix" v-for="(condition, index) in conditionMapList['c3']" :key="index">
+                  <i class="obicon obicon-node fl"></i>
+                  <!-- <i class="el-icon-close fr" @click="removeCondition(index)"></i> -->
+                  <a-icon type="close" class="fr" @click="removeCondition(index)"></a-icon>
+                  <p>
+                    {{ parseCondition(condition) }}
+                    <span class="and" v-if="conditionMapList['c3'].length !== 1 && index !== conditionMapList['c3'].length - 1">AND</span>
+                  </p>
+                </div>
+                <a-button class="add-btn" size="small" icon="plus" @click="addCondition"></a-button>
+              </a-tab-pane>
+            </a-tabs>
+          </a-card>
         </a-form-model-item>
 
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="设备行为">
@@ -87,12 +89,12 @@
                   <a-input-number v-model="deviceAction.action_time" :min="0" @change="onSelectDevice('', index, '', 1)"></a-input-number>
                 </a-tooltip>
                 <a-select v-if="deviceAction.serialId" placeholder="选择设备类型" v-model="deviceAction.serialId" @change="onSelectDevice(deviceAction.serialId, index)">
-                  <a-select-option v-for="item in deviceAction.deviceTypeList" :key="item.deviceSerialId" :value="item.deviceSerialId">
+                  <a-select-option v-for="(item, index1) in deviceAction.deviceTypeList" :key="index1" :value="item.deviceSerialId">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                   </a-select-option>
                 </a-select>
                 <a-select v-else placeholder="选择设备类型" v-model="deviceAction.deviceType" @change="onSelectDevice(deviceAction.serialId, index, deviceAction.deviceType)">
-                  <a-select-option v-for="item in deviceAction.deviceTypeList" :key="item.deviceType" :value="item.deviceType">
+                  <a-select-option v-for="(item, index2) in deviceAction.deviceTypeList" :key="index2" :value="item.deviceType">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                   </a-select-option>
                 </a-select>
@@ -114,7 +116,7 @@
 // import pick from 'lodash.pick'
 import { getSmartSceneById, addSmartScene, editSmartScene } from '@/api/scene'
 import SceneMixin from '../SceneMixin'
-import { Descriptor, TypeHints, Converter } from 'hardware-suit'
+import { Descriptor, Converter } from 'hardware-suit'
 import SceneConditionModal from './SceneConditionModal'
 import SceneActionModal from './SceneActionModal'
 export default {
@@ -135,11 +137,6 @@ export default {
         sm: { span: 16 }
       },
       confirmLoading: false,
-      // form: this.$form.createForm(this),
-      // validatorRules: {
-      //   name: { rules: [{ required: true, message: '场景名称不能为空!' }] },
-      //   buildingId: { rules: [{ required: true, message: '楼栋不能为空'}] },
-      // },
       sceneModel: { // the scene created or edited model object
         scene_type: '00',
         scene_status: '01',
@@ -220,16 +217,6 @@ export default {
       this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
     },
-    initDeviceType () { // for building or floor location
-      return [{
-        name: '3 way switch',
-        deviceType: '04',
-        deviceChildType: '17'
-      }, {
-        name: 'Ifrate',
-        deviceType: '51'
-      }]
-    },
     initActionModel () { // model for device to save action messages
       return [{
         action_time: 0,
@@ -243,14 +230,6 @@ export default {
     deviceTypeFilter (type, subtype) { // get description text of device's type
       if (!type && !subtype) return
       return Descriptor.getTypeDescriptor(type, subtype)
-    },
-    isActionDevice (deviceType, deviceSubType) { // only some device can be set action
-      return !TypeHints.isSensors(deviceType)
-        && !TypeHints.isFinger(deviceType)
-        && !TypeHints.isDoorLock(deviceType)
-        && !TypeHints.isCamera(deviceType)
-        && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isSceneSocketSwitch(deviceSubType))
-        && !(TypeHints.isSocketSwitch(deviceType) && TypeHints.isMixSocketSwitch(deviceSubType))
     },
     settingAction (serialId, index, deviceType, type) { // click area of the action behavior and set
       this.onSelectDevice(serialId, index, deviceType, type)
@@ -274,11 +253,6 @@ export default {
     removeCondition (index) {
       this.conditionMapList[this.conditionsTab].splice(index, 1)
     },
-    // onActionChange (actionData, dialogVisible) { // when finishing handling actions, enter this callback function
-    //   this.actionDialogVisible = dialogVisible
-    //   this.currentAction.actionDescriptor = actionData.extra
-    //   this.currentAction.action = actionData.action
-    // },
     /**
      * @param {String} serialId
      * @param {Number} index  action index
@@ -335,9 +309,6 @@ export default {
     },
     hasEmptyAction (actions) {
       return !actions || !actions.length || actions.findIndex(item => !item || !Object.keys(item).length || !item.action) > -1
-    },
-    handleSelectedCondition () { // combine the arguments and save
-
     },
     parseCondition (condition) { // parse condition to readable text
       let str = ''
@@ -413,15 +384,6 @@ export default {
         }
         this.loadingEditData = false
       })
-      // this.$nextTick(() => {
-      //   const model = {
-      //     'scene_name': this.sceneModel.scene_name,
-      //     buildingId: this.sceneModel.location.buildingId,
-      //     floorId: this.sceneModel.location.floorId,
-      //     roomId: this.sceneModel.location.roomId
-      //   }
-      //   this.form.setFieldsValue(model)
-      // })
     },
     inverseActions (actions) { // convert action data to created structure
       const parseKey = act => {

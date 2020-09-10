@@ -56,7 +56,8 @@ export default {
 
   > i{
     display: block;
-    padding: 40px;
+    // padding: 40px;
+    padding-top: 40px;
     color: #fff;
     transition: all .3s;
   }
