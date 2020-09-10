@@ -164,7 +164,7 @@ export default {
       delFloor(id).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('删除成功')
-          this.loadData()
+          this.loadData(1)
         } else this.$message.error(res.message)
       })
     },
