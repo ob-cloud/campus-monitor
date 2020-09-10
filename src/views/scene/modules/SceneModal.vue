@@ -96,9 +96,17 @@
                 </a-select>
                 <!-- 添加状态 -->
                 <a-select v-else placeholder="选择设备类型" v-model="deviceAction.deviceType" @change="onSelectDevice(deviceAction.serialId, index, deviceAction.deviceType)">
-                  <a-select-option v-for="(item, index2) in deviceAction.deviceTypeList" :key="index2" :value="item.deviceType">
+                  <template v-for="(item, index2) in deviceAction.deviceTypeList">
+                    <a-select-option :key="index2" :value="item.deviceSerialId" v-if="item.deviceSerialId">
+                      {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
+                    </a-select-option>
+                    <a-select-option :key="index2" :value="item.deviceType" v-else>
+                      {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
+                    </a-select-option>
+                  </template>
+                  <!-- <a-select-option v-for="(item, index2) in deviceAction.deviceTypeList" :key="index2" :value="item.deviceType">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
-                  </a-select-option>
+                  </a-select-option> -->
                 </a-select>
                 <div v-if="deviceAction.serialId || deviceAction.deviceType" class="action-item__behavior" @click="settingAction(deviceAction.serialId, index, deviceAction.deviceType, 2)" :title="deviceAction.actionDescriptor">
                   <p>{{ deviceAction.actionDescriptor || '配置设备动作' }}</p>
@@ -308,8 +316,14 @@ export default {
           addr: device.rfAddress,
           action_time: activeActionModel.action_time
         }
-      } else if (deviceType) { // by device's type
-        const item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
+      } else if (deviceType) { // by device's type  添加场景，选择楼栋、楼层时为deviceType, 具体到房间时是serialId
+        let item = {}
+        if (deviceType && deviceType.length > 2) { // 序列号
+          item = activeActionModel.deviceTypeList.find(item => item.deviceSerialId === deviceType)
+        } else { // 类型
+          item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
+        }
+        // const item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
         this.activeDevice.device_type = item.deviceType
         this.activeDevice.device_child_type = item.deviceChildType
         this.activeDevice.action_time = activeActionModel.action_time
@@ -318,6 +332,7 @@ export default {
         this.activeDevice.device_name = item.deviceName
         this.activeDevice.obox_serial_id = item.oboxSerialId
       }
+      console.log('activeDevice  ', this.activeDevice)
       this.currentAction = activeActionModel
       if (actionType) { // change action time & change action description
         actionType === 1 && (this.activeDevice.action_time = activeActionModel.action_time)
