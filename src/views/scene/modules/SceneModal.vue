@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="title" :width="900" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
+  <a-modal :title="title" :width="900" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭" :destroyOnClose="true">
     <a-spin :spinning="confirmLoading">
       <a-form-model ref="sceneForm" :rules="sceneModelRules" :model="sceneModel">
         <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="场景名称" prop="scene_name">
@@ -139,21 +139,22 @@ export default {
         sm: { span: 16 }
       },
       confirmLoading: false,
-      sceneModel: { // the scene created or edited model object
-        scene_type: '00',
-        scene_status: '01',
-        scene_number: 0, // create 0
-        scene_name: '',
-        scene_group: '00',
-        msg_alter: 0,
-        actions: [], // device behaviors
-        conditions: [], // device conditions
-        location: {
-          buildingId: '',
-          floorId: '',
-          roomId: ''
-        }
-      },
+      sceneModel: this.initSceneModel(),
+      // sceneModel: { // the scene created or edited model object
+      //   scene_type: '00',
+      //   scene_status: '01',
+      //   scene_number: 0, // create 0
+      //   scene_name: '',
+      //   scene_group: '00',
+      //   msg_alter: 0,
+      //   actions: [], // device behaviors
+      //   conditions: [], // device conditions
+      //   location: {
+      //     buildingId: '',
+      //     floorId: '',
+      //     roomId: ''
+      //   }
+      // },
       sceneModelRules: {
         scene_name: [{ required: true, trigger: 'blur', message: '场景名称不能为空!'}],
         'location.buildingId': [{ required: true, trigger: 'change', message: '楼栋不能为空'}],
@@ -186,6 +187,23 @@ export default {
     }
   },
   methods: {
+    initSceneModel () {
+      return {
+        scene_type: '00',
+        scene_status: '01',
+        scene_number: 0, // create 0
+        scene_name: '',
+        scene_group: '00',
+        msg_alter: 0,
+        actions: [], // device behaviors
+        conditions: [], // device conditions
+        location: {
+          buildingId: '',
+          floorId: '',
+          roomId: ''
+        }
+      }
+    },
     handleBuildingChange (id) {
       if (!this.isEditScene) {
         this.sceneModel.location.floorId = ''
@@ -215,7 +233,7 @@ export default {
       this.deviceTypeList = this.deviceTypeList.filter(item => {
         return this.isActionDevice(item.deviceType, item.deviceChildType)
       })
-      this.deviceTypeList = this.uniqList(this.deviceTypeList)
+      // this.deviceTypeList = this.uniqList(this.deviceTypeList)
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
@@ -473,6 +491,7 @@ export default {
     edit (record) {
       // this.form.resetFields()
       // this.$refs.sceneForm.resetFields();
+      this.initSceneModel()
       this.model = Object.assign({}, record)
       this.sceneNumber = record.sceneNumber
       this.visible = true
@@ -501,7 +520,7 @@ export default {
       const that = this
       this.$refs.sceneForm.validate(valid => {
         if (valid) {
-          let obj = model.scene_number ? editSmartScene(model) : addSmartScene(model)
+          let obj = that.sceneNumber ? editSmartScene(model) : addSmartScene(model)
           obj.then((res) => {
             if (that.$isAjaxSuccess(res.code)) {
               that.$message.success(res.message)
