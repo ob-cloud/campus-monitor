@@ -121,7 +121,7 @@ export default {
       // //   }
       // // })
       const params = {
-        roomId: item.id,
+        buildingId: item.id,
         deviceType: item.lightState ? 2 : 1
       }
       handleLampPower(params).then(res => {
