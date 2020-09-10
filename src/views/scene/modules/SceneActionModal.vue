@@ -21,6 +21,8 @@
                 <a-radio-button value="custom" style="display: block; margin: 10px 0; border-radius: 0;">学习按键</a-radio-button>
               </a-radio-group>
             </div>
+
+            <!-- 空调遥控 -->
             <air-condition-remote-control v-if="tabActiveName ? tabActiveName === 'cloud' : isAirCondition" @change="(record) => remoteControlValue = record"></air-condition-remote-control>
 
             <!-- 学习按键区域 -->
@@ -62,7 +64,7 @@ export default {
       confirmLoading: false,
 
       switchStatus: '00',
-      powerStatus: [0, 0, 0], // switcher panel controller panel status
+      powerStatus: '', // switcher panel controller panel status
 
       transponderList: [],
       curInfraredDevice: {},
@@ -172,7 +174,8 @@ export default {
         action_time: this.actionObject.action_time
       }
       if (this.isXkeyPanel) {
-        this.$emit('ok', {action: this.toAction(this.powerStatus, this.actionObject, room), extra: this.powerStatus.slice(0, 2) !== '00' ? '开关 - 开' : '开关 - 关'}, false)
+        if (!this.powerStatus) return this.$message.warning('请设置开关状态')
+        this.$emit('ok', {action: this.toAction(this.powerStatus, this.actionObject, room), extra: this.powerStatus.slice(0, 2) === '00' ? '开关 - 关' : '开关 - 开'}, false)
       } else if (this.isTransponder) {
         let keys = ''
         if (this.isCustomLearningButton()) { // 学习按键
