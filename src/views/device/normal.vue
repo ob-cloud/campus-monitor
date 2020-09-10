@@ -250,7 +250,7 @@
       handleDelete (record) {
         delDevice(record.serialId, record.name).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
-            this.loadData()
+            this.loadData(1)
             this.$message.success('删除成功')
           } else {
             this.$message.error(res.message)
