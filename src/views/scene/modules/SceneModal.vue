@@ -213,9 +213,23 @@ export default {
       this.deviceTypeList = this.deviceTypeList.filter(item => {
         return this.isActionDevice(item.deviceType, item.deviceChildType)
       })
+      this.deviceTypeList = this.uniqList(this.deviceTypeList)
+      // TODO 去重
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
+    },
+    uniqList (list) {
+      const uniq = []
+      const uniqType = []
+      for (let index = 0; index < list.length; index++) {
+        const element = list[index]
+        if (!uniqType[element.deviceType]) {
+          uniqType[element.deviceType] = true
+          uniq.push(element)
+        }
+      }
+      return uniq
     },
     initActionModel () { // model for device to save action messages
       return [{
