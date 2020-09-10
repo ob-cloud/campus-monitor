@@ -14,7 +14,7 @@
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
           <a-button v-isPermitted="'room:classroom:add'" type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-button v-isPermitted="'room:classroom:power'" type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
+          <a-button v-isPermitted="'room:classroom:power'" type="primary" icon="poweroff" title="电源" @click="handleAllPower"></a-button>
 
         </a-button-group>
       </div>
@@ -32,7 +32,7 @@
                 <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="教室灯"></i>
               </a-popconfirm>
               <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}教室开关?`" @confirm="() => handlePower(item)">
-                <i v-isPermitted="'room:classroom:power'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="教室开关"></i>
+                <i v-isPermitted="'room:classroom:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="教室开关"></i>
               </a-popconfirm>
               <a-icon v-isPermitted="'room:classroom:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">

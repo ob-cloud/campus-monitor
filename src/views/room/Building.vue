@@ -12,7 +12,7 @@
         <a-button-group>
           <a-button type="primary" icon="reload" title="刷新" @click="handleRefresh"></a-button>
           <a-button v-isPermitted="'room:building:add'" type="primary" icon="plus" title="添加" @click="handleAdd"></a-button>
-          <a-button v-isPermitted="'room:building:power'" type="primary" icon="poweroff" title="开关" @click="handleAllPower"></a-button>
+          <a-button v-isPermitted="'room:building:power'" type="primary" icon="poweroff" title="电源" @click="handleAllPower"></a-button>
         </a-button-group>
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
@@ -23,8 +23,8 @@
                 <!-- <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" title="楼栋灯"></i> -->
                 <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="楼栋灯"></i>
               </a-popconfirm>
-              <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}楼栋电源?`" @confirm="() => handlePower(item)">
-                <i v-isPermitted="'room:building:power'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="电源开关"></i>
+              <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}楼栋开关?`" @confirm="() => handlePower(item)">
+                <i v-isPermitted="'room:building:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="楼层开关"></i>
               </a-popconfirm>
               <a-icon v-isPermitted="'room:building:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
               <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
