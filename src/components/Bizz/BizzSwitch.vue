@@ -37,7 +37,7 @@ export default {
       if (!this.serialId) return
       editSwitchStatus(this.serialId, status).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.$message.success('灯设置成功')
+          this.$message.success('设置成功')
         } else this.$message.error(res.message)
       }).finally(() => this.$emit('change', this.powers))
     },
