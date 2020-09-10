@@ -113,6 +113,11 @@ export default {
       this.$emit('change', status)
     },
   },
+  destroyed () {
+    this.power = false
+    this.bright = 0
+    this.color = 0
+  },
 }
 </script>
 
