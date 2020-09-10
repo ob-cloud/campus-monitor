@@ -214,12 +214,11 @@ export default {
         return this.isActionDevice(item.deviceType, item.deviceChildType)
       })
       this.deviceTypeList = this.uniqList(this.deviceTypeList)
-      // TODO 去重
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
     },
-    uniqList (list) {
+    uniqList (list) { // 去重
       const uniq = []
       const uniqType = []
       for (let index = 0; index < list.length; index++) {
