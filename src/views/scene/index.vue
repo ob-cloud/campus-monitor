@@ -119,7 +119,7 @@
 
 <script>
   import SceneModal from './modules/SceneModal'
-  import { getSmartSceneList, editSceneStatus, delScene, execSmartScene } from '@/api/scene'
+  import { getSmartSceneList, editSceneStatus, delScene, batchDelScene, execSmartScene } from '@/api/scene'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
   import SceneMixin from './SceneMixin'
 
@@ -253,6 +253,33 @@
             this.$message.error(res.message)
           }
         }).catch(() => this.$message.error('服务异常'))
+      },
+      batchDel () {
+        if (this.selectedRowKeys.length <= 0) {
+          this.$message.warning('请选择一条记录！')
+          return
+        } else {
+          let ids = ''
+          for (let a = 0; a < this.selectedRowKeys.length; a++) {
+            ids += this.selectedRowKeys[a] + ','
+          }
+          let that = this;
+          this.$confirm({
+            title: '确认删除',
+            content: '是否删除选中数据?',
+            onOk: function () {
+              batchDelScene(ids).then((res) => {
+                if (that.$isAjaxSuccess(res.code)) {
+                  that.$message.success(res.message)
+                  that.loadData()
+                  that.onClearSelected()
+                } else {
+                  that.$message.warning(res.message)
+                }
+              })
+            }
+          })
+        }
       }
     }
   }

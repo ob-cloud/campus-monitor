@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-07 15:19:34
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-08-31 15:44:06
+ * @Last Modified time: 2020-09-10 09:52:47
  */
 
 // import {request} from '@/common/request'
@@ -51,6 +51,10 @@ const editSceneStatus = (sceneStatus, sceneNumber) => postFormAction('/common', 
   scene_status: sceneStatus,
   scene_number: sceneNumber
 })
+const batchDelScene = (sceneNumber) => postFormAction('/common', {
+  CMD: 'delete_smart_scene',
+  scene_number: sceneNumber
+})
 
 export {
   getSmartSceneList,
@@ -61,6 +65,7 @@ export {
   addSmartScene,
   setSceneInfo,
   delScene,
+  batchDelScene,
   editSceneStatus
 }
 // const SceneAPI = {
