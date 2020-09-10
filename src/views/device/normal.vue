@@ -127,7 +127,7 @@
   // import PasswordModal from './modules/PasswordModal'
   import { getOboxDeviceList, getAllOboxList, delDevice } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
-  import { Descriptor, TypeHints } from 'hardware-suit'
+  import { Descriptor, TypeHints, LedLampEquip } from 'hardware-suit'
 
   export default {
     name: 'UserList',
@@ -185,10 +185,12 @@
             align: 'center',
             customRender (row) {
               if (TypeHints.isSimpleLed(row.device_child_type)) {
-                const exception = row.state.slice(14) || '00'
-                const bits = exception.split('')
-                if (!bits || !bits.length) return '无异常'
-                return bits[0] === '1' ? '开路' : bits[1] === '1' ? '短路' : '无异常'
+                const ledLampEquip = new LedLampEquip(row.state, row.device_type, row.device_child_type)
+                return ledLampEquip.getLampExceptionStatus()
+                // const exception = row.state.slice(14) || '00'
+                // const bits = exception.split('')
+                // if (!bits || !bits.length) return '无异常'
+                // return bits[0] === '1' ? '开路' : bits[1] === '1' ? '短路' : '无异常'
               }
               return '-'
             }
