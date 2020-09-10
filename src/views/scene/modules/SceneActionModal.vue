@@ -172,7 +172,7 @@ export default {
         action_time: this.actionObject.action_time
       }
       if (this.isXkeyPanel) {
-        this.$emit('ok', {action: this.toAction(this.powerStatus, this.actionObject, room), extra: this.powerStatus[0] ? '开关 - 开' : '开关 - 关'}, false)
+        this.$emit('ok', {action: this.toAction(this.powerStatus, this.actionObject, room), extra: this.powerStatus.slice(0, 2) !== '00' ? '开关 - 开' : '开关 - 关'}, false)
       } else if (this.isTransponder) {
         let keys = ''
         if (this.isCustomLearningButton()) { // 学习按键
