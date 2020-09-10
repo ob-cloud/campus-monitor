@@ -271,7 +271,7 @@
               batchDelScene(ids).then((res) => {
                 if (that.$isAjaxSuccess(res.code)) {
                   that.$message.success(res.message)
-                  that.loadData()
+                  that.loadData(1)
                   that.onClearSelected()
                 } else {
                   that.$message.warning(res.message)
