@@ -88,11 +88,13 @@
                 <a-tooltip title="行为执行时间(单位秒)" placement="top">
                   <a-input-number v-model="deviceAction.action_time" :min="0" @change="onSelectDevice('', index, '', 1)"></a-input-number>
                 </a-tooltip>
+                <!-- 编辑状态 -->
                 <a-select v-if="deviceAction.serialId" placeholder="选择设备类型" v-model="deviceAction.serialId" @change="onSelectDevice(deviceAction.serialId, index)">
                   <a-select-option v-for="(item, index1) in deviceAction.deviceTypeList" :key="index1" :value="item.deviceSerialId">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                   </a-select-option>
                 </a-select>
+                <!-- 添加状态 -->
                 <a-select v-else placeholder="选择设备类型" v-model="deviceAction.deviceType" @change="onSelectDevice(deviceAction.serialId, index, deviceAction.deviceType)">
                   <a-select-option v-for="(item, index2) in deviceAction.deviceTypeList" :key="index2" :value="item.deviceType">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
@@ -293,6 +295,10 @@ export default {
         this.activeDevice.device_type = item.deviceType
         this.activeDevice.device_child_type = item.deviceChildType
         this.activeDevice.action_time = activeActionModel.action_time
+        this.activeDevice.serialId = item.deviceSerialId
+        this.activeDevice.state = item.deviceState
+        this.activeDevice.device_name = item.deviceName
+        this.activeDevice.obox_serial_id = item.oboxSerialId
       }
       this.currentAction = activeActionModel
       if (actionType) { // change action time & change action description
