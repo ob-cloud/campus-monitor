@@ -129,6 +129,7 @@ import SceneMixin from '../SceneMixin'
 import { Descriptor, Converter } from 'hardware-suit'
 import SceneConditionModal from './SceneConditionModal'
 import SceneActionModal from './SceneActionModal'
+import { LedLampEquip } from 'hardware-suit'
 export default {
   components: { SceneConditionModal, SceneActionModal },
   mixins: [ SceneMixin ],
@@ -429,7 +430,7 @@ export default {
           this.conditionMapList.c2 = this.inverseCondition(conditions[1] || [])
           this.conditionMapList.c3 = this.inverseCondition(conditions[2] || [])
           setTimeout(() => {
-            this.deviceActionModel = this.inverseActions(res.result.actions)
+            this.deviceActionModel = this.parseActions(res.result.actions)
           }, 0)
 
 
@@ -437,7 +438,8 @@ export default {
         this.loadingEditData = false
       })
     },
-    inverseActions (actions) { // convert action data to created structure
+    // 解析回显action
+    parseActions (actions) { // convert action data to created structure
       const parseKey = act => {
         let actObj = {}
         try {
@@ -453,11 +455,17 @@ export default {
       const isTransponder = act => {
         return act.indexOf('{') !== -1
       }
+      const parseLamp = ledEquip => {
+        return `亮度:${ledEquip.getBrightness()} / 色温:${ledEquip.getColdColor()} (${ledEquip.getStatus()})`
+      }
+      // TODO
 
       return actions.map(action => {
         let actionDesc = ''
+        const ledLampEquip = new LedLampEquip(action.action, action.device_type, action.device_type)
+
         if (action.action) {
-          actionDesc = isTransponder(action.action) ? parseKey(action.action) : parseSwitch(action.action)
+          actionDesc = isTransponder(action.action) ? parseKey(action.action) : ledLampEquip.isBicolor() ? parseLamp(ledLampEquip) : parseSwitch(action.action)
         }
         return {
           deviceTypeList: this.deviceTypeList,

@@ -7,6 +7,7 @@
       <div v-if="isTransponder" class="list transponder">
         <a-spin :spinning="transponderLoading">
           <div v-if="actionObject.serialId && !transponderList.length" style="text-align:center;">暂无数据</div>
+          <!-- 红外列表 -->
           <div class="item" :class="{active: item.index === curInfraredDevice.index}" v-for="(item, index) in transponderList" :key="index" @click="curInfraredDevice = item">
             <p class="item-icon">
               <i class="obicon obicon-ac" :class="transponderIconFilter(item.deviceType)"></i>
@@ -14,6 +15,7 @@
             <p>{{ item.name }}</p>
             <p>{{ item.rmodel }}</p>
           </div>
+
           <div class="controller">
             <div class="tabPicker" v-if="tabPickerVisible">
               <a-radio-group v-model="tabActiveName" size="small">
@@ -26,7 +28,8 @@
             <air-condition-remote-control v-if="tabActiveName ? tabActiveName === 'cloud' : isAirCondition" @change="(record) => remoteControlValue = record"></air-condition-remote-control>
 
             <!-- 学习按键区域 -->
-            <div class="panel" v-if="tabActiveName ? tabActiveName === 'custom' : isCustomKeyBoard" style="height: 424px; overflow-y: auto; ">
+            <custom-learning-button v-if="tabActiveName ? tabActiveName === 'custom' : isCustomKeyBoard" v-model="customKeyPicker" :keyList="customKeyList"></custom-learning-button>
+            <!-- <div class="panel" v-if="tabActiveName ? tabActiveName === 'custom' : isCustomKeyBoard" style="height: 424px; overflow-y: auto; ">
               <a-spin :spinning="customKeyLoading">
                 <div class="custom_key">
                   <a-radio-group v-model="customKeyPicker" size="small">
@@ -34,12 +37,12 @@
                   </a-radio-group>
                 </div>
               </a-spin>
-            </div>
+            </div> -->
           </div>
         </a-spin>
       </div>
       <div v-if="isBicolorLed">
-        <bizz-lamp :siderWidth="150" @change="(status) => lampStatus = status"></bizz-lamp>
+        <bizz-lamp :siderWidth="150" @change="(status, statusInfo) => { lampStatus = status; lampStatusInfo = statusInfo}"></bizz-lamp>
       </div>
     </div>
   </a-modal>
@@ -53,9 +56,10 @@ import BizzLamp from '@/components/Bizz/BizzLamp'
 // import IotSwitch from '@/components/IoT/Switch'
 import SceneActionSwitch from './SceneActionSwitch'
 import AirConditionRemoteControl from '@/components/IoT/AirCondition'
+import CustomLearningButton from '@/components/IoT/CustomLearningButton'
 export default {
   mixins: [ ActionMixin ],
-  components: { BizzLamp, SceneActionSwitch, AirConditionRemoteControl },
+  components: { BizzLamp, SceneActionSwitch, AirConditionRemoteControl, CustomLearningButton },
   data () {
     return {
       title: '操作',
@@ -75,10 +79,11 @@ export default {
 
       customKeyLoading: false,
       customKeyList: [],
-      customKeyPicker: '', // 自定义按键radio值
+      customKeyPicker: null, // 自定义按键radio值
       actionObject: {}, // 选中的设备类型对象
 
       lampStatus: '',
+      lampStatusInfo: '',
       remoteControlValue: null
     }
   },
@@ -210,7 +215,8 @@ export default {
         this.remoteControlValue = null
         this.$emit('ok', {action: this.changeAirConditionToAction(JSON.stringify(action), {...this.curInfraredDevice, deviceType: '51'}, room), extra: action.key}, false)
       } else if (this.isBicolorLed) {
-        this.$emit('ok', {action: this.toAction(this.lampStatus, this.actionObject, room), extra: this.lampStatus}, false)
+        const descriptor = `亮度:${this.lampStatusInfo.bright} / 色温:${this.lampStatusInfo.color} (${this.lampStatus})`
+        this.$emit('ok', {action: this.toAction(this.lampStatus, this.actionObject, room), extra: descriptor}, false)
       }
       this.close()
     },
@@ -282,16 +288,16 @@ export default {
       margin-bottom: 0;
       font-size: 12px;
     }
-    .el-checkbox-button{
-      width: 30%;
-    }
-    .el-checkbox-button__inner{
-      border: 1px solid #DCDFE6;
-      border-radius: 4px;
-    }
-    .el-checkbox-button.is-checked .el-checkbox-button__inner{
-      border-color: #409EFF;
-    }
+    // .el-checkbox-button{
+    //   width: 30%;
+    // }
+    // .el-checkbox-button__inner{
+    //   border: 1px solid #DCDFE6;
+    //   border-radius: 4px;
+    // }
+    // .el-checkbox-button.is-checked .el-checkbox-button__inner{
+    //   border-color: #409EFF;
+    // }
     .obicon{
       font-size: 30px;
     }
@@ -339,23 +345,5 @@ export default {
     // box-shadow: 0px -4px 7px 2px #d8d815;
   }
 }
-.tabPicker,
-.custom_key{
-  .el-radio-button:first-child .el-radio-button__inner,
-  .el-radio-button:last-child .el-radio-button__inner{
-    border-radius: 0;
-  }
-  .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-    border-color: none;
-  }
-}
-.custom_key{
-  margin-top: 10px;
-  .el-radio-button{
-    margin: 10px;
-  }
-  .el-radio-button .el-radio-button__inner{
-    border: 1px solid #DCDFE6;
-  }
-}
+
 </style>
