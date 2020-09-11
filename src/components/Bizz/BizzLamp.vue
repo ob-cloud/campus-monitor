@@ -101,16 +101,16 @@ export default {
     onPowerChange (power) {
       this.bright = !power ? 0 : 100
       const status = this.ledLampEquip.setBrightness(this.bright).setColdColor(this.color).getBytes()
-      this.$emit('change', status)
+      this.$emit('change', status, { power: this.power, bright: this.bright, color: this.color })
     },
     onBrightChange (bright) {
       if (bright === 0) (this.power = false)
       const status = this.ledLampEquip.setBrightness(bright).getBytes()
-      this.$emit('change', status)
+      this.$emit('change', status, { power: this.power, bright: this.bright, color: this.color })
     },
     onColorChange (color) {
       const status = this.ledLampEquip.setColdColor(color).getBytes()
-      this.$emit('change', status)
+      this.$emit('change', status, { power: this.power, bright: this.bright, color: this.color })
     },
   },
   destroyed () {
