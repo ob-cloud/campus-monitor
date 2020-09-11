@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-09 15:37:09
+ * @Last Modified time: 2020-09-11 14:58:26
  */
 
 // import {request} from '@/common/request'
@@ -37,7 +37,7 @@ const editDevice = (serialId, name) => getAction('/common', {
  * }
  */
 const scanAndSaveDevicesToObox = (oboxSerialId, params) => postFormAction(`/aliService/scanByUnRestart/${oboxSerialId}`, {
-  timeout: 60,
+  timeOut: 60,
   ...params
 })
 const pauseScanDevices = (oboxSerialId) => deleteAction(`/facade/scan/${oboxSerialId}`)
