@@ -126,7 +126,7 @@ export default {
       })
     },
     handleBind () {
-       this.$refs.bindModal.show({})
+      this.$refs.bindModal.show({})
     },
     handleUnbind (selection) {
       const params = {
