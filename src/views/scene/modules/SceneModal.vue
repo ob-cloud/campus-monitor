@@ -96,17 +96,17 @@
                 </a-select>
                 <!-- 添加状态 -->
                 <a-select v-else placeholder="选择设备类型" v-model="deviceAction.deviceType" @change="onSelectDevice(deviceAction.serialId, index, deviceAction.deviceType)">
-                  <template v-for="(item, index2) in deviceAction.deviceTypeList">
+                  <!-- <template v-for="(item, index2) in deviceAction.deviceTypeList">
                     <a-select-option :key="index2" :value="item.deviceSerialId" v-if="item.deviceSerialId">
                       {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                     </a-select-option>
                     <a-select-option :key="index2" :value="item.deviceType" v-else>
                       {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
                     </a-select-option>
-                  </template>
-                  <!-- <a-select-option v-for="(item, index2) in deviceAction.deviceTypeList" :key="index2" :value="item.deviceType">
+                  </template> -->
+                  <a-select-option v-for="(item, index2) in deviceAction.deviceTypeList" :key="index2" :value="item.deviceType">
                     {{ deviceTypeFilter(item.deviceType, item.deviceChildType) }}
-                  </a-select-option> -->
+                  </a-select-option>
                 </a-select>
                 <div v-if="deviceAction.serialId || deviceAction.deviceType" class="action-item__behavior" @click="settingAction(deviceAction.serialId, index, deviceAction.deviceType, 2)" :title="deviceAction.actionDescriptor">
                   <p>{{ deviceAction.actionDescriptor || '配置设备动作' }}</p>
@@ -149,21 +149,6 @@ export default {
       },
       confirmLoading: false,
       sceneModel: this.initSceneModel(),
-      // sceneModel: { // the scene created or edited model object
-      //   scene_type: '00',
-      //   scene_status: '01',
-      //   scene_number: 0, // create 0
-      //   scene_name: '',
-      //   scene_group: '00',
-      //   msg_alter: 0,
-      //   actions: [], // device behaviors
-      //   conditions: [], // device conditions
-      //   location: {
-      //     buildingId: '',
-      //     floorId: '',
-      //     roomId: ''
-      //   }
-      // },
       sceneModelRules: {
         scene_name: [{ required: true, trigger: 'blur', message: '场景名称不能为空!'}],
         'location.buildingId': [{ required: true, trigger: 'change', message: '楼栋不能为空'}],
@@ -242,18 +227,19 @@ export default {
       this.deviceTypeList = this.deviceTypeList.filter(item => {
         return this.isActionDevice(item.deviceType, item.deviceChildType)
       })
-      // this.deviceTypeList = this.uniqList(this.deviceTypeList)
+      this.deviceTypeList = this.uniqList(this.deviceTypeList)
       this.deviceActionModel = this.initActionModel()
       this.deviceActionModel[0].deviceTypeList = this.deviceTypeList
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
     },
-    uniqList (list) { // 去重
+    // 设备行为类型去重
+    uniqList (list, aliasType = 'deviceType') {
       const uniq = []
       const uniqType = []
       for (let index = 0; index < list.length; index++) {
         const element = list[index]
-        if (!uniqType[element.deviceType]) {
-          uniqType[element.deviceType] = true
+        if (!uniqType[element[aliasType]]) {
+          uniqType[element[aliasType]] = true
           uniq.push(element)
         }
       }
@@ -277,9 +263,12 @@ export default {
       this.onSelectDevice(serialId, index, deviceType, type)
       this.$refs.actionModal.edit(this.activeDevice)
     },
-
-    addCondition () { // for condition modal/dialog controller
+    // 添加设备条件
+    addCondition () {
       this.$refs.conditionModal.edit({})
+    },
+    removeCondition (index) {
+      this.conditionMapList[this.conditionsTab].splice(index, 1)
     },
     conditionModalOk (condition) { // when finishing choosing conditions, enter this callback function
       if (this.conditionMapList[this.conditionsTab].length >= 3) {
@@ -291,9 +280,6 @@ export default {
     actionModalOk (actionData) {
       this.currentAction.actionDescriptor = actionData.extra
       this.currentAction.action = actionData.action
-    },
-    removeCondition (index) {
-      this.conditionMapList[this.conditionsTab].splice(index, 1)
     },
     /**
      * @param {String} serialId
@@ -318,13 +304,13 @@ export default {
           action_time: activeActionModel.action_time
         }
       } else if (deviceType) { // by device's type  添加场景，选择楼栋、楼层时为deviceType, 具体到房间时是serialId
-        let item = {}
-        if (deviceType && deviceType.length > 2) { // 序列号
-          item = activeActionModel.deviceTypeList.find(item => item.deviceSerialId === deviceType)
-        } else { // 类型
-          item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
-        }
-        // const item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
+        // let item = {}
+        // if (deviceType && deviceType.length > 2) { // 序列号
+        //   item = activeActionModel.deviceTypeList.find(item => item.deviceSerialId === deviceType)
+        // } else { // 类型
+        //   item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
+        // }
+        const item = activeActionModel.deviceTypeList.find(type => type.deviceType === deviceType)
         this.activeDevice.device_type = item.deviceType
         this.activeDevice.device_child_type = item.deviceChildType
         this.activeDevice.action_time = activeActionModel.action_time
@@ -430,7 +416,9 @@ export default {
           this.conditionMapList.c2 = this.inverseCondition(conditions[1] || [])
           this.conditionMapList.c3 = this.inverseCondition(conditions[2] || [])
           setTimeout(() => {
-            this.deviceActionModel = this.parseActions(res.result.actions)
+            // action 去重，保留一个同类型action
+            const actions = this.uniqList(res.result.actions, 'device_type')
+            this.deviceActionModel = this.parseActions(actions)
           }, 0)
 
 
@@ -458,8 +446,6 @@ export default {
       const parseLamp = ledEquip => {
         return `亮度:${ledEquip.getBrightness()} / 色温:${ledEquip.getColdColor()} (${ledEquip.getStatus()})`
       }
-      // TODO
-
       return actions.map(action => {
         let actionDesc = ''
         const ledLampEquip = new LedLampEquip(action.action, action.device_type, action.device_type)
