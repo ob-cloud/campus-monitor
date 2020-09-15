@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="title" :width="800" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
+  <a-modal :title="title" :width="800" :destroyOnClose="true" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
     <div class="action-container">
       <div v-if="isXkeyPanel" class="list power-group">
         <scene-action-switch :state="switchStatus" @change="(status) => powerStatus = status"></scene-action-switch>
@@ -29,15 +29,6 @@
 
             <!-- 学习按键区域 -->
             <custom-learning-button v-if="tabActiveName ? tabActiveName === 'custom' : isCustomKeyBoard" v-model="customKeyPicker" :keyList="customKeyList"></custom-learning-button>
-            <!-- <div class="panel" v-if="tabActiveName ? tabActiveName === 'custom' : isCustomKeyBoard" style="height: 424px; overflow-y: auto; ">
-              <a-spin :spinning="customKeyLoading">
-                <div class="custom_key">
-                  <a-radio-group v-model="customKeyPicker" size="small">
-                    <a-radio-button :value="item" border v-for="(item, index) in customKeyList" :key="index">{{ item.name && `${item.name} - ` }}{{ item.key }}</a-radio-button>
-                  </a-radio-group>
-                </div>
-              </a-spin>
-            </div> -->
           </div>
         </a-spin>
       </div>
@@ -53,7 +44,6 @@ import { getTransponderDevice, getIrCustomKeys } from '@/api/device'
 import ActionMixin from '@/utils/mixins/ActionMixin'
 import { TypeHints } from 'hardware-suit'
 import BizzLamp from '@/components/Bizz/BizzLamp'
-// import IotSwitch from '@/components/IoT/Switch'
 import SceneActionSwitch from './SceneActionSwitch'
 import AirConditionRemoteControl from '@/components/IoT/AirCondition'
 import CustomLearningButton from '@/components/IoT/CustomLearningButton'
@@ -125,7 +115,7 @@ export default {
     }
   },
   methods: {
-    edit (record) {
+    show (record) {
       this.actionObject = { ...record }
       this.isTransponder && this.getTransponderDeviceList()
       this.visible = true
@@ -180,7 +170,7 @@ export default {
       }
       if (this.isXkeyPanel) {
         if (!this.powerStatus) return this.$message.warning('请设置开关状态')
-        this.$emit('ok', {action: this.toAction(this.powerStatus, this.actionObject, room), extra: this.powerStatus.slice(0, 2) === '00' ? '开关 - 关' : '开关 - 开'}, false)
+        this.$emit('ok', {action: this.toAction(this.powerStatus, this.actionObject, room), extra: this.powerStatus.slice(0, 2) === '00' ? '开关 - 关' : '开关 - 开'}, this.actionObject.childActionIndex)
       } else if (this.isTransponder) {
         let keys = ''
         if (this.isCustomLearningButton()) { // 学习按键
@@ -213,10 +203,10 @@ export default {
           name: this.curInfraredDevice.name || ''
         }
         this.remoteControlValue = null
-        this.$emit('ok', {action: this.changeAirConditionToAction(JSON.stringify(action), {...this.curInfraredDevice, deviceType: '51'}, room), extra: action.key}, false)
+        this.$emit('ok', {action: this.changeAirConditionToAction(JSON.stringify(action), {...this.curInfraredDevice, deviceType: '51'}, room), extra: action.key},  this.actionObject.childActionIndex)
       } else if (this.isBicolorLed) {
         const descriptor = `亮度:${this.lampStatusInfo.bright} / 色温:${this.lampStatusInfo.color} (${this.lampStatus})`
-        this.$emit('ok', {action: this.toAction(this.lampStatus, this.actionObject, room), extra: descriptor}, false)
+        this.$emit('ok', {action: this.toAction(this.lampStatus, this.actionObject, room), extra: descriptor},  this.actionObject.childActionIndex)
       }
       this.close()
     },

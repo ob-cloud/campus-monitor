@@ -62,7 +62,6 @@ const triggerAllPower = (deviceType) => getAction('/common', {
   device: JSON.stringify({deviceType})
 })
 
-
 // 楼栋
 const getBuildingList = (params = {}) => getAction('/common', {
   CMD: 'get_building',

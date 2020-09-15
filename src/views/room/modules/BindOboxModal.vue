@@ -20,7 +20,7 @@
 
 <script>
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
-import { getOboxList } from '@/api/device'
+import { getBindableOboxList, bindObox2Room } from '@/api/device'
 export default {
   mixins: [ProListMixin],
   data() {
@@ -52,11 +52,15 @@ export default {
           }
         },
         {
-          title: '版本',
+          title: '绑定状态',
           align: 'center',
-          dataIndex: 'obox_version'
+          dataIndex: 'is_bind',
+          customRender (status) {
+            return status ? '已绑定' : '未绑定'
+          }
         }
-      ]
+      ],
+      roomId: ''
     }
   },
   methods: {
@@ -71,7 +75,7 @@ export default {
       params.pageNo = this.ipagination.current
       params.pageSize = this.ipagination.pageSize
       this.loading = true
-      getOboxList(params).then((res) => {
+      getBindableOboxList(params).then((res) => {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataSource = res.result.records
           this.ipagination.total = res.result.total || 0
@@ -81,27 +85,23 @@ export default {
         this.loading = false
       })
     },
-    show () {
+    show (record) {
       this.visible = true
+      this.roomId = record.roomId
       this.loadData()
     },
      handleOk () {
       if (!this.selectionRows.length) return this.$message.warning('请选择OBOX')
-      // const selection = this.selectionRows[0]
-      // const params = {
-      //   roomId: this.queryParam.roomId,
-      //   deviceId: selection.id,
-      //   deviceSerialId: selection.serialId,
-      //   deviceType: selection.device_type,
-      //   deviceChildType: selection.device_child_type
-      // }
-      // bindRoomDevice(params).then(res => {
-      //   if (this.$isAjaxSuccess(res.code)) {
-      //     this.loadData()
-      //   }
-      // })
-      this.$emit('ok', this.selectionRows)
-      this.handleCancel()
+      const selection = this.selectionRows[0]
+      const roomId = this.roomId
+      const oboxId = selection.oboxId
+      const oboxSerialId = selection.obox_serial_id
+      bindObox2Room(roomId, oboxId, oboxSerialId).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('绑定成功')
+          this.$emit('ok', this.selectionRows)
+        } else this.$message.error('绑定失败')
+      }).finally(() => this.handleCancel())
     },
     // 关闭
     handleCancel () {

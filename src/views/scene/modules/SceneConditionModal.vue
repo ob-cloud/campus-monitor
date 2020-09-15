@@ -61,6 +61,7 @@
 import { TypeHints, Converter, Descriptor } from 'hardware-suit'
 import Cron from '@/components/IoT/Cron'
 export default {
+  name: 'SceneConditionModal',
   components: { Cron },
   data () {
     return {

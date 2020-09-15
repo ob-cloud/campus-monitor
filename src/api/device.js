@@ -69,6 +69,26 @@ const editOboxName = (oboxSerialId, name) => postFormAction('/common', {
   obox_name: name
 })
 
+const getRoomObox = (roomId) => getAction('/common', {
+  CMD: 'get_room_obox',
+  device: JSON.stringify({ roomId })
+})
+
+const getBindableOboxList = (params) => getAction('/common', {
+  CMD: 'get_building_obox',
+  user: JSON.stringify(params)
+})
+
+const bindObox2Room = (roomId, oboxId, oboxSerialId) => postFormAction('/common', {
+  CMD: 'bind_room_obox',
+  device: JSON.stringify({ roomId, oboxId, oboxSerialId })
+})
+
+const unbindObox2Room = (roomId, oboxId, oboxSerialId) => postFormAction('/common', {
+  CMD: 'unbind_room_obox',
+  device: JSON.stringify({ roomId, oboxId, oboxSerialId })
+})
+
 // 开关
 
 const getSwitchStatus = (serialId) => postFormAction('/common', {
@@ -247,6 +267,10 @@ export {
   getOboxDeviceList,
   delObox,
   editOboxName,
+  getRoomObox,
+  getBindableOboxList,
+  bindObox2Room,
+  unbindObox2Room,
 
   getSwitchStatus,
   editSwitchStatus,

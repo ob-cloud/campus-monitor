@@ -50,7 +50,8 @@
         <a-pagination simple style="position: fixed; right: 70px; bottom: 30px;" :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" :showSizeChanger="true" @change="handlePageChange" />
       </div>
       <classroom-modal ref="modalForm" @ok="modalFormOk"></classroom-modal>
-      <room-device-modal ref="deviceModal" @ok="deviceModalOk"></room-device-modal>
+      <room-device-modal ref="deviceModal1" @ok="deviceModalOk"></room-device-modal>
+      <room-obox-modal ref="deviceModal"></room-obox-modal>
     </a-card>
   </div>
 </template>
@@ -62,9 +63,10 @@ import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
 import ClassroomModal from './modules/ClassroomModal'
 import RoomDeviceModal from './modules/RoomDeviceModal'
+import RoomOboxModal from './modules/RoomOboxModal'
 import { HumidityEquip } from 'hardware-suit'
 export default {
-  components: { ClassroomModal, RoomDeviceModal },
+  components: { ClassroomModal, RoomDeviceModal, RoomOboxModal },
   mixins: [ProListMixin],
   data () {
     return {
@@ -130,17 +132,6 @@ export default {
       this.loadData(1)
     },
     handleLamp (item) {
-      // console.log(state)
-      // const val = state ? 100 : 0
-      // const ledLampEquip = new LedLampEquip('')
-      // ledLampEquip.setBrightness(val).setColdColor(0).setWarmColor().getBytes()
-      // // editSwitchStatus(this.model.serialId, status).then(res => {
-      // //   if (this.$isAjaxSuccess(res.code)) {
-      // //     this.$message.success('成功')
-      // //   } else {
-      // //     this.$message.error('失败')
-      // //   }
-      // // })
       const params = {
         roomId: item.id,
         deviceType: item.lightState ? 2 : 1
