@@ -125,13 +125,7 @@ export default {
       this.$refs.actionBlockModal.resetActionTypeList()
     },
     handleRoomChange (id) {
-      if (!id) {
-        // this.$refs.actionBlockModal.resetDeviceTypes()
-        this.$refs.actionBlockModal.resetActionTypeList()
-        return
-      }
-      // TODO
-      // this.deviceTypeList = this.uniqList(this.deviceTypeList)
+      if (!id) return this.$refs.actionBlockModal.resetActionTypeList()
       const list = this.$refs.actionBlockModal.getTypeListByRoom(id)
       this.$refs.actionBlockModal.setActionTypeList(list)
       this.isEditScene = false // after finishing rendering location, reset isEditScene variable
@@ -174,8 +168,6 @@ export default {
 
           this.$refs.conditionModal.toConditionList(res.result.conditions)
           setTimeout(() => {
-            // TODO action 去重，保留一个同类型action
-            // const actions = this.uniqList(res.result.actions, 'device_type')
             this.$refs.actionBlockModal.toActionList(res.result.actions)
           }, 0)
         }
@@ -204,7 +196,6 @@ export default {
     },
     // 确定
     handleOk () {
-      console.log('action    ', this.$refs.actionBlockModal.getSceneAction())
       const actions = this.$refs.actionBlockModal.getSceneAction()
       const conditions = this.$refs.conditionModal.getSceneCondition()
       this.sceneModel.actions = actions

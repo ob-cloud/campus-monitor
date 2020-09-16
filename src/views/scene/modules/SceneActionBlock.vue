@@ -8,18 +8,8 @@
           <a-tooltip title="行为执行时间(单位秒)" placement="top">
             <a-input-number class="time" v-model="deviceAction.action_time" :min="0" @change="setActionTime(deviceAction)"></a-input-number>
           </a-tooltip>
-          <!-- 编辑状态 -->
-          <!-- <a-select v-if="deviceAction.serialId" placeholder="选择设备类型" v-model="deviceAction.serialId" @change="setDeviceBySerialId(deviceAction.serialId, index)">
-            <a-select-option v-for="(item, index1) in deviceAction.deviceTypeList" :key="index1" :value="item.deviceSerialId">
-              {{ Descriptor.getTypeDescriptor(item.deviceType, item.deviceChildType) }}
-            </a-select-option>
-          </a-select> -->
-          <!-- 添加状态 -->
           <a-select placeholder="选择设备类型" v-model="deviceAction.deviceType" @change="setDeviceByDeviceType(deviceAction, index)">
             <template v-for="(item, index2) in deviceAction.deviceTypeList">
-              <!-- <a-select-option :key="index2" :value="item.deviceSerialId" v-if="item.deviceSerialId">
-                {{ Descriptor.getTypeDescriptor(item.deviceType, item.deviceChildType) }}
-              </a-select-option> -->
               <a-select-option :key="index2" :value="item.deviceType">
                 {{ item.title }}
               </a-select-option>
@@ -29,6 +19,7 @@
             <p>{{ deviceAction.actionDescriptor || '配置设备动作' }}</p>
           </div>
         </div>
+        <!-- 子 Action -->
         <div v-if="deviceAction.childVisible">
           <div class="sub-action-content" v-for="(item, index4) in deviceAction.childAction" :key="index4">
             <a-icon type="close" class="fr" title="删除" @click="handleDelChild(deviceAction, index4, index)"></a-icon>
@@ -63,7 +54,6 @@ export default {
       sceneActionModel: this.initActionModel(),
       activeObj: {},    // 当前活跃设备对象
       activeAction: {}, // 当前活跃Action
-      // deviceTypeList: this.initDeviceType(),
       Descriptor
     }
   },
@@ -87,10 +77,6 @@ export default {
     },
     // 设置父级action
     handleAction (device) {
-      // if (device.serialId) this.setDeviceBySerialId(device.serialId, index)
-      // else if (device.deviceType) this.setDeviceByDeviceType(device, index)
-      // this.setActionTime(device)
-      // this.setActionDescriptor(device)
       this.setActionTime(device)
       this.setActionDescriptor(device)
       const subtypeList = device.deviceTypeList.find(type => type.deviceType === device.deviceType)
@@ -101,15 +87,8 @@ export default {
     // 设置子action
     handleChildAction (childAction, parentAction, index) {
       this.activeAction = parentAction
-      console.log('child action ---- ', childAction)
       this.activeObj = this.toDeviceObj({ ...childAction, childActionIndex: index }, childAction.action_time)
       this.$refs.actionBehaviorModal.show(this.activeObj)
-    },
-    getSerialIdFromTypeListBySceneNumber () { // edit mode, get serialId for actionModel
-      if (this.sceneNumber) {
-        const typeObj = this.deviceTypeList.find(type => type.deviceSerialId)
-        return typeObj && typeObj.deviceSerialId
-      }
     },
     toDeviceObj (device, action_time) {
       if (!device) return null
@@ -125,22 +104,9 @@ export default {
         ...device
       }
     },
-    // 根据序列号设置当前设备信息
-    setDeviceBySerialId (serialId, index) {
-      const action = this.activeAction = this.sceneActionModel[index]
-      const device = action.deviceTypeList.find(item => item.deviceSerialId === serialId)
-      this.activeObj = device ? this.toDeviceObj(device, action.action_time) : {}
-    },
     // 根据类型设置当前设备信息
     setDeviceByDeviceType (action) {
       this.activeAction = action
-      // const action = this.activeAction = this.sceneActionModel[index]
-      // if (device.serialId || device.deviceType.length > 2) {
-      //   this.setDeviceBySerialId(device.serialId || device.deviceType, index)
-      // } else {
-      //   const dev = action.deviceTypeList.find(type => type.deviceType === device.deviceType)
-      //   this.activeObj = dev ? this.toDeviceObj(dev, action.action_time) : {}
-      // }
       this.setActionDescriptor(action)
       const subtypeList = action.deviceTypeList.find(type => type.deviceType === action.deviceType)
       action.childVisible = true
@@ -162,21 +128,18 @@ export default {
     actionBehaviorModalOk (actionData, index) {
       if (index === undefined) { // 父级action
         this.activeAction.actionDescriptor = actionData.extra
-        // this.activeAction.action = actionData.action
-        // this.activeAction = { ...this.activeAction, ...actionData.action }
-        // 同步父分类action
-        if (this.activeAction.childAction.length) {
+        if (this.activeAction.childAction.length) { // 同步父分类action
           this.activeAction.childAction.forEach(item => {
             item.actionDescriptor = actionData.extra
             item.action = actionData.action.action
             item.node_type = actionData.action.node_type
           })
-        } else {
+        } else { // 栋、层批量处理
           this.activeAction.action = actionData.action.action
           this.activeAction.node_type = actionData.action.node_type
           this.activeAction.device_child_type = actionData.action.device_child_type
         }
-      } else {
+      } else { // 子 action
         let activeChildAction = this.activeAction.childAction[index]
         // 父action无设置时，默认取第一个子action
         if (index === 0 && !this.activeAction.actionDescriptor) this.activeAction.actionDescriptor = actionData.extra
@@ -256,10 +219,6 @@ export default {
       const parseSwitch = act => act.slice(0, 2) === '00' ? '关' : '开'
       const isTransponder = act => act.indexOf('{') !== -1
       const parseLamp = ledEquip => `亮度:${ledEquip.getBrightness()} / 色温:${ledEquip.getColdColor()} (${ledEquip.getStatus()})`
-
-      const typeList = getClassify(classifyTypeList(this.toCamelNaming(actions)))
-      console.log('---- ', typeList)
-
       const getDescriptor = (action) => {
         let actionDesc = ''
         const ledLampEquip = new LedLampEquip(action.action, action.deviceType, action.deviceChildType)
@@ -269,6 +228,7 @@ export default {
         return actionDesc
       }
 
+      const typeList = getClassify(classifyTypeList(this.toCamelNaming(actions)))
       const sceneModel = []
       typeList.forEach(item => {
         item.children.forEach(item => item.actionDescriptor = getDescriptor(item))
@@ -285,25 +245,9 @@ export default {
 
         sceneModel.push(model)
       })
-
-      // const model = actions.map(action => {
-
-      //   return {
-      //     deviceTypeList: this.deviceTypeList,
-      //     serialId: action.serialId,
-      //     deviceType: action.device_type,
-      //     action_time: action.action_time,
-      //     actionDescriptor: actionDesc,
-      //     action: action
-      //   }
-      // })
-      console.log('sceneModel ', sceneModel)
       this.sceneActionModel = sceneModel
     },
     getSceneAction () { // 获取场景Action
-      // return this.sceneActionModel.map(item => {
-      //   return item.serialId ? {...item.action, serialId: item.serialId, action_time: item.action_time} : {...item.action, action_time: item.action_time}
-      // })
       const getAction = (item) => {
         return {
           node_type: item.node_type,
