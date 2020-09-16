@@ -1,10 +1,10 @@
 <template>
-  <a-modal :title="title" :width="1000" :visible="visible" @ok="handleOk" @cancel="handleCancel" cancelText="关闭">
+  <a-modal :title="title" :width="1000" :visible="visible" @ok="handleOk" @cancel="handleCancel" cancelText="关闭" destroyOnClose>
     <a-card :bodyStyle="{padding: '12px 14px 20px'}">
       <div slot="title">
         <a-tag class="tag" :color="item.obox_status ? 'green' : ''" v-for="(item, index) in oboxList" :key="index" :title="item.obox_status ? '在线' : '离线'">
           <a-popconfirm title="解绑oboox?" @confirm="() => handleUndbind(item)">
-            <a-icon type="close" class="close" />
+            <a-icon type="close" class="close" title="解绑" />
           </a-popconfirm>
           {{ item.obox_name }}
         </a-tag>
@@ -22,7 +22,7 @@
                 :dataSource="deviceList"
                 :loading="loading"
                 :pagination="false"
-                :scroll="{ y: 300 }"
+                :scroll="{ y: 250 }"
               ></a-table>
             </a-card>
           </a-col>
@@ -31,12 +31,12 @@
               <a-table
                 bordered
                 size="small"
-                rowKey="deviceSerialId"
+                rowKey="sceneNumber"
                 :columns="sceneColumns"
                 :dataSource="sceneList"
                 :loading="loading"
                 :pagination="false"
-                :scroll="{ y: 300 }"
+                :scroll="{ y: 250 }"
               ></a-table>
             </a-card>
           </a-col>
@@ -65,16 +65,28 @@ export default {
       visible: false,
       oboxList: [],
       sceneColumns: [
+         {
+          title: '场景号',
+          align: 'center',
+          dataIndex: 'sceneNumber',
+        },
         {
           title: '场景名称',
           align: 'center',
           dataIndex: 'sceneName',
         },
         {
+          title: '教室',
+          align: 'center',
+          dataIndex: 'roomName',
+        },
+        {
           title: '场景状态',
           align: 'center',
           dataIndex: 'sceneStatus',
-          scopedSlots: { customRender: 'status' }
+          customRender (status) {
+            return status ? '启用' : '禁用'
+          }
         },
       ],
       sceneList: [],
@@ -112,7 +124,11 @@ export default {
   },
   watch: {
     oboxList (list) {
-      if (!list || !list.length) return
+      if (!list || !list.length) {
+        this.deviceList = []
+        this.sceneList = []
+        return
+      }
       this.getDeviceList()
       this.getSceneList()
     }
@@ -184,7 +200,7 @@ export default {
 <style lang="less" scoped>
 .tag{
   position: relative;
-  padding: 20px 30px;
+  padding: 28px 50px;
 }
 .close{
   float: right;

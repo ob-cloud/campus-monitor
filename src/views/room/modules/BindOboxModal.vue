@@ -65,13 +65,14 @@ export default {
   },
   methods: {
     loadData (arg) {
-      this.getDataList(arg)
+      if (this.roomId) this.getDataList(arg)
     },
     getDataList (arg) {
       if (arg === 1) {
         this.ipagination.current = 1
       }
-      const params = {...this.queryParam}
+      // const params = {...this.queryParam}
+      const params = {}
       params.pageNo = this.ipagination.current
       params.pageSize = this.ipagination.pageSize
       this.loading = true
