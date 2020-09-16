@@ -162,15 +162,27 @@ export default {
     actionBehaviorModalOk (actionData, index) {
       if (index === undefined) { // 父级action
         this.activeAction.actionDescriptor = actionData.extra
-        this.activeAction.action = actionData.action
+        // this.activeAction.action = actionData.action
+        // this.activeAction = { ...this.activeAction, ...actionData.action }
         // 同步父分类action
-        this.activeAction.childAction.forEach(item => {item.actionDescriptor = actionData.extra; item.action = actionData.action})
+        if (this.activeAction.childAction.length) {
+          this.activeAction.childAction.forEach(item => {
+            item.actionDescriptor = actionData.extra
+            item.action = actionData.action.action
+            item.node_type = actionData.action.node_type
+          })
+        } else {
+          this.activeAction.action = actionData.action.action
+          this.activeAction.node_type = actionData.action.node_type
+          this.activeAction.device_child_type = actionData.action.device_child_type
+        }
       } else {
-        const activeChildAction = this.activeAction.childAction[index]
+        let activeChildAction = this.activeAction.childAction[index]
         // 父action无设置时，默认取第一个子action
         if (index === 0 && !this.activeAction.actionDescriptor) this.activeAction.actionDescriptor = actionData.extra
         activeChildAction.actionDescriptor = actionData.extra
-        activeChildAction.action = actionData.action
+        activeChildAction.action = actionData.action.action
+        activeChildAction.node_type = actionData.action.node_type
       }
     },
     initActionModel () {
@@ -298,7 +310,7 @@ export default {
           device_type: item.device_type || item.deviceType,
           device_child_type: item.device_child_type || item.deviceChildType,
           serialId: item.serialId || item.deviceSerialId,
-          obox_serial_id: item.obox_serial_id,
+          obox_serial_id: item.obox_serial_id || item.oboxSerialId,
           addr: item.addr,
           action: item.action,
           action_time: item.action_time
@@ -307,7 +319,7 @@ export default {
       let action = this.sceneActionModel.length === 1 ? this.sceneActionModel[0].childAction : this.sceneActionModel.reduce((prev, next) => prev.childAction.concat(next.childAction))
       if (!action.length) { // 栋、层批量处理
         action = this.sceneActionModel.map(item => {
-          return { ...item.action, actionDescriptor: item.actionDescriptor, action_time: item.action_time }
+          return { ...item, actionDescriptor: item.actionDescriptor, action_time: item.action_time }
         })
         return action.map(item => getAction(item))
       } else { // 房处理
