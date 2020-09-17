@@ -66,7 +66,7 @@
         ref="table"
         bordered
         size="middle"
-        rowKey="group_id"
+        rowKey="groupId"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="ipagination"
@@ -79,16 +79,22 @@
           <a-tag color="green">{{ panel_addr[0].group_addr }}</a-tag>
         </span>
         <span slot="action" slot-scope="text, record">
-          <a v-isPermitted="'device:group:edit'" @click="handleEdit(record)">编辑</a>
+          <a v-isPermitted="'device:equip:edit'" @click="handleEditName(record)">编辑</a>
 
-          <a-divider v-isPermitted="'device:group:edit'" type="vertical" />
+          <a-divider v-isPermitted="'device:equip:edit'" type="vertical" />
 
           <a-dropdown>
             <a class="ant-dropdown-link">
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-isPermitted="'device:group:delete'">
+              <a-menu-item v-isPermitted="'device:equip:control'">
+                控制
+              </a-menu-item>
+              <a-menu-item v-isPermitted="'device:equip:member'" @click="handleMember(record)">
+                成员
+              </a-menu-item>
+              <a-menu-item v-isPermitted="'device:equip:delete'">
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.group_id)">
                   <a>删除</a>
                 </a-popconfirm>
@@ -101,43 +107,59 @@
     </div>
     <!-- table区域-end -->
 
-    <group-modal ref="modalForm" @ok="modalFormOk"></group-modal>
+    <equip-group-modal ref="modalForm" @ok="modalFormOk" @close="modalClose"></equip-group-modal>
+    <edit-equip-group-modal ref="editModal" @ok="loadData()"></edit-equip-group-modal>
+    <equip-group-member-control-modal ref="memberModal" @ok="loadData()"></equip-group-member-control-modal>
   </a-card>
 </template>
 
 <script>
-  import GroupModal from './modules/GroupModal'
-  import { getPanelGroupList, delPanelGroup } from '@/api/device'
+  import EquipGroupModal from './modules/EquipGroupModal'
+  import EditEquipGroupModal from './modules/EditEquipGroupModal'
+  import EquipGroupMemberControlModal from './modules/EquipGroupMemberControlModal'
+  import { getLocalDeviceGroupList, delDeviceGroup } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
   export default {
     name: '',
     mixins: [ ProListMixin ],
     components: {
-      GroupModal,
+      EquipGroupModal,
+      EditEquipGroupModal,
+      EquipGroupMemberControlModal
     },
     data() {
       return {
         description: '这是用户管理页面',
         queryParam: {
-          current: 1,
-          size: 10
+          pageNo: 1,
+          pageSize: 10
         },
         columns: [
           {
             title: '组号',
             align: 'center',
-            dataIndex: 'group_id',
+            dataIndex: 'groupId',
           },
           {
             title: '名称',
             align: 'center',
-            dataIndex: 'group_name',
+            dataIndex: 'groupName',
+          },
+          {
+            title: '网关序列号',
+            align: 'center',
+            dataIndex: 'oboxSerialId',
+          },
+          {
+            title: '组类型',
+            align: 'center',
+            dataIndex: 'groupType',
           },
           {
             title: '状态',
             align: 'center',
-            dataIndex: 'group_state',
+            dataIndex: 'groupState',
             customRender () {
               // return Descriptor.getTypeDescriptor(row.device_type, t)
             }
@@ -161,10 +183,10 @@
           this.ipagination.current = 1
         }
         const params = {...this.queryParam}
-        params.current = this.ipagination.current
-        params.size = this.ipagination.pageSize
+        params.pageNo = this.ipagination.current
+        params.pageSize = this.ipagination.pageSize
         this.loading = true
-        getPanelGroupList(params).then((res) => {
+        getLocalDeviceGroupList(params).then((res) => {
           if (this.$isAjaxSuccess(res.code)) {
             this.dataSource = res.result.records
             this.ipagination.total = res.result.total || 0
@@ -175,7 +197,7 @@
         })
       },
       handleDelete (id) {
-        delPanelGroup(id).then(res => {
+        delDeviceGroup(id).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.loadData(1)
             this.$message.success('删除成功')
@@ -183,6 +205,18 @@
             this.$message.error(res.message)
           }
         })
+      },
+      handleEditName (record) {
+        this.$refs.editModal.edit(record)
+      },
+      handleMember (record) {
+        this.$refs.memberModal.edit(record)
+      },
+      modalFormOk () {
+        this.loadData()
+      },
+      modalClose (refresh) {
+        refresh && this.loadData()
       }
     }
 

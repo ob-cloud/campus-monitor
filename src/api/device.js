@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-11 14:58:26
+ * @Last Modified time: 2020-09-17 18:19:43
  */
 
 // import {request} from '@/common/request'
@@ -133,8 +133,75 @@ const getGrouplListPanelKey = (serialId, index) => getAction('/common', {
   index
 })
 
-// 温湿度
+// 设备分组
+const getDeviceGroupList = (params) => getAction('/common', {
+  CMD: 'query_group',
+  ...params
+})
+// same with getDeviceGroupList
+const getLocalDeviceGroupList = (params) => getAction('/common', {
+  CMD: 'query_local_group',
+  group: { ...params }
+})
+// group={"pageNo":1,"pageSize":10,"groupId":18}
+const getGroupMemberById = (params) => getAction('/common', {
+  CMD: 'query_local_group_device',
+  group: { ...params }
+})
 
+const addDeviceGroup = (oboxSerialId, groupName, groupMember = []) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '01',
+  group_style: '00',
+  obox_serial_id: oboxSerialId,
+  group_name: groupName,
+  group_member: JSON.stringify(groupMember)
+})
+const delDeviceGroup = (groupId) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '00',
+  group_style: '00',
+  group_id: groupId
+})
+const execDeviceGroup = (groupId, groupState) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '06',
+  group_style: '00',
+  group_id: groupId,
+  group_state: groupState
+})
+const editDeviceGroup = (groupId, groupName) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '05',
+  group_style: '00',
+  group_id: groupId,
+  group_name: groupName
+})
+
+const addDeviceGroupMember = (groupId, groupMember) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '03',
+  group_style: '00',
+  group_member: JSON.stringify(groupMember),
+  group_id: groupId
+})
+const editDeviceGroupMember = (groupId, groupMember) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '02',
+  group_style: '00',
+  group_member: JSON.stringify(groupMember),
+  group_id: groupId
+})
+
+const delDeviceGroupMember = (groupId, groupMember) => postFormAction('/common', {
+  CMD: 'set_group',
+  operate_type: '04',
+  group_style: '00',
+  group_id: groupId,
+  group_member: JSON.stringify(groupMember)
+})
+
+// 温湿度
 const getDeviceStatusHistory = (serialId, fromDate, toDate, type = '02') => getAction('/common', {
   CMD: 'query_device_status_history',
   serialId,
@@ -281,6 +348,17 @@ export {
   setPanelKey,
   getGroupListByPanelId,
   getGrouplListPanelKey,
+
+  getDeviceGroupList,
+  getLocalDeviceGroupList,
+  getGroupMemberById,
+  addDeviceGroup,
+  delDeviceGroup,
+  execDeviceGroup,
+  editDeviceGroup,
+  addDeviceGroupMember,
+  editDeviceGroupMember,
+  delDeviceGroupMember,
 
   getDeviceStatusHistory,
 
