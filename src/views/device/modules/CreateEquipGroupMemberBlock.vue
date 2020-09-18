@@ -30,6 +30,7 @@
         "
         :columns="direction === 'left' ? leftColumns : rightColumns"
         :data-source="filteredItems"
+        :loading="loading"
         size="small"
         :style="{ pointerEvents: listDisabled ? 'none' : null }"
         :scroll="{ y: 250 }"
@@ -86,7 +87,8 @@ export default {
       leftColumns: leftTableColumns,
       rightColumns: rightTableColumns,
       oboxSerialId: '',
-      groupId: ''
+      groupId: '',
+      loading: false
     }
   },
   mounted () {
@@ -120,6 +122,7 @@ export default {
         pageNo: 1,
         pageSize: 1000
       }
+      this.loading = true
       getOboxDeviceList(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataSource = res.result.records.map(item => {
@@ -131,11 +134,11 @@ export default {
             }
           })
         }
-      })
+      }).finally(() => this.loading = false)
     },
     onChange(nextTargetKeys, direction, moveKeys) {
       console.log('.... --- ', nextTargetKeys)
-
+      this.loading = true
       if (direction === 'right') { // 添加组员
         // A B(pre) ---> A B C D(next) |  C D(move) | D(result) ---> A B D(final)
         addDeviceGroupMember(this.groupId, moveKeys).then(res => {
@@ -149,7 +152,7 @@ export default {
             this.targetKeys = preTargetKeys.concat(memberKeys)
             this.$message.success(`组员（${memberKeys.join(',')}）添加成功`)
           } else this.$message.error('添加失败')
-        })
+        }).finally(() => this.loading = false)
       } else { // 删除组员
         // A B C D(pre)  -->  A B(next) | C D(move)  | D(result) --> A B C(final)
         delDeviceGroupMember(this.groupId, moveKeys).then(res => {
@@ -161,7 +164,7 @@ export default {
             this.targetKeys = preTargetKeys.concat(memberKeys)
             this.$message.success(`组员（${memberKeys.join(',')}）删除成功`)
           } else this.$message.error('删除失败')
-        })
+        }).finally(() => this.loading = false)
       }
     },
     // 单选

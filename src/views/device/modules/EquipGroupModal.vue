@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="title" :width="900" :maskClosable="false" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" destroyOnClose cancelText="取消">
+  <a-modal :title="title" :width="1000" :maskClosable="false" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" destroyOnClose cancelText="取消">
     <a-card :bordered="false">
       <div slot="title">
         <a-steps :current="current">
