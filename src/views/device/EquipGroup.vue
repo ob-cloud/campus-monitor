@@ -7,7 +7,7 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="组名">
-              <a-input placeholder="请输入编组名称" v-model="queryParam.name" allowClear></a-input>
+              <a-input placeholder="请输入编组名称" v-model="queryParam.groupName" allowClear></a-input>
             </a-form-item>
           </a-col>
 
@@ -19,10 +19,11 @@
           </a-col> -->
 
           <a-col :md="6" :sm="8">
-            <a-form-item label="OBOX">
-              <a-select placeholder="请选择OBOX" v-model="queryParam.online" allowClear>
-                <a-select-option :value="0">在线</a-select-option>
-                <a-select-option :value="1">离线</a-select-option>
+            <a-form-item label="网关">
+              <a-select placeholder="请选择网关" v-model="queryParam.oboxSerialId" allowClear>
+                <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
+                  {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
+                </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -88,14 +89,14 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
-              <a-menu-item v-isPermitted="'device:equip:control'">
-                控制
+              <a-menu-item v-if="TypeHints.isSimpleLed(record.groupChildType)" v-isPermitted="'device:equip:control'" @click="handleControl(record)">
+                组控
               </a-menu-item>
               <a-menu-item v-isPermitted="'device:equip:member'" @click="handleMember(record)">
                 成员
               </a-menu-item>
               <a-menu-item v-isPermitted="'device:equip:delete'">
-                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.group_id)">
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.groupId)">
                   <a>删除</a>
                 </a-popconfirm>
               </a-menu-item>
@@ -110,115 +111,136 @@
     <equip-group-modal ref="modalForm" @ok="modalFormOk" @close="modalClose"></equip-group-modal>
     <edit-equip-group-modal ref="editModal" @ok="loadData()"></edit-equip-group-modal>
     <equip-group-member-control-modal ref="memberModal" @ok="loadData()"></equip-group-member-control-modal>
+    <equip-group-lamp-control-modal ref="lampModal" @ok="loadData()"></equip-group-lamp-control-modal>
   </a-card>
 </template>
 
 <script>
-  import EquipGroupModal from './modules/EquipGroupModal'
-  import EditEquipGroupModal from './modules/EditEquipGroupModal'
-  import EquipGroupMemberControlModal from './modules/EquipGroupMemberControlModal'
-  import { getLocalDeviceGroupList, delDeviceGroup } from '@/api/device'
-  import { ProListMixin } from '@/utils/mixins/ProListMixin'
-
-  export default {
-    name: '',
-    mixins: [ ProListMixin ],
-    components: {
-      EquipGroupModal,
-      EditEquipGroupModal,
-      EquipGroupMemberControlModal
-    },
-    data() {
-      return {
-        description: '这是用户管理页面',
-        queryParam: {
-          pageNo: 1,
-          pageSize: 10
+import EquipGroupModal from './modules/EquipGroupModal'
+import EditEquipGroupModal from './modules/EditEquipGroupModal'
+import EquipGroupMemberControlModal from './modules/EquipGroupMemberControlModal'
+import EquipGroupLampControlModal from './modules/EquipGroupLampControlModal'
+import { getLocalDeviceGroupList, delDeviceGroup, getAllOboxList } from '@/api/device'
+import { ProListMixin } from '@/utils/mixins/ProListMixin'
+import { Descriptor, TypeHints } from 'hardware-suit'
+export default {
+  name: '',
+  mixins: [ ProListMixin ],
+  components: {
+    EquipGroupModal,
+    EditEquipGroupModal,
+    EquipGroupMemberControlModal,
+    EquipGroupLampControlModal
+  },
+  data() {
+    return {
+      description: '这是用户管理页面',
+      queryParam: {
+        pageNo: 1,
+        pageSize: 10
+      },
+      oboxList: [],
+      TypeHints,
+      columns: [
+        {
+          title: '组号',
+          align: 'center',
+          dataIndex: 'groupId',
         },
-        columns: [
-          {
-            title: '组号',
-            align: 'center',
-            dataIndex: 'groupId',
-          },
-          {
-            title: '名称',
-            align: 'center',
-            dataIndex: 'groupName',
-          },
-          {
-            title: '网关序列号',
-            align: 'center',
-            dataIndex: 'oboxSerialId',
-          },
-          {
-            title: '组类型',
-            align: 'center',
-            dataIndex: 'groupType',
-          },
-          {
-            title: '状态',
-            align: 'center',
-            dataIndex: 'groupState',
-            customRender () {
-              // return Descriptor.getTypeDescriptor(row.device_type, t)
-            }
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
-            align: 'center',
-            width: 170
+        {
+          title: '名称',
+          align: 'center',
+          dataIndex: 'groupName',
+        },
+        {
+          title: '网关序列号',
+          align: 'center',
+          dataIndex: 'oboxSerialId',
+        },
+        {
+          title: '组类型',
+          align: 'center',
+          dataIndex: 'groupType',
+          customRender (t) {
+            return Descriptor.getTypeDescriptor(t)
           }
-        ]
-      }
-    },
-    methods: {
-      loadData (arg) {
-        this.getDataList(arg)
-      },
-      getDataList (arg) {
-        if (arg === 1) {
-          this.ipagination.current = 1
+        },
+        {
+          title: '状态',
+          align: 'center',
+          dataIndex: 'groupState',
+          customRender (status, record) {
+            return Descriptor.getStatusDescriptor(status, record.groupType, record.groupChildType)
+          }
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+          align: 'center',
+          width: 170
         }
-        const params = {...this.queryParam}
-        params.pageNo = this.ipagination.current
-        params.pageSize = this.ipagination.pageSize
-        this.loading = true
-        getLocalDeviceGroupList(params).then((res) => {
-          if (this.$isAjaxSuccess(res.code)) {
-            this.dataSource = res.result.records
-            this.ipagination.total = res.result.total || 0
-          } else {
-            this.$message.warning(res.message)
-          }
-          this.loading = false
-        })
-      },
-      handleDelete (id) {
-        delDeviceGroup(id).then(res => {
-          if (this.$isAjaxSuccess(res.code)) {
-            this.loadData(1)
-            this.$message.success('删除成功')
-          } else {
-            this.$message.error(res.message)
-          }
-        })
-      },
-      handleEditName (record) {
-        this.$refs.editModal.edit(record)
-      },
-      handleMember (record) {
-        this.$refs.memberModal.edit(record)
-      },
-      modalFormOk () {
-        this.loadData()
-      },
-      modalClose (refresh) {
-        refresh && this.loadData()
-      }
+      ]
     }
-
+  },
+  created () {
+    this.getOboxList()
+  },
+  methods: {
+    loadData (arg) {
+      this.getDataList(arg)
+    },
+    getDataList (arg) {
+      if (arg === 1) {
+        this.ipagination.current = 1
+      }
+      const params = {...this.queryParam}
+      params.pageNo = this.ipagination.current
+      params.pageSize = this.ipagination.pageSize
+      this.loading = true
+      getLocalDeviceGroupList(params).then((res) => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.dataSource = res.result.records
+          this.ipagination.total = res.result.total || 0
+        } else {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      })
+    },
+    getOboxList () {
+      getAllOboxList().then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.oboxList = res.result
+        }
+      })
+    },
+    handleDelete (id) {
+      delDeviceGroup(id).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.loadData(1)
+          this.$message.success('删除成功')
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    handleEditName (record) {
+      this.$refs.editModal.edit(record)
+    },
+    handleMember (record) {
+      this.$refs.memberModal.edit(record)
+    },
+    handleControl (record) {
+      this.$refs.lampModal.edit(record)
+    },
+    modalFormOk () {
+      this.loadData()
+    },
+    modalClose (refresh) {
+      refresh && this.loadData()
+    }
   }
+
+}
 </script>

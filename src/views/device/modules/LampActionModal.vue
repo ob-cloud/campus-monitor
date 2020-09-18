@@ -10,7 +10,8 @@
     :destroyOnClose="true"
     :bodyStyle="{height: 'calc(100% - 60px)'}"
   >
-    <a-layout style="height: 100%">
+    <bizz-lamp :siderWidth="150" :status="status" :deviceType="deviceType" :deviceChildType="deviceChildType" @change="handleLampChange"></bizz-lamp>
+    <!-- <a-layout style="height: 100%">
       <a-layout-sider width="200px" style="background: #132436;">
         <lamp :color="lampColor"></lamp>
       </a-layout-sider>
@@ -55,17 +56,18 @@
           </div>
         </a-card>
       </a-layout-content>
-    </a-layout>
+    </a-layout> -->
   </a-drawer>
 </template>
 
 
 <script>
-import Lamp from '@/components/IoT/Lamp'
+// import Lamp from '@/components/IoT/Lamp'
 import { editSwitchStatus, getSwitchStatus } from '@/api/device'
 import { LedLampEquip, Descriptor } from 'hardware-suit'
+import BizzLamp from '@/components/Bizz/BizzLamp'
 export default {
-  components: { Lamp },
+  components: { BizzLamp },
   data () {
     return {
       drawerWidth: 500,
@@ -88,6 +90,8 @@ export default {
       ledLampEquip: null,
 
       status: '',
+      deviceType: '',
+      deviceChildType: '',
       power: false,
       bright: 0,
       color: 0,
@@ -126,6 +130,11 @@ export default {
       this.model = Object.assign({}, record)
       this.visible = true
       this.title = `灯控 - ${Descriptor.getTypeDescriptor(record.device_type, record.device_child_type)}(${record.serialId})`
+
+      this.status = record.state
+      this.deviceType = record.device_type
+      this.deviceChildType = record.device_child_type
+
       const ledLampEquip = this.ledLampEquip = new LedLampEquip(record.state, record.device_type, record.device_child_type)
       this.isColorLamp = ledLampEquip.isBicolor()
       this.power = ledLampEquip.isPowerOn()
@@ -143,20 +152,25 @@ export default {
     },
     handleOk () {
     },
-    onPowerChange (power) {
-      this.bright = !power ? 0 : 100
-      const status = this.ledLampEquip.setBrightness(this.bright).setColdColor(this.color).getBytes()
+    handleLampChange (status, lampStatusInfo) {
+      // lampStatus = status; lampStatusInfo = statusInfo
+      console.log('lamp ', lampStatusInfo)
       this.setSwtich(status)
     },
-    onBrightChange (bright) {
-      if (bright === 0) (this.power = false)
-      const status = this.ledLampEquip.setBrightness(bright).getBytes()
-      this.setSwtich(status)
-    },
-    onColorChange (color) {
-      const status = this.ledLampEquip.setColdColor(color).getBytes()
-      this.setSwtich(status)
-    },
+    // onPowerChange (power) {
+    //   this.bright = !power ? 0 : 100
+    //   const status = this.ledLampEquip.setBrightness(this.bright).setColdColor(this.color).getBytes()
+    //   this.setSwtich(status)
+    // },
+    // onBrightChange (bright) {
+    //   if (bright === 0) (this.power = false)
+    //   const status = this.ledLampEquip.setBrightness(bright).getBytes()
+    //   this.setSwtich(status)
+    // },
+    // onColorChange (color) {
+    //   const status = this.ledLampEquip.setColdColor(color).getBytes()
+    //   this.setSwtich(status)
+    // },
     setSwtich (status) {
       editSwitchStatus(this.model.serialId, status).then(res => {
         if (this.$isAjaxSuccess(res.code)) {

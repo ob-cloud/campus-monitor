@@ -5,6 +5,10 @@
     </a-layout-sider>
     <a-layout-content>
       <a-card class="box-card" shadow="never">
+        <div slot="extra" class="clearfix" v-if="status">
+          <a-icon style="color: #ff4d4f;" type="warning" />
+          <span style="font-size: 12px; margin-left: 5px">{{ exceptionText }}</span>
+        </div>
         <div class="card-content">
           <a-row :gutter="40" class="card-content__item">
             <a-col :xs="12" :sm="5" :md="5">
@@ -75,6 +79,7 @@ export default {
       exception: '',
       isColorLamp: false,
       ledLampEquip: null,
+      exceptionText: ''
     }
   },
   watch: {
@@ -95,7 +100,12 @@ export default {
     }
   },
   mounted () {
-    this.ledLampEquip = new LedLampEquip(this.status, this.deviceType, this.deviceChildType)
+    const ledLampEquip = this.ledLampEquip = new LedLampEquip(this.status, this.deviceType, this.deviceChildType)
+    this.isColorLamp = ledLampEquip.isBicolor()
+    this.power = ledLampEquip.isPowerOn()
+    this.bright = ledLampEquip.getBrightness()
+    this.color = ledLampEquip.getColdColor()
+    this.exceptionText = ledLampEquip.getLampExceptionStatus() || ''
   },
   methods: {
     onPowerChange (power) {
