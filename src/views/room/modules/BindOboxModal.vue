@@ -100,7 +100,7 @@ export default {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('绑定成功')
           this.$emit('ok', this.selectionRows)
-        } else this.$message.error('绑定失败')
+        } else this.$message.error(res.message)
       }).finally(() => this.handleCancel())
     },
     // 关闭

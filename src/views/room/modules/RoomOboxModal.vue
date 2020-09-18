@@ -185,7 +185,8 @@ export default {
       unbindObox2Room(this.roomId, obox.oboxId, obox.obox_serial_id).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.getOboxList(this.roomId)
-        }
+          this.$message.success('解绑成功')
+        }else this.$message.error(res.message)
       })
     },
     handleOk () {
