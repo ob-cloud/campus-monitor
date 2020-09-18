@@ -3,13 +3,13 @@
     <a-card :bodyStyle="{padding: '12px 14px 20px'}">
       <div slot="title">
         <a-tag class="tag" :color="item.obox_status ? 'green' : ''" v-for="(item, index) in oboxList" :key="index" :title="item.obox_status ? '在线' : '离线'">
-          <a-popconfirm title="解绑oboox?" @confirm="() => handleUndbind(item)">
+          <a-popconfirm title="解绑OBOX?" @confirm="() => handleUndbind(item)">
             <a-icon type="close" class="close" title="解绑" />
           </a-popconfirm>
           {{ item.obox_name }}
         </a-tag>
       </div>
-      <a-button slot="extra" size="small" type="primary" title="绑定" @click="handleBind"><i class="obicon obicon-bangding"></i></a-button>
+      <a-button slot="extra" size="small" type="primary" title="绑定" @click="handleBind"><i class="obicon obicon-bangding" style="margin-right: 5px;"></i>绑定OBOX</a-button>
       <div class="content">
         <a-row>
           <a-col :span="12">
@@ -34,7 +34,7 @@
                 rowKey="sceneNumber"
                 :columns="sceneColumns"
                 :dataSource="sceneList"
-                :loading="loading"
+                :loading="sceneLoading"
                 :pagination="false"
                 :scroll="{ y: 250 }"
               ></a-table>
@@ -50,7 +50,7 @@
 
 <script>
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
-import { getRoomObox } from '@/api/device'
+import { getRoomObox, unbindObox2Room } from '@/api/device'
 import { getRoomDeviceList } from '@/api/room'
 import { getSmartSceneList } from '@/api/scene'
 
@@ -61,8 +61,10 @@ export default {
   components: { BindOboxModal },
   data() {
     return {
-      title: '绑定设备',
+      title: 'OBOX操作',
       visible: false,
+      loading: false,
+      sceneLoading: false,
       oboxList: [],
       sceneColumns: [
          {
@@ -145,11 +147,12 @@ export default {
       })
     },
     getDeviceList () {
+      this.loading = true
       getRoomDeviceList({ roomId: this.roomId }).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.deviceList = res.result.records
         }
-      })
+      }).finally(() => this.loading = false)
     },
     getSceneList () {
       const params = {
@@ -157,11 +160,12 @@ export default {
         pageNo: 1,
         pageSize: 1000
       }
+      this.sceneLoading = true
       getSmartSceneList(params).then((res) => {
         if (this.$isAjaxSuccess(res.code)) {
           this.sceneList = res.result.records
         }
-      })
+      }).finally(() => this.sceneLoading = false)
     },
     show (record) {
       this.visible = true
@@ -178,7 +182,11 @@ export default {
     },
     handleUndbind (obox) {
       console.log(obox)
-      console.log('unbindobox')
+      unbindObox2Room(this.roomId, obox.oboxId, obox.obox_serial_id).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.getOboxList(this.roomId)
+        }
+      })
     },
     handleOk () {
       if (!this.selectionRows.length) return this.$message.warning('请选择设备')

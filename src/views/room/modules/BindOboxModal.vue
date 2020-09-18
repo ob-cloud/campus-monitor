@@ -83,8 +83,7 @@ export default {
         } else {
           this.$message.warning(res.message)
         }
-        this.loading = false
-      })
+      }).finally(() =>  this.loading = false)
     },
     show (record) {
       this.visible = true

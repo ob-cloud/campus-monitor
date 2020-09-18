@@ -27,7 +27,7 @@
               <span><i class="obicon obicon-humidity" style="color: #73d1f0;"></i>40%</span> -->
             </div>
             <div class="toolbar">
-              <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="设备" @click="handleDeviceModal(item)"></i>
+              <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="绑定OBOX" @click="handleDeviceModal(item)"></i>
               <a-popconfirm :title="`${item.lightState ? '关' : '开'}灯?`" @confirm="() => handleLamp(item)">
                 <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="教室灯"></i>
               </a-popconfirm>
