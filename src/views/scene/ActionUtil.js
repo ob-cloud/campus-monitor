@@ -3,6 +3,7 @@ import { Descriptor } from 'hardware-suit'
 export const getActionModel = () => {
   return {
     // serialId: '',
+    id: Date.now(),
     action_time: 0,
     deviceType: '',
     actionDescriptor: '',

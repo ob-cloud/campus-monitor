@@ -205,6 +205,7 @@ export default {
         this.remoteControlValue = null
         this.$emit('ok', {action: this.changeAirConditionToAction(JSON.stringify(action), {...this.curInfraredDevice, deviceType: '51'}, room), extra: action.key},  this.actionObject.childActionIndex)
       } else if (this.isBicolorLed) {
+        if (!this.lampStatus) return this.$message.warning('请设置灯状态')
         const descriptor = `亮度:${this.lampStatusInfo.bright} / 色温:${this.lampStatusInfo.color} (${this.lampStatus})`
         this.$emit('ok', {action: this.toAction(this.lampStatus, this.actionObject, room), extra: descriptor},  this.actionObject.childActionIndex)
       }

@@ -110,8 +110,9 @@ export default {
       this.activeAction = action
       this.setActionDescriptor(action)
       const subtypeList = action.deviceTypeList.find(type => type.deviceType === action.deviceType)
+      const children = subtypeList.children.map(item => Object.assign({}, item))
       action.childVisible = true
-      action.childAction = [...(subtypeList.children || [])]
+      action.childAction = [...(children || [])]
       this.activeObj = this.toDeviceObj({ ...action, deviceChildType: subtypeList.deviceChildType }, action.action_time)
     },
     // 设置行为执行时间
