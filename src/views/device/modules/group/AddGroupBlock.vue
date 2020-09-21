@@ -1,0 +1,217 @@
+<template>
+  <a-spin :spinning="confirmLoading">
+    <a-form :form="form">
+      <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="编号">
+        <a-input-number v-decorator="[ 'group_no', validatorRules.no]" :min="1" :max="65535" />
+      </a-form-item>
+      <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="名称">
+        <a-input placeholder="输入组名" v-decorator="[ 'group_name', validatorRules.name]" />
+      </a-form-item>
+      <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="网关">
+        <a-select placeholder="请选择网关" allowClear v-decorator="[ 'obox_serial_id', validatorRules.oboxSerialId]" @change="onOboxChange">
+          <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
+            {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
+          </a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item v-if="trasnferVisible" :labelCol="labelCol" :wrapperCol="wrapperCol2" label="设备">
+        <a-transfer
+          :data-source="dataSource"
+          :titles="['设备列表', '编组列表']"
+          :target-keys="targetKeys"
+          :filter-option="(inputValue, item) => item.title.indexOf(inputValue) !== -1"
+          :showSelectAll="false"
+          @change="onTransferChange"
+        >
+          <template
+            slot="children"
+            slot-scope="{
+              props: { direction, filteredItems, selectedKeys, disabled: listDisabled },
+              on: { itemSelectAll, itemSelect },
+            }"
+          >
+            <a-table
+              :row-selection="
+                getRowSelection({ disabled: listDisabled, selectedKeys, itemSelectAll, itemSelect })
+              "
+              :columns="direction === 'left' ? leftColumns : rightColumns"
+              :data-source="filteredItems"
+              :loading="loading"
+              size="small"
+              :style="{ pointerEvents: listDisabled ? 'none' : null }"
+              :scroll="{ y: 200 }"
+              :custom-row="
+                ({ key, disabled: itemDisabled }) => ({
+                  on: {
+                    click: () => {
+                      if (itemDisabled || listDisabled) return
+                      itemSelect(key, !selectedKeys.includes(key))
+                    },
+                  },
+                })
+              "
+            />
+          </template>
+        </a-transfer>
+      </a-form-item>
+    </a-form>
+  </a-spin>
+</template>
+
+<script>
+import { getAllOboxList, getOboxDeviceList } from '@/api/device'
+import difference from 'lodash/difference'
+import { Descriptor } from 'hardware-suit'
+const leftTableColumns = [
+  {
+    dataIndex: 'serialId',
+    title: '序列号',
+  },
+  {
+    dataIndex: 'name',
+    title: '名称',
+  },
+  {
+    dataIndex: 'description',
+    title: '设备类型',
+  }
+]
+const rightTableColumns = [
+  {
+    dataIndex: 'serialId',
+    title: '序列号',
+  },
+  {
+    dataIndex: 'name',
+    title: '名称',
+  },
+]
+export default {
+  data () {
+    return {
+      confirmLoading: false,
+      trasnferVisible: false,
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 }
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 12 }
+      },
+      wrapperCol2: {
+        xs: { span: 24 },
+        sm: { span: 18 }
+      },
+      oboxList: [],
+      form: this.$form.createForm(this),
+      validatorRules: {
+        no: { initialValue: 1, rules: [{ required: true, message: '请输入数字(1~65535)!' }] },
+        name: { rules: [{ required: true, message: '组名不能为空!' }] },
+        oboxSerialId: { rules: [{ required: true, message: '网关不能为空!' }] }
+      },
+      dataSource: [],
+      targetKeys: [],
+      leftColumns: leftTableColumns,
+      rightColumns: rightTableColumns,
+      oboxSerialId: '',
+      groupId: '',
+      loading: false
+    }
+  },
+  mounted () {
+    this.getOboxList()
+  },
+  methods: {
+    getOboxList () {
+      getAllOboxList().then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.oboxList = res.result
+        }
+      })
+    },
+    getOboxDeviceList (oboxSerialId) {
+      if (!oboxSerialId) return
+      // this.oboxSerialId = oboxSerialId
+      const params = {
+        obox_serial_id: oboxSerialId,
+        pageNo: 1,
+        pageSize: 1000
+      }
+      this.loading = true
+      getOboxDeviceList(params).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.dataSource = res.result.records.map(item => {
+            return {
+              ...item,
+              key: item.serialId,
+              title: item.name,
+              description: Descriptor.getTypeDescriptor(item.device_type)
+            }
+          })
+        }
+      }).finally(() => this.loading = false)
+    },
+    onOboxChange (val) {
+      this.trasnferVisible = !!val
+      val && this.getOboxDeviceList(val)
+    },
+    onTransferChange(nextTargetKeys, direction, moveKeys) {
+      console.log(nextTargetKeys, direction, moveKeys)
+      this.targetKeys = nextTargetKeys
+    },
+    getRowSelection({ disabled, selectedKeys, itemSelectAll, itemSelect }) {
+      return {
+        getCheckboxProps: item => ({ props: { disabled: disabled || item.disabled } }),
+        onSelectAll(selected, selectedRows) {
+          const treeSelectedKeys = selectedRows
+            .filter(item => !item.disabled)
+            .map(({ key }) => key)
+          const diffKeys = selected
+            ? difference(treeSelectedKeys, selectedKeys)
+            : difference(selectedKeys, treeSelectedKeys)
+          itemSelectAll(diffKeys, selected)
+        },
+        onSelect({ key }, selected) {
+          itemSelect(key, selected)
+        },
+        selectedRowKeys: selectedKeys
+      }
+    },
+    handleOk () {
+      return new Promise(resolve => {
+        // const that = this
+        this.form.validateFields((err, values) => {
+          if (!err) {
+            // that.confirmLoading = true
+            console.log('ok ', values)
+            this.trasnferVisible = false
+            resolve({status: 1, result: values})
+            // const groupName = values.group_name
+            // const oboxSerialId = values.obox_serial_id
+            // addDeviceGroup(oboxSerialId, groupName).then(res => {
+            //   if (that.$isAjaxSuccess(res.code)) {
+            //     const groupId = res.result.groups.group_id
+            //     that.$message.success(res.message)
+            //     that.confirmLoading = false
+            //     resolve({status: 1, oboxSerialId, groupId})
+            //   } else {
+            //     that.$message.warning(res.message)
+            //   }
+            // }).finally(() => that.confirmLoading = false)
+          }
+        })
+      })
+    },
+    reset () {
+      this.form.resetFields()
+      this.oboxList = []
+      this.trasnferVisible = false
+    }
+  },
+}
+</script>
+
+<style lang="less" scoped>
+
+</style>

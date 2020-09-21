@@ -106,7 +106,7 @@
 </template>
 
 <script>
-  import GroupModal from './modules/GroupModal'
+  import GroupModal from './modules/group/GroupModal'
   import { getPanelGroupList, delPanelGroup } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
@@ -125,7 +125,7 @@
         },
         columns: [
           {
-            title: '组号',
+            title: '编号',
             align: 'center',
             dataIndex: 'group_id',
           },
@@ -134,12 +134,12 @@
             align: 'center',
             dataIndex: 'group_name',
           },
-          {
-            title: '面板地址',
-            align: 'center',
-            dataIndex: 'panel_addr',
-            scopedSlots: { customRender: 'tags' }
-          },
+          // {
+          //   title: '面板地址',
+          //   align: 'center',
+          //   dataIndex: 'panel_addr',
+          //   scopedSlots: { customRender: 'tags' }
+          // },
           {
             title: '操作',
             dataIndex: 'action',
