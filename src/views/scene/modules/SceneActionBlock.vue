@@ -262,7 +262,9 @@ export default {
           action_time: item.action_time
         }
       }
-      let action = this.sceneActionModel.length === 1 ? this.sceneActionModel[0].childAction : this.sceneActionModel.reduce((prev, next) => prev.childAction.concat(next.childAction))
+      // let action = this.sceneActionModel.length === 1 ? this.sceneActionModel[0].childAction : this.sceneActionModel.reduce((prev, next) => {prev.childAction.concat(next.childAction)})
+      let action = this.sceneActionModel.reduce((prev, next) => { return {childAction: prev.childAction.concat(next.childAction)} })
+      action = action.childAction
       if (!action.length) { // 栋、层批量处理
         action = this.sceneActionModel.map(item => {
           return { ...item, actionDescriptor: item.actionDescriptor, action_time: item.action_time }
