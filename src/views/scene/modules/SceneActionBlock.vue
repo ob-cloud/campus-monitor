@@ -27,7 +27,8 @@
               <a-tooltip title="行为执行时间(单位秒)" placement="top">
                 <a-input-number v-model="item.action_time" class="time" :min="0"></a-input-number>
               </a-tooltip>
-              <div class="subtype">{{ item.subtitle }}</div>
+              <!-- ({{ item.serialId }}) -->
+              <div class="subtype" :title="`${item.subtitle}(${item.serialId})`">{{ item.subtitle }}</div>
               <div class="action-item__behavior" :title="item.actionDescriptor" @click="handleChildAction(item, deviceAction, index4)">
                 <p>{{ item.actionDescriptor || '配置设备动作' }}</p>
               </div>

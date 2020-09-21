@@ -33,7 +33,7 @@
               <a-slider v-model="bright" :marks="{0: '0', 100: '100'}" :disabled="!isPowerOn" input-size="mini" @afterChange="onBrightChange"></a-slider>
             </a-col>
           </a-row>
-          <a-row :gutter="40" class="card-content__item">
+          <a-row :gutter="40" class="card-content__item" v-if="isColorLamp">
             <a-col :xs="12" :sm="5" :md="5">
               <span>色度</span>
             </a-col>
@@ -102,6 +102,7 @@ export default {
   mounted () {
     const ledLampEquip = this.ledLampEquip = new LedLampEquip(this.status, this.deviceType, this.deviceChildType)
     this.isColorLamp = ledLampEquip.isBicolor()
+    console.log('lamp ', this.isColorLamp)
     this.power = ledLampEquip.isPowerOn()
     this.bright = ledLampEquip.getBrightness()
     this.color = ledLampEquip.getColdColor()

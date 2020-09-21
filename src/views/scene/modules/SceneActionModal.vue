@@ -33,7 +33,7 @@
         </a-spin>
       </div>
       <div v-if="isBicolorLed">
-        <bizz-lamp :siderWidth="150" @change="(status, statusInfo) => { lampStatus = status; lampStatusInfo = statusInfo}"></bizz-lamp>
+        <bizz-lamp :siderWidth="150" :deviceType="deviceType" :deviceChildType="deviceSubType" @change="(status, statusInfo) => { lampStatus = status; lampStatusInfo = statusInfo}"></bizz-lamp>
       </div>
     </div>
   </a-modal>
@@ -111,7 +111,7 @@ export default {
       return this.curInfraredDevice.deviceType === 0
     },
     isBicolorLed () {
-      return TypeHints.isBicolorLed(this.deviceSubType)
+      return TypeHints.isSimpleLed(this.deviceSubType)
     }
   },
   methods: {
