@@ -21,10 +21,10 @@ export const BroadcastMixin = {
     broadcast (data) {
       if (data.type === 0 && SocketMessageCmdEvent[data.cmd]) {
         this.$bus.$emit(SocketMessageCmdEvent[data.cmd], data)
-      // } else if (data.type === 2 && SocketMessageTypeEvent[data.type]) {
-      //   this.$bus.$emit(SocketMessageTypeEvent[data.cmd], data)
-      } else if ([2, 6, 7].includes(data.type) && SocketMessageTypeEvent[data.type]) {
+      } else if (data.type === 2 && SocketMessageTypeEvent[data.type]) {
         this.$bus.$emit(SocketMessageTypeEvent[data.cmd], data)
+      } else if ([6, 7].includes(data.type) && SocketMessageTypeEvent[data.type]) {
+        this.$bus.$emit(SocketMessageTypeEvent[data.type], data)
       }
     }
   }
