@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-17 18:19:43
+ * @Last Modified time: 2020-09-21 16:58:54
  */
 
 // import {request} from '@/common/request'
@@ -55,6 +55,16 @@ const getAllOboxList = () => getAction('/common', {
 const getOboxDeviceList = (params) => getAction('/common', {
   CMD: 'get_obox_device',
   oboxdevice: JSON.stringify(params)
+})
+
+const addWiredObox = () => postFormAction('/common', {
+  CMD: 'add_wired_obox'
+})
+
+// {"ssid":"OBE-dev","bssid":"20:6b:e7:7f:7c:95","password":"28068198"
+const addWirelessObox = (ssid, password, bssid) => postFormAction('/common', {
+  CMD: 'add_wireless_obox',
+  config: JSON.stringify({ssid, password, bssid})
 })
 
 const delObox = (oboxSerialId) => postFormAction('/common', {
@@ -332,6 +342,8 @@ export {
   getOboxList,
   getAllOboxList,
   getOboxDeviceList,
+  addWiredObox,
+  addWirelessObox,
   delObox,
   editOboxName,
   getRoomObox,

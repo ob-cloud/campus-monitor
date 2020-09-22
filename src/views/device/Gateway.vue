@@ -44,6 +44,11 @@
       </a-form>
     </div>
 
+    <!-- 操作按钮区域 -->
+    <div class="table-operator" style="border-top: 5px">
+      <a-button v-isPermitted="'device:gateway:add'" @click="handleScan" type="primary" icon="plus">添加网关</a-button>
+    </div>
+
     <!-- table区域-begin -->
     <div>
       <a-table
@@ -82,11 +87,13 @@
     <!-- table区域-end -->
 
     <gateway-modal ref="modalForm" @ok="modalFormOk"></gateway-modal>
+    <gateway-scan-modal ref="scanModal" @ok="scanModalOk"></gateway-scan-modal>
   </a-card>
 </template>
 
 <script>
   import GatewayModal from './modules/GatewayModal'
+  import GatewayScanModal from './modules/GatewayScanModal'
   import { getOboxList, delObox } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
 
@@ -95,6 +102,7 @@
     mixins: [ ProListMixin ],
     components: {
       GatewayModal,
+      GatewayScanModal
     },
     data() {
       return {
@@ -171,6 +179,12 @@
             this.$message.error(res.message)
           }
         })
+      },
+      handleScan () {
+        this.$refs.scanModal.edit()
+      },
+      scanModalOk () {
+        this.loadData()
       }
     }
 
