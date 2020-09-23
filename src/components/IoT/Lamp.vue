@@ -4,7 +4,8 @@
       <slot name="header"></slot>
     </div>
     <div class="panel-content">
-      <a-icon type="bulb" :style="[iconSize, colorStyle]" />
+      <!-- <a-icon type="bulb" :style="[iconSize, colorStyle]" /> -->
+      <i class="icon obicon obicon-droplight" :style="[iconSize, colorStyle]"></i>
     </div>
   </div>
 </template>
