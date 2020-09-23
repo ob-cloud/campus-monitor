@@ -145,7 +145,7 @@ export default {
           console.log(formData)
           setPanelGroup(formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
-              if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
+              // if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
               if (item.group_id) item.group_id = res.result.groupId
               this.$message.success('添加成功')
             } else this.$message.error('添加失败')

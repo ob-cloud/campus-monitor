@@ -209,6 +209,7 @@
     },
     mounted () {
       this.getOboxList()
+      this.$bus.$on('state', () => this.loadData())
     },
     methods: {
       loadData (arg) {
