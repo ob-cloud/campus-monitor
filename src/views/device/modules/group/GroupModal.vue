@@ -1,10 +1,14 @@
 <template>
-  <a-modal :title="title" :width="'90%'" :visible="visible" :confirmLoading="confirmLoading" @ok="handleOk" @cancel="handleCancel" destroyOnClose cancelText="关闭">
-    <a-card :bordered="false">
+  <a-modal :title="title" :width="'90%'" :visible="visible" :confirmLoading="confirmLoading" @cancel="close" destroyOnClose>
+    <template slot="footer">
+      <a-button v-if="cancelText" key="back" @click="handleCancel">{{ cancelText }}</a-button>
+      <a-button key="submit" type="primary" :loading="confirmLoading" @click="handleOk">{{ confirmText }}</a-button>
+    </template>
+    <a-card :bordered="false" style="width: 90%; margin:0 auto;">
       <div slot="title">
         <a-steps :current="current">
-          <a-step key="1" title="添加分组" />
-          <a-step key="2" title="添加组员" />
+          <a-step key="1" title="" />
+          <a-step key="2" title="" />
         </a-steps>
       </div>
       <div class="steps-content">
@@ -12,13 +16,10 @@
         <add-member-block v-show="current === 1" ref="createMemberModal"></add-member-block>
       </div>
     </a-card>
-    <!-- <group-member-modal ref="memberModal" @ok="modalOk"></group-member-modal> -->
   </a-modal>
 </template>
 
 <script>
-// import { setPanelGroup } from '@/api/device'
-// import GroupMemberModal from './GroupMemberModal'
 import AddGroupBlock from './AddGroupBlock'
 import AddMemberBlock from './AddMemberBlock'
 export default {
@@ -44,7 +45,9 @@ export default {
         member: { rules: [{ required: true, message: '成员不能为空!' }] },
         addr: { rules: [{ required: true, message: '短地址不能为空!' }] },
         group_addr: { rules: [{ required: true, message: '组地址不能为空!' }] },
-      }
+      },
+      cancelText: null,
+      confirmText: '下一步'
     }
   },
   methods: {
@@ -52,26 +55,40 @@ export default {
       this.edit({})
     },
     edit (record) {
+      console.log(record)
       this.form.resetFields()
+      this.visible = true
       this.model = {
         group_id: record.group_id,
-        group_member: record.group_member,
         group_name: record.group_name,
-        addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].addr : '',
-        group_addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].group_addr : ''
+        addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].addr : ''
       }
-      this.visible = true
       this.$nextTick(() => {
-        this.form.setFieldsValue(this.model)
+        this.$refs.createModal.setFieldsValue(this.model)
+        record.group_id && this.$refs.createModal.setEditDeviceList(this.model.group_id)
       })
     },
     handleAddGroupOk () {
-      this.$refs.createModal.handleOk().then(({status, oboxSerialId, groupId}) => {
+      this.$refs.createModal.handleOk().then(({status, deviceList, groupNo}) => {
         if (status) {
           this.current++
-          console.log('===== ', oboxSerialId, groupId)
-          this.$refs.createMemberModal.init(oboxSerialId, groupId)
+          this.cancelText = ''
+          this.confirmText = '完成'
+          console.log('===== ', deviceList, groupNo)
+          this.$refs.createMemberModal.init(deviceList, groupNo)
         }
+      })
+    },
+    handleAddMemberOk () {
+      const that = this
+      this.$confirm({
+        content: '确认退出编辑操作吗？',
+        onOk() {
+          that.$emit('ok')
+          that.close()
+        },
+        cancelText: '取消',
+        onCancel() { that.close() },
       })
     },
     // 确定
@@ -82,55 +99,22 @@ export default {
         this.handleAddMemberOk()
       }
     },
-    handleOk1 () {
-      // const that = this
-      // // 触发表单验证
-      // this.form.validateFields((err, values) => {
-      //   if (!err) {
-      //     that.confirmLoading = true
-      //     const formData = {}
-      //     if (this.model.group_id) {
-      //       formData.group_id = this.model.group_id
-      //     }
-      //     formData.panel_addr = {list: [{addr: values.addr, groupAddr: values.group_addr}]}
-      //     formData.group_name = values.group_name
-      //     formData.group_member = values.group_member
-      //     console.log(formData)
-      //     let obj = setPanelGroup(formData)
-      //     obj.then((res) => {
-      //       if (that.$isAjaxSuccess(res.code)) {
-      //         that.$message.success(res.message)
-      //         that.$emit('ok')
-      //       } else {
-      //         that.$message.warning(res.message)
-      //       }
-      //     }).finally(() => {
-      //       that.confirmLoading = false
-      //       that.close()
-      //     })
-      //   }
-      // })
-    },
     // 关闭
     handleCancel () {
-      this.close(this.current === 1)
+      this.reset()
     },
-    close (refresh) {
-      this.$emit('close', refresh)
+    close () {
+      this.$emit('close', this.current === 1)
       this.visible = false
       this.reset()
     },
     reset () {
       this.current = 0
+      this.cancelText = null
+      this.confirmText = '下一步'
       this.$refs.createModal.reset()
       this.$refs.createMemberModal.reset()
     },
-    handleMember () {
-      this.$refs.memberModal.edit({members: this.form.getFieldValue('group_member')})
-    },
-    modalOk (member) {
-      this.form.setFieldsValue({group_member: member})
-    }
   },
 }
 </script>

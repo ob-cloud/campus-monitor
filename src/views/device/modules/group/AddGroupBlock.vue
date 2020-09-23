@@ -2,13 +2,13 @@
   <a-spin :spinning="confirmLoading">
     <a-form :form="form">
       <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="编号">
-        <a-input-number v-decorator="[ 'group_no', validatorRules.no]" :min="1" :max="65535" />
+        <a-input-number v-decorator="[ 'addr', validatorRules.no]" :min="1" :max="65535" />
       </a-form-item>
       <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="名称">
         <a-input placeholder="输入组名" v-decorator="[ 'group_name', validatorRules.name]" />
       </a-form-item>
       <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="网关">
-        <a-select placeholder="请选择网关" allowClear v-decorator="[ 'obox_serial_id', validatorRules.oboxSerialId]" @change="onOboxChange">
+        <a-select placeholder="请选择网关" allowClear @change="onOboxChange">
           <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
             {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
           </a-select-option>
@@ -59,9 +59,9 @@
 </template>
 
 <script>
-import { getAllOboxList, getOboxDeviceList } from '@/api/device'
+import { getAllOboxList, getOboxDeviceList, setPanelGroup, getPanelGroupDeviceList } from '@/api/device'
 import difference from 'lodash/difference'
-import { Descriptor } from 'hardware-suit'
+import { Descriptor, Converter, fillLength } from 'hardware-suit'
 const leftTableColumns = [
   {
     dataIndex: 'serialId',
@@ -116,7 +116,9 @@ export default {
       rightColumns: rightTableColumns,
       oboxSerialId: '',
       groupId: '',
-      loading: false
+      loading: false,
+      isEditMode: false,
+      deviceList: []
     }
   },
   mounted () {
@@ -141,16 +143,18 @@ export default {
       this.loading = true
       getOboxDeviceList(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.dataSource = res.result.records.map(item => {
-            return {
-              ...item,
-              key: item.serialId,
-              title: item.name,
-              description: Descriptor.getTypeDescriptor(item.device_type)
-            }
-          })
+          const dataSource = res.result.records.map(item =>this.getTransferObjList(item))
+          this.dataSource = this.isEditMode ? dataSource.concat(this.deviceList) : dataSource
         }
       }).finally(() => this.loading = false)
+    },
+    getTransferObjList (item) {
+      return {
+        ...item,
+        key: item.serialId,
+        title: item.name,
+        description: Descriptor.getTypeDescriptor(item.device_type)
+      }
     },
     onOboxChange (val) {
       this.trasnferVisible = !!val
@@ -180,33 +184,68 @@ export default {
     },
     handleOk () {
       return new Promise(resolve => {
-        // const that = this
+        const that = this
         this.form.validateFields((err, values) => {
           if (!err) {
-            // that.confirmLoading = true
+            that.confirmLoading = true
             console.log('ok ', values)
-            this.trasnferVisible = false
-            resolve({status: 1, result: values})
-            // const groupName = values.group_name
-            // const oboxSerialId = values.obox_serial_id
-            // addDeviceGroup(oboxSerialId, groupName).then(res => {
-            //   if (that.$isAjaxSuccess(res.code)) {
-            //     const groupId = res.result.groups.group_id
-            //     that.$message.success(res.message)
-            //     that.confirmLoading = false
-            //     resolve({status: 1, oboxSerialId, groupId})
-            //   } else {
-            //     that.$message.warning(res.message)
-            //   }
-            // }).finally(() => that.confirmLoading = false)
+            if (!that.targetKeys.length) return that.$message.warning('请选择设备')
+            let formData = {}
+            if (that.groupId) {
+              formData.group_id = that.groupId
+            }
+            // 转16进制
+            let addr = new Converter(values.addr, 10).toHex()
+            addr = fillLength(addr, 4)
+            formData.panel_addr = {list: [{addr: addr, groupAddr: '00'}]}
+            formData.group_name = values.group_name
+            formData.group_member = that.targetKeys.join(',')
+            console.log(formData)
+            const groupNo = values.addr
+            let obj = setPanelGroup(formData)
+            obj.then(res => {
+              if (that.$isAjaxSuccess(res.code)) {
+                const deviceList = that.getDeviceListByKeys(that.targetKeys)
+                that.trasnferVisible = false
+                resolve({status: 1, deviceList, groupNo})
+              } else {
+                that.$message.warning(res.message)
+              }
+            }).finally(() => that.confirmLoading = false)
           }
         })
       })
+    },
+    getDeviceListByKeys (keyList) {
+      return keyList.map(key => this.dataSource.find(item => item.serialId === key))
+    },
+    getDeviceKeys (list) {
+      return list.map(item => item.serialId)
     },
     reset () {
       this.form.resetFields()
       this.oboxList = []
       this.trasnferVisible = false
+      this.isEditMode = false
+      this.groupId = ''
+    },
+    setFieldsValue (model) {
+      model.addr = model.addr ? +(new Converter(model.addr, 16).toDecimal()) : 1
+      this.form.setFieldsValue(model)
+    },
+    setEditDeviceList (groupId) {
+      this.isEditMode = true
+      this.trasnferVisible = true
+      this.groupId = groupId
+      this.loading = true
+      getPanelGroupDeviceList(groupId).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.deviceList = res.result && res.result.length ? res.result.map(item => this.getTransferObjList(item)) : []
+          this.targetKeys = this.getDeviceKeys(res.result)
+          this.dataSource = this.dataSource.concat(this.deviceList)
+          console.log(this.deviceList, this.dataSource)
+        }
+      }).finally(() => this.loading = false)
     }
   },
 }

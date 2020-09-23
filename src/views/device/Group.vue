@@ -7,7 +7,7 @@
 
           <a-col :md="6" :sm="12">
             <a-form-item label="组名">
-              <a-input placeholder="请输入编组名称" v-model="queryParam.name"></a-input>
+              <a-input placeholder="请输入编组名称" v-model="queryParam.groupName" allowClear></a-input>
             </a-form-item>
           </a-col>
 
@@ -109,7 +109,7 @@
   import GroupModal from './modules/group/GroupModal'
   import { getPanelGroupList, delPanelGroup } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
-
+  import { Converter } from 'hardware-suit'
   export default {
     name: '',
     mixins: [ ProListMixin ],
@@ -127,7 +127,10 @@
           {
             title: '编号',
             align: 'center',
-            dataIndex: 'group_id',
+            dataIndex: 'panel_addr',
+            customRender (t) {
+              return t[0] && new Converter(t[0].addr, 16).toDecimal()
+            }
           },
           {
             title: '名称',
@@ -135,7 +138,7 @@
             dataIndex: 'group_name',
           },
           // {
-          //   title: '面板地址',
+          //   title: '编号',
           //   align: 'center',
           //   dataIndex: 'panel_addr',
           //   scopedSlots: { customRender: 'tags' }

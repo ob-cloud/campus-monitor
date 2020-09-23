@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-21 16:58:54
+ * @Last Modified time: 2020-09-23 11:54:06
  */
 
 // import {request} from '@/common/request'
@@ -113,17 +113,28 @@ const editSwitchStatus = (serialId, status) => postFormAction('/common', {
 })
 
 
-// group
+// 面板编组
 const getPanelGroupList = (params) => getAction('/common', {
-  CMD: 'get_user_panel_group',
+  // CMD: 'get_user_panel_group',
+  CMD: 'get_panel_00',
   ...params
 })
+const getPanelChildGroupList = (groupNo) => getAction('/common', {
+  CMD: 'get_group_panel_no',
+  addr: groupNo
+})
+// 添加编辑组
 const setPanelGroup = (params) => getAction('/common', {
   CMD: 'set_panel_group',
   ...params
 })
+// 删除组
 const delPanelGroup = (groupId) => postFormAction('/common', {
   CMD: 'del_panel_group',
+  group_id: groupId
+})
+const getPanelGroupDeviceList = (groupId) => getAction('/common', {
+  CMD: 'get_device_panel',
   group_id: groupId
 })
 
@@ -355,6 +366,8 @@ export {
   editSwitchStatus,
 
   getPanelGroupList,
+  getPanelChildGroupList,
+  getPanelGroupDeviceList,
   setPanelGroup,
   delPanelGroup,
   setPanelKey,

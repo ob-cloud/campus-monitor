@@ -1,20 +1,50 @@
 <template>
   <div class="group">
     <a-spin :spinning="confirmLoading">
-      <a-card>
+      <a-card :bordered="false">
         <div class="card-content">
-          <!-- <a-button class="add-btn" size="small" icon="plus" @click="handleAdd"></a-button> -->
-          <a-form-model ref="form" :model="formModel" layout="inline" class="block" v-bind="formItemLayoutWithOutLabel">
-            <div class="block-item" v-for="(item, index) in formModel.group" :key="index">
-              <a-icon type="close" class="del-btn" @click="handleDel(index)" title="删除组"></a-icon>
-              <a-form-model-item v-bind="formItemLayout" label="组" :prop="'group.' + index + '.no'" :rules="{ required: true, message: '编号不能空', trigger: 'blur', }">
-                <a-input-number v-model="formModel.group[index].no" :min="1" />
+
+          <a-form-model :ref="`form${index}`" :model="formModel" v-for="(item, index) in formModel.group" :key="index" layout="inline" class="block" v-bind="formItemLayoutWithOutLabel">
+            <div class="block-item">
+              <a-popconfirm title="确定删除组?" @confirm="() => handleDel(item, index)">
+                <a-icon type="close-circle" class="del-btn" title="删除组"></a-icon>
+              </a-popconfirm>
+              <a-icon type="check-circle" class="check-btn" @click="handleConfirm(item, index)" title="确认" />
+              <a-form-model-item v-bind="formItemLayout" label="组号" :prop="'group.' + index + '.no'" :rules="{ required: true, message: '组号不能空', trigger: 'blur', }">
+                <a-input-number v-model="item.no" :min="1" :max="255" />
+              </a-form-model-item>
+              <a-form-model-item v-bind="formItemLayout" label="组名" :prop="'group.' + index + '.name'" :rules="{ required: true, message: '组名不能空', trigger: 'blur', }">
+                <a-input placeholder="输入组名" v-model="item.name" />
               </a-form-model-item>
               <a-form-model-item v-bind="formItemLayout" label="成员" :prop="'group.' + index + '.member'" :rules="{ required: true, message: '成员不能空', trigger: 'blur', }">
-                <a-select mode="multiple" style="width: 300px" placeholder="请选择成员" v-model="formModel.group[index].member" @change="onMemberChange">
-                  <!-- <a-select-option v-for="item in oboxList" :key="item.obox_serial_id" :value="item.obox_serial_id">
-                    {{ item.obox_name }}（{{ item.obox_status === 1 ? '在线' : '离线' }}）
-                  </a-select-option> -->
+                <a-select mode="multiple" style="width: 200px" placeholder="请选择成员" v-model="item.member">
+                  <a-select-option v-for="it in deviceList" :key="it.serialId" :value="it.serialId">
+                    {{ it.name }}
+                  </a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </div>
+          </a-form-model>
+          <a-button type="dashed" style="width: 100%" @click="handleAdd">
+            <a-icon type="plus" /> 添加组
+          </a-button>
+
+          <!-- <a-button class="add-btn" size="small" icon="plus" @click="handleAdd"></a-button> -->
+          <!-- <a-form-model ref="form" :model="formModel" layout="inline" class="block" v-bind="formItemLayoutWithOutLabel">
+            <div class="block-item" v-for="(item, index) in formModel.group" :key="index">
+              <a-icon type="close-circle" class="del-btn" @click="handleDel(index)" title="删除组"></a-icon>
+              <a-icon type="check-circle" class="check-btn" @click="handleConfirm(item, index)" title="确认" />
+              <a-form-model-item v-bind="formItemLayout" label="组号" :prop="'group.' + index + '.no'" :rules="{ required: true, message: '组号不能空', trigger: 'blur', }">
+                <a-input-number v-model="formModel.group[index].no" :min="1" />
+              </a-form-model-item>
+              <a-form-model-item v-bind="formItemLayout" label="组名" :prop="'group.' + index + '.name'" :rules="{ required: true, message: '组名不能空', trigger: 'blur', }">
+                <a-input placeholder="输入组名" v-model="formModel.group[index].name" />
+              </a-form-model-item>
+              <a-form-model-item v-bind="formItemLayout" label="成员" :prop="'group.' + index + '.member'" :rules="{ required: true, message: '成员不能空', trigger: 'blur', }">
+                <a-select mode="multiple" style="width: 200px" placeholder="请选择成员" v-model="formModel.group[index].member">
+                  <a-select-option v-for="it in deviceList" :key="it.serialId" :value="it.serialId">
+                    {{ it.name }}
+                  </a-select-option>
                 </a-select>
               </a-form-model-item>
             </div>
@@ -23,7 +53,7 @@
                 <a-icon type="plus" /> 添加组
               </a-button>
             </a-form-model-item>
-          </a-form-model>
+          </a-form-model> -->
         </div>
       </a-card>
     </a-spin>
@@ -31,10 +61,8 @@
 </template>
 
 <script>
-// import { getOboxDeviceList, addDeviceGroupMember, delDeviceGroupMember, getGroupMemberById } from '@/api/device'
-// import { Descriptor } from 'hardware-suit'
-// import difference from 'lodash/difference'
-// import intersection from 'lodash/intersection'
+import { setPanelGroup, delPanelGroup, getPanelGroupDeviceList, getPanelChildGroupList } from '@/api/device'
+import { Converter, fillLength } from 'hardware-suit'
 
 export default {
   data () {
@@ -49,7 +77,7 @@ export default {
         },
         wrapperCol: {
           xs: { span: 24 },
-          sm: { span: 12 },
+          sm: { span: 14 },
         },
       },
       formItemLayoutWithOutLabel: {
@@ -58,22 +86,22 @@ export default {
           sm: { span: 24, offset: 0 },
         },
       },
-      // form: this.$form.createForm(this),
-      // validatorRules: {
-      //   no: { initialValue: 1, rules: [{ required: true, message: '组名不能为空!' }] },
-      //   oboxSerialId: { rules: [{ required: true, message: '网关不能为空!' }] }
-      // },
       formModel: {
         group: [{
           no: 1,
-          member: ''
+          name: '',
+          member: []
         }]
       },
       modelRules: {
         no: [{ required: true, trigger: 'change', message: '不能空!'}],
+        name: [{ required: true, trigger: 'change', message: '不能空!'}],
         member: [{ required: true, trigger: 'change', message: '不能空'}],
       },
-      confirmLoading: false
+      confirmLoading: false,
+      deviceList: [],
+      groupNo: '',
+      groupNoHex: ''
     }
   },
   mounted () {
@@ -82,11 +110,65 @@ export default {
     handleAdd () {
       this.formModel.group.push({
         no: 1,
-        member: ''
+        name: '',
+        member: []
       })
     },
-    handleDel () {
-
+    handleDel (item, index) {
+      if (item.group_id) { // 已入库组
+        this.confirmLoading = true
+        delPanelGroup(item.group_id).then(res => {
+          if (this.$isAjaxSuccess(res.code)) {
+            this.$message.success('删除成功')
+            this.this.formModel.group.splice(index, 1)
+          } else this.$message.error('删除失败')
+        }).finally(() => this.confirmLoading = false)
+      } else { // 未入库
+        this.formModel.group.splice(index, 1)
+      }
+    },
+    handleConfirm (item, index) {
+      console.log(item, index)
+      const that = this
+      this.$refs[`form${index}`][0].validate(valid => {
+        if (valid) {
+          that.confirmLoading = true
+          let formData = {}
+          if (item.group_id) {
+            formData.group_id = item.group_id
+          }
+          let addr = new Converter(item.no, 10).toHex()
+          addr = fillLength(addr, 2)
+          formData.panel_addr = {list: [{addr: that.groupNoHex, groupAddr: addr}]}
+          formData.group_name = item.name
+          formData.group_member = item.member.join(',')
+          console.log(formData)
+          setPanelGroup(formData).then(res => {
+            if (this.$isAjaxSuccess(res.code)) {
+              if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
+              if (item.group_id) item.group_id = res.result.groupId
+              this.$message.success('添加成功')
+            } else this.$message.error('添加失败')
+          }).finally(() => that.confirmLoading = false)
+        }
+      })
+      // this.$refs.form.validateField([`group.${index}.no`, `group.${index}.name`, `group.${index}.member`], err => {
+      //   if (!err) {
+      //     let formData = {}
+      //     if (item.group_id) {
+      //       formData.group_id = item.group_id
+      //     }
+      //     formData.panel_addr = {list: [{addr: item.no, groupAddr: '01'}]}
+      //     formData.group_name = item.name
+      //     formData.group_member = item.member.join(',')
+      //     console.log(formData)
+      //     setPanelGroup(formData).then(res => {
+      //       if (this.$isAjaxSuccess(res.code)) {
+      //         this.$message.success('添加成功')
+      //       } else this.$message.error('添加失败')
+      //     })
+      //   }
+      // })
     },
     edit (record) {
       const groupId = record.groupId
@@ -94,122 +176,34 @@ export default {
       this.init(oboxSerialId, groupId)
       this.getMembers(groupId)
     },
-    onMemberChange () {
-      //
-    },
-    handleOk () {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          console.log(valid)
+    async init (deviceList, groupNo) {
+      if (!deviceList || !deviceList.length) {
+        const result = await getPanelGroupDeviceList(groupNo)
+        console.log(result)
+        deviceList = result.record
+      }
+      this.deviceList = deviceList
+      this.groupNo = groupNo
+      this.confirmLoading = true
+      let addr = new Converter(groupNo, 10).toHex()
+      addr = fillLength(addr, 4)
+      this.groupNoHex = addr
+
+      getPanelChildGroupList(addr).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          if (res.result && res.result.length) {
+            this.formModel.group = res.result.map(item => {
+              return {
+                no: +(new Converter(item.panel_addr[0].group_addr, 16).toDecimal()),
+                name: item.group_name,
+                member: item.groupMember.map(it => it.serialId)
+              }
+            })
+            console.log(this.formModel.group)
+          }
         }
-      })
+      }).finally(() => this.confirmLoading = false)
     },
-    // getMembers (groupId) {
-    //   if (!groupId) return
-    //   const params = {
-    //     groupId,
-    //     pageNo: 1,
-    //     pageSize: 1000
-    //   }
-    //   getGroupMemberById(params).then(res => {
-    //     if (this.$isAjaxSuccess(res.code)) {
-    //       this.targetKeys = res.result.records
-    //     }
-    //   })
-    // },
-    init (oboxSerialId, groupId) {
-      if (!oboxSerialId || !groupId) return
-      // this.oboxSerialId = oboxSerialId
-      // this.groupId = groupId
-      // const params = {
-      //   obox_serial_id: oboxSerialId,
-      //   pageNo: 1,
-      //   pageSize: 1000
-      // }
-      // this.loading = true
-      // getOboxDeviceList(params).then(res => {
-      //   if (this.$isAjaxSuccess(res.code)) {
-      //     this.dataSource = res.result.records.map(item => {
-      //       return {
-      //         ...item,
-      //         key: item.serialId,
-      //         title: item.name,
-      //         description: Descriptor.getTypeDescriptor(item.device_type)
-      //       }
-      //     })
-      //   }
-      // }).finally(() => this.loading = false)
-    },
-    // onChange(nextTargetKeys, direction, moveKeys) {
-    //   console.log('.... --- ', nextTargetKeys)
-    //   this.loading = true
-    //   if (direction === 'right') { // 添加组员
-    //     // A B(pre) ---> A B C D(next) |  C D(move) | D(result) ---> A B D(final)
-    //     addDeviceGroupMember(this.groupId, moveKeys).then(res => {
-    //       if(this.$isAjaxSuccess(res.code)) {
-    //         const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
-    //         if (!isAsynSuccess) return this.$message.error('添加组员到OBOX失败！')
-    //         // 原绑定设备
-    //         const preTargetKeys = difference(nextTargetKeys, moveKeys)
-    //         // 成功添加的设备
-    //         const memberKeys = intersection(moveKeys, res.result.groupNumber)
-    //         this.targetKeys = preTargetKeys.concat(memberKeys)
-    //         this.$message.success(`组员（${memberKeys.join(',')}）添加成功`)
-    //       } else this.$message.error('添加失败')
-    //     }).finally(() => this.loading = false)
-    //   } else { // 删除组员
-    //     // A B C D(pre)  -->  A B(next) | C D(move)  | D(result) --> A B C(final)
-    //     delDeviceGroupMember(this.groupId, moveKeys).then(res => {
-    //       if(this.$isAjaxSuccess(res.code)) {
-    //         const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
-    //         if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')
-    //         const preTargetKeys = nextTargetKeys.concat(moveKeys)
-    //         const memberKeys = difference(moveKeys, res.result.groupNumber) // 删除成功的成员
-    //         this.targetKeys = preTargetKeys.concat(memberKeys)
-    //         this.$message.success(`组员（${memberKeys.join(',')}）删除成功`)
-    //       } else this.$message.error('删除失败')
-    //     }).finally(() => this.loading = false)
-    //   }
-    // },
-    // 单选
-    // getRowSelection({ disabled, selectedKeys, itemSelectAll, itemSelect }) {
-    //   selectedKeys = [selectedKeys.length === 1 ? selectedKeys[0] : selectedKeys[selectedKeys.length - 1]]
-    //   return {
-    //     hideDefaultSelections: true,
-    //     getCheckboxProps: item => ({ props: { disabled: disabled || item.disabled } }),
-    //     onSelectAll(selected, selectedRows) {
-    //       const unselectedKeys = selectedRows.map(({ key }) => key)
-    //       const treeSelectedKeys = selectedRows.filter((item, index) => index === 0).map(({ key }) => key)
-    //       itemSelectAll(unselectedKeys, false)
-    //       itemSelectAll(treeSelectedKeys, selected)
-    //     },
-    //     onSelect({ key }, selected, selectedRows) {
-    //       const unselectedKeys = selectedRows.filter(item => item.key !== key).map(({ key }) => key)
-    //       itemSelectAll(unselectedKeys, false)
-    //       itemSelect(key, selected)
-    //     },
-    //     selectedRowKeys: selectedKeys,
-    //   };
-    // },
-    // 多选
-    // getRowSelection({ disabled, selectedKeys, itemSelectAll, itemSelect }) {
-    //   return {
-    //     getCheckboxProps: item => ({ props: { disabled: disabled || item.disabled } }),
-    //     onSelectAll(selected, selectedRows) {
-    //       const treeSelectedKeys = selectedRows
-    //         .filter(item => !item.disabled)
-    //         .map(({ key }) => key)
-    //       const diffKeys = selected
-    //         ? difference(treeSelectedKeys, selectedKeys)
-    //         : difference(selectedKeys, treeSelectedKeys)
-    //       itemSelectAll(diffKeys, selected)
-    //     },
-    //     onSelect({ key }, selected) {
-    //       itemSelect(key, selected)
-    //     },
-    //     selectedRowKeys: selectedKeys
-    //   }
-    // },
     reset () {
       this.dataSource = []
       this.targetKeys = []
@@ -221,8 +215,8 @@ export default {
 <style lang="less" scoped>
 .block{
   position: relative;
-  width: 70%;
-  margin: 0 auto;
+  // width: 70%;
+  // margin: 0 auto;
 
   .block-item{
     border: 1px solid #eee;
@@ -235,9 +229,15 @@ export default {
   float: right;
   margin: 0 5px 0;
 }
+.check-btn,
 .del-btn {
+  font-size: 16px;
   float: right;
   margin-top: 10px;
+  cursor: pointer;
+}
+.check-btn{
+  margin-right: 10px;
 }
 </style>
 <style lang="less">
