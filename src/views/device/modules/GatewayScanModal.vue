@@ -148,11 +148,13 @@ export default {
     },
     reset () {
       this.current = 0
-      this.type = 1
       this.loadingTips = ''
       this.cancelText = null
-      this.form.resetFields()
-      this.form.clearField()
+      if (this.type === 2) {
+        this.form.resetFields()
+        this.form.clearField()
+      }
+      this.type = 1
     }
   },
 }
