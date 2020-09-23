@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-07 16:43:10
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-09 18:06:41
+ * @Last Modified time: 2020-09-22 18:12:44
  */
 
 import { getAction, postFormAction } from '@/utils/ajax'
@@ -44,7 +44,7 @@ const unbindRoomDevice = (params = {}) => postFormAction('/common', {
 // 灯控
 const handleLampPower = (params = {}) => postFormAction('/common', {
   CMD: 'tigger_room_device',
-  device: JSON.stringify({ ...params, deviceChildType: '0102' })
+  device: JSON.stringify({ ...params, deviceChildType: '01' })
 })
 // 开关
 const handleSwitchPower = (params = {}) => postFormAction('/common', {
