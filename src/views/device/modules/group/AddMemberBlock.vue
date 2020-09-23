@@ -146,8 +146,10 @@ export default {
           setPanelGroup(formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
               // if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
-              if (item.group_id) item.group_id = res.result.groupId
-              this.$message.success('添加成功')
+              if (res.result.group_id) item.group_id = res.result.group_id
+              // 根据设备组员入网结果，重置选项值
+              item.group_member = res.result.group_member ? res.result.group_member.split(',') : []
+              this.$message.success(`${item.group_id ? '编辑' : '添加'}组成功，设备成员有(${item.group_member.join(',')})`)
             } else this.$message.error('添加失败')
           }).finally(() => that.confirmLoading = false)
         }
