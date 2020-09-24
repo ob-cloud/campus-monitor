@@ -23,7 +23,7 @@
             <div class="toolbar">
               <a-popconfirm :title="`${item.lightState ? '关' : '开'}楼层灯?`" @confirm="() => handleLamp(item)">
                 <!-- <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" :class="{active: item.lightState}" title="楼层灯"></i> -->
-                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="楼层灯"></i>
+                <i v-isPermitted="'room:floor:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="楼层灯"></i>
               </a-popconfirm>
               <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}楼层开关?`" @confirm="() => handlePower(item)">
                 <i v-isPermitted="'room:floor:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="楼层开关"></i>
