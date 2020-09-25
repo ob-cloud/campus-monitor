@@ -51,7 +51,7 @@ sudo nano /etc/nginx/sites-available/default
 #  }
 
 # reload nginx
-sudo /etc/init.d/nginx start
+sudo /etc/init.d/nginx restart
 
 # stop nginx
 # sudo /etc/init.d/nginx stop
