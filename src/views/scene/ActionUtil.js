@@ -5,7 +5,7 @@ export const getActionModel = () => {
     // serialId: '',
     id: Date.now(),
     action_time: 0,
-    deviceType: '',
+    deviceType: undefined,
     actionDescriptor: '',
     action: ''
   }
