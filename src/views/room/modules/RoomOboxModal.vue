@@ -190,8 +190,8 @@ export default {
       })
     },
     handleOk () {
-      if (!this.selectionRows.length) return this.$message.warning('请选择设备')
-      this.$emit('ok', this.selectionRows[0])
+      // if (!this.selectionRows.length) return this.$message.warning('请选择设备')
+      this.$emit('ok')
       this.handleCancel()
     },
     // 关闭
