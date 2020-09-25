@@ -109,7 +109,7 @@
     <!-- table区域-end -->
 
     <normal-modal ref="modalForm" @ok="modalFormOk"></normal-modal>
-    <normal-device-modal ref="modalDeviceForm" @ok="modalDeviceFormOk"></normal-device-modal>
+    <normal-device-modal ref="modalDeviceForm" @ok="modalDeviceFormOk" @close="modalDeviceFormOk"></normal-device-modal>
     <humidity-action-modal ref="humidityModal" @close="actionModalClose"></humidity-action-modal>
     <lamp-action-modal ref="lampModal" @close="actionModalClose"></lamp-action-modal>
     <keypanel-action-modal ref="keypanelModal" @ok="actionModalClose" @close="actionModalClose"></keypanel-action-modal>

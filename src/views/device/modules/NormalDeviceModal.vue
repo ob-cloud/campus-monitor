@@ -80,7 +80,7 @@ export default {
       oboxList: [],
       oboxSerialId: '',
       scanDeviceListFromWebsocket: [],
-      scanTimeout: 6000,
+      scanTimeout: 10000,
       timePicker: null,
       scanTips: '扫描设备中...',
       Descriptor
