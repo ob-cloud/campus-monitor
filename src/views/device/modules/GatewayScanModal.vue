@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="title" :width="800" :visible="visible" :confirmLoading="confirmLoading" @cancel="close">
+  <a-modal :title="title" :width="800" :visible="visible" :confirmLoading="confirmLoading" @cancel="handleClose">
     <template slot="footer">
       <a-button v-if="cancelText" key="back" :disabled="confirmLoading" @click="handleCancel">{{ cancelText }}</a-button>
       <a-button key="submit" type="primary" :loading="confirmLoading" @click="handleOk">确定</a-button>
@@ -140,6 +140,21 @@ export default {
     handleCancel () {
       // this.close()
       this.reset()
+    },
+    handleClose () {
+      if (this.confirmLoading) {
+        const that = this
+        this.$confirm({
+          content: '正在扫描添加OBOX，确认退出？',
+          onOk() {
+            that.confirmLoading = false
+            that.close()
+          },
+          cancelText: '取消'
+        })
+      } else {
+        this.close()
+      }
     },
     close () {
       this.$emit('close')

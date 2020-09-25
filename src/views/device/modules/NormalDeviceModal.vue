@@ -89,11 +89,11 @@ export default {
   mounted () {
     // 订阅WebSocket设备扫描信息
     this.$bus.$on('scan', (record) => {
-      if (!record.result) {
-        this.timePicker && clearTimeout(this.timePicker)
-        return this.confirmLoading = false
-      }
-      this.scanDeviceListFromWebsocket.push(record.result)
+      // if (!record.result) {
+      //   this.timePicker && clearTimeout(this.timePicker)
+      //   return this.confirmLoading = false
+      // }
+      record.result && this.scanDeviceListFromWebsocket.push(record.result)
     })
   },
   methods: {
@@ -149,7 +149,7 @@ export default {
     },
     searchPause () {
       if (!this.oboxSerialId) return
-      pauseScanDevices(this.oboxSerialId).then(res => {
+      return pauseScanDevices(this.oboxSerialId).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('已停止扫描')
         } else {
@@ -172,8 +172,22 @@ export default {
       this.close()
     },
     // 关闭
+    // handleCancel () {
+    //   this.close()
+    // },
     handleCancel () {
-      this.close()
+      if (this.confirmLoading) {
+        const that = this
+        this.$confirm({
+          content: '正在扫描添加设备，确认退出？',
+          onOk() {
+            that.searchPause().then(() => that.close())
+          },
+          cancelText: '取消'
+        })
+      } else {
+        this.close()
+      }
     },
     close () {
       this.$emit('close')
