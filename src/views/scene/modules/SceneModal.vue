@@ -100,16 +100,16 @@ export default {
         actions: [], // device behaviors
         conditions: [], // device conditions
         location: {
-          buildingId: '',
-          floorId: '',
-          roomId: ''
+          buildingId: undefined,
+          floorId: undefined,
+          roomId: undefined
         }
       }
     },
     handleBuildingChange (id) {
       if (!this.isEditScene) {
-        this.sceneModel.location.floorId = ''
-        this.sceneModel.location.roomId = ''
+        this.sceneModel.location.floorId = undefined
+        this.sceneModel.location.roomId = undefined
       }
       this.floorList = []
       this.roomList = []
@@ -118,7 +118,7 @@ export default {
       this.$refs.actionBlockModal.resetActionTypeList()
     },
     handleFloorChange (id) {
-      !this.isEditScene && (this.sceneModel.location.roomId = '')
+      !this.isEditScene && (this.sceneModel.location.roomId = undefined)
       this.roomList = []
       this.getRoomList(id)
       this.$refs.actionBlockModal.getRoomList(id)
@@ -149,9 +149,9 @@ export default {
     getLocation () { // get validable location
       const location = {...this.sceneModel.location}
       // const location = { buildingId: this.buildingId, floorId: this.floorId, roomId: this.roomId}
-      location.buildingId === '' && delete location.buildingId
-      location.floorId === '' && delete location.floorId
-      location.roomId === '' && delete location.roomId
+      // location.buildingId === '' && delete location.buildingId
+      // location.floorId === '' && delete location.floorId
+      // location.roomId === '' && delete location.roomId
       return location
     },
     getSceneDataBySceneNumber () { // init sceneModel data
