@@ -80,7 +80,7 @@ export default {
       oboxList: [],
       oboxSerialId: '',
       scanDeviceListFromWebsocket: [],
-      scanTimeout: 10000,
+      scanTimeout: 60000,
       timePicker: null,
       scanTips: '扫描设备中...',
       Descriptor
@@ -112,7 +112,7 @@ export default {
         if (!err) {
           that.confirmLoading = true
           let formData = Object.assign(that.model, values)
-          // that.oboxSerialId = formData.oboxSerialId
+          that.oboxSerialId = formData.oboxSerialId
           scanAndSaveDevicesToObox(formData.oboxSerialId, formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
               // console.log('scan  ', res)
