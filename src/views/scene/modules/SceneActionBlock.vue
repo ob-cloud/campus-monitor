@@ -83,12 +83,16 @@ export default {
       const subtypeList = device.deviceTypeList.find(type => type.deviceType === device.deviceType)
       device.childVisible = true
       this.activeObj = this.toDeviceObj({ ...device, deviceChildType: subtypeList.deviceChildType }, device.action_time)
+      // 操作action时，重置action类型状态值
+      this.$refs.actionBehaviorModal.reset()
       this.$refs.actionBehaviorModal.show(this.activeObj)
     },
     // 设置子action
     handleChildAction (childAction, parentAction, index) {
       this.activeAction = parentAction
       this.activeObj = this.toDeviceObj({ ...childAction, childActionIndex: index }, childAction.action_time)
+      // 操作action时，重置action类型状态值
+      this.$refs.actionBehaviorModal.reset()
       this.$refs.actionBehaviorModal.show(this.activeObj)
     },
     toDeviceObj (device, action_time) {
@@ -110,10 +114,13 @@ export default {
       this.activeAction = action
       this.setActionDescriptor(action)
       const subtypeList = action.deviceTypeList.find(type => type.deviceType === action.deviceType)
-      const children = subtypeList.children.map(item => Object.assign({}, item))
+      const children = subtypeList.children ? subtypeList.children.map(item => Object.assign({}, item)) : []
       action.childVisible = true
-      action.childAction = [...(children || [])]
+      action.childAction = [...(children)]
       this.activeObj = this.toDeviceObj({ ...action, deviceChildType: subtypeList.deviceChildType }, action.action_time)
+
+      // 类型切换时，重置action类型状态值
+      // this.$refs.actionBehaviorModal.reset()
     },
     // 设置行为执行时间
     setActionTime (action) {
@@ -139,7 +146,7 @@ export default {
         } else { // 栋、层批量处理
           this.activeAction.action = actionData.action.action
           this.activeAction.node_type = actionData.action.node_type
-          this.activeAction.device_child_type = actionData.action.device_child_type
+          // this.activeAction.device_child_type = actionData.action.device_child_type
         }
       } else { // 子 action
         let activeChildAction = this.activeAction.childAction[index]
