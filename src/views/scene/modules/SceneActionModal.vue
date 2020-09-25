@@ -128,6 +128,11 @@ export default {
       this.$emit('close')
       this.visible = false
     },
+    reset () {
+      this.lampStatus = ''
+      this.powerStatus = ''
+      this.customKeyPicker = null
+    },
     transponderIconFilter (type) {
       const iconMap = {
         7: 'obicon-ac',
