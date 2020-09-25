@@ -12,6 +12,7 @@ export function initWebSocket (topic = '', url) {
   websocket.onclose = onWebSocketClose
   websocket.onerror = onWebSocketError
   websocket.onmessage = onWebSocketMessage
+  console.log('init WebSocket.')
   return websocket
 }
 
@@ -87,21 +88,26 @@ export const WebSocketMixin = {
       this.topic = topic
 
       this.websocket = websocket
+      console.log('init WebSocket.')
     },
     onWebSocketOpen () {
+      console.log('WebSocket Connected.')
       // this.startHeartBeat()
     },
     onWebSocketClose () {
-      this.isForceClose && this.reconnectWebSocket()
+      console.log(`WebSocket Closed.`)
+      // this.isForceClose && this.reconnectWebSocket()
+      this.reconnectWebSocket()
     },
     onWebSocketError () {
+      console.log('WebSocket Connect Error.')
       this.reconnectWebSocket()
     },
     onWebSocketMessage () {
-
+      console.log('WebSocket Receive Data.\n')
     },
     closeWebSocket () {
-      this.isForceClose = true
+      // this.isForceClose = true
       this.websocket.close()
     },
     reconnectWebSocket () {
