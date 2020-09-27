@@ -89,6 +89,7 @@ export default {
       formModel: {
         group: [{
           no: 1,
+          group_id: '',
           name: '',
           member: []
         }]
@@ -110,6 +111,7 @@ export default {
     handleAdd () {
       this.formModel.group.push({
         no: 1,
+        group_id: '',
         name: '',
         member: []
       })
@@ -120,7 +122,7 @@ export default {
         delPanelGroup(item.group_id).then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.$message.success('删除成功')
-            this.this.formModel.group.splice(index, 1)
+            this.formModel.group.splice(index, 1)
           } else this.$message.error('删除失败')
         }).finally(() => this.confirmLoading = false)
       } else { // 未入库
@@ -146,10 +148,11 @@ export default {
           setPanelGroup(formData).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
               // if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
-              if (res.result.group_id) item.group_id = res.result.group_id
               // 根据设备组员入网结果，重置选项值
               item.group_member = res.result.group_member ? res.result.group_member.split(',') : []
               this.$message.success(`${item.group_id ? '编辑' : '添加'}组成功，设备成员有(${item.group_member.join(',')})`)
+              // 添加时，添加group_id
+              if (res.result.group_id) item.group_id = res.result.group_id
             } else this.$message.error('添加失败')
           }).finally(() => that.confirmLoading = false)
         }
@@ -197,6 +200,7 @@ export default {
             this.formModel.group = res.result.map(item => {
               return {
                 no: +(new Converter(item.panel_addr[0].group_addr, 16).toDecimal()),
+                group_id: item.group_id,
                 name: item.group_name,
                 member: item.groupMember.map(it => it.serialId)
               }

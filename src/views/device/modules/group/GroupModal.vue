@@ -1,5 +1,5 @@
 <template>
-  <a-modal :title="title" :width="'90%'" :visible="visible" :confirmLoading="confirmLoading" @cancel="close" destroyOnClose>
+  <a-modal :title="title" :width="'90%'" :visible="visible" :confirmLoading="confirmLoading" @cancel="handleAddMemberOk" destroyOnClose>
     <template slot="footer">
       <a-button v-if="cancelText" key="back" @click="handleCancel">{{ cancelText }}</a-button>
       <a-button key="submit" type="primary" :loading="confirmLoading" @click="handleOk">{{ confirmText }}</a-button>
