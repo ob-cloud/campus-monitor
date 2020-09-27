@@ -88,7 +88,7 @@ export default {
           that.close()
         },
         cancelText: '取消',
-        onCancel() { that.close() },
+        onCancel() {},
       })
     },
     // 确定
