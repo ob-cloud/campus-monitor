@@ -2,7 +2,7 @@
   <a-spin :spinning="confirmLoading">
     <a-form :form="form">
       <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="编号">
-        <a-input-number v-decorator="[ 'addr', validatorRules.no]" :min="1" :max="65535" />
+        <a-input-number v-decorator="[ 'addr', validatorRules.no]" :min="1" :max="65535" :disabled="!!groupId" />
       </a-form-item>
       <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="名称">
         <a-input placeholder="输入组名" v-decorator="[ 'group_name', validatorRules.name]" />

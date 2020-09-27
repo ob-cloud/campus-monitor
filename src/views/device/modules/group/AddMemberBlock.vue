@@ -11,7 +11,7 @@
               </a-popconfirm>
               <a-icon type="check-circle" class="check-btn" @click="handleConfirm(item, index)" title="确认" />
               <a-form-model-item v-bind="formItemLayout" label="组号" :prop="'group.' + index + '.no'" :rules="{ required: true, message: '组号不能空', trigger: 'blur', }">
-                <a-input-number v-model="item.no" :min="1" :max="255" />
+                <a-input-number v-model="item.no" :min="1" :max="255" :disabled="!!item.group_id" />
               </a-form-model-item>
               <a-form-model-item v-bind="formItemLayout" label="组名" :prop="'group.' + index + '.name'" :rules="{ required: true, message: '组名不能空', trigger: 'blur', }">
                 <a-input placeholder="输入组名" v-model="item.name" />
