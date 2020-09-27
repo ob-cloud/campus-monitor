@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-23 11:54:06
+ * @Last Modified time: 2020-09-27 11:01:17
  */
 
 // import {request} from '@/common/request'
@@ -138,16 +138,19 @@ const getPanelGroupDeviceList = (groupId) => getAction('/common', {
   group_id: groupId
 })
 
+// 六键开关，键设置
 const setPanelKey = (params) => getAction('/common', {
   CMD: 'set_panel_key',
   ...params
 })
 
+// 根据序列号获取关联组
 const getGroupListByPanelId = (serialId) => getAction('/common', {
   CMD: 'get_panel_group',
   serialId
 })
 
+// 获取键配置的组列表
 const getGrouplListPanelKey = (serialId, index) => getAction('/common', {
   CMD: 'get_panel_key',
   serialId,
