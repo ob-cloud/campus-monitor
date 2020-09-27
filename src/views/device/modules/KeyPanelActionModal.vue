@@ -155,9 +155,16 @@ export default {
       this.$emit('close')
       this.disableSubmit = false
       this.visible = false
+      this.reset()
     },
     handleCancel () {
       this.close()
+    },
+    reset () {
+      this.lampGroupList = []
+      this.checkboxGroup = []
+      this.keyList = []
+      this.checkboxGroupList = []
     },
     handleOk () {
       const params = {
