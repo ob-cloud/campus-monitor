@@ -109,7 +109,7 @@ export default {
       }
       getGroupMemberById(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.targetKeys = res.result.records
+          this.targetKeys = res.result.records && res.result.records.map(item => item.deviceSerialId)
         }
       })
     },
