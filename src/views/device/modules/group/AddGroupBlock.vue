@@ -188,7 +188,11 @@ export default {
         this.form.validateFields((err, values) => {
           if (!err) {
             console.log('ok ', values)
-            if (!that.targetKeys.length) return that.$message.warning('请选择设备')
+            if (!that.targetKeys.length) {
+              that.$message.warning('请选择设备')
+              resolve({ status: 0 })
+              return
+            }
             that.confirmLoading = true
             let formData = {}
             if (that.groupId) {
