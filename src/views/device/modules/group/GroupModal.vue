@@ -69,13 +69,17 @@ export default {
       })
     },
     handleAddGroupOk () {
+      this.confirmLoading = true
       this.$refs.createModal.handleOk().then(({status, deviceList, groupNo}) => {
         if (status) {
+          this.confirmLoading = false
           this.current++
           this.cancelText = ''
           this.confirmText = '完成'
           console.log('===== ', deviceList, groupNo)
           this.$refs.createMemberModal.init(deviceList, groupNo)
+        } else {
+          this.confirmLoading = false
         }
       })
     },
@@ -111,6 +115,7 @@ export default {
     reset () {
       this.current = 0
       this.cancelText = null
+      this.confirmLoading = false
       this.confirmText = '下一步'
       this.$refs.createModal.reset()
       this.$refs.createMemberModal.reset()

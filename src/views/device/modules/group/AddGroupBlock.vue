@@ -200,19 +200,23 @@ export default {
             formData.panel_addr = {list: [{addr: addr, groupAddr: '00'}]}
             formData.group_name = values.group_name
             formData.group_member = that.targetKeys.join(',')
+            formData.type = '00'
             console.log(formData)
             const groupNo = values.addr
-            let obj = setPanelGroup(formData)
+            const timeout = that.targetKeys.length * 6 * 1000 || 6000
+            let obj = setPanelGroup(formData, { timeout })
             obj.then(res => {
               if (that.$isAjaxSuccess(res.code)) {
-                const deviceList = that.getDeviceListByKeys(that.targetKeys)
+                // that.targetKeys
+                const validKeys = res.result.group_member ? res.result.group_member.split(',') : []
+                const deviceList = that.getDeviceListByKeys(validKeys)
                 that.trasnferVisible = false
                 resolve({status: 1, deviceList, groupNo})
               } else {
                 that.$message.warning(res.message)
               }
             }).finally(() => that.confirmLoading = false)
-          }
+          } else resolve({ status: 0 })
         })
       })
     },
@@ -228,6 +232,8 @@ export default {
       this.trasnferVisible = false
       this.isEditMode = false
       this.groupId = ''
+      this.dataSource = []
+      this.targetKeys = []
     },
     setFieldsValue (model) {
       model.addr = model.addr ? +(new Converter(model.addr, 16).toDecimal()) : 1

@@ -119,7 +119,7 @@ export default {
     handleDel (item, index) {
       if (item.group_id) { // 已入库组
         this.confirmLoading = true
-        delPanelGroup(item.group_id).then(res => {
+        delPanelGroup(item.group_id, '01').then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.$message.success('删除成功')
             this.formModel.group.splice(index, 1)
@@ -144,8 +144,10 @@ export default {
           formData.panel_addr = {list: [{addr: that.groupNoHex, groupAddr: addr}]}
           formData.group_name = item.name
           formData.group_member = item.member.join(',')
+          formData.type = '01'
           console.log(formData)
-          setPanelGroup(formData).then(res => {
+          const timeout = item.member.length * 6 * 1000 || 6000
+          setPanelGroup(formData, { timeout }).then(res => {
             if (this.$isAjaxSuccess(res.code)) {
               // if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
               // 根据设备组员入网结果，重置选项值

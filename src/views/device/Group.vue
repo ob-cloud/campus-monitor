@@ -176,7 +176,7 @@
         })
       },
       handleDelete (id) {
-        delPanelGroup(id).then(res => {
+        delPanelGroup(id, '00').then(res => {
           if (this.$isAjaxSuccess(res.code)) {
             this.loadData(1)
             this.$message.success('删除成功')
