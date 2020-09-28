@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-27 11:01:17
+ * @Last Modified time: 2020-09-28 09:56:36
  */
 
 // import {request} from '@/common/request'
@@ -124,14 +124,15 @@ const getPanelChildGroupList = (groupNo) => getAction('/common', {
   addr: groupNo
 })
 // 添加编辑组
-const setPanelGroup = (params) => getAction('/common', {
+const setPanelGroup = (params, extra = {}) => getAction('/common', {
   CMD: 'set_panel_group',
   ...params
-})
+}, extra)
 // 删除组
-const delPanelGroup = (groupId) => postFormAction('/common', {
+const delPanelGroup = (groupId, type) => postFormAction('/common', {
   CMD: 'del_panel_group',
-  group_id: groupId
+  group_id: groupId,
+  type
 })
 const getPanelGroupDeviceList = (groupId) => getAction('/common', {
   CMD: 'get_device_panel',
