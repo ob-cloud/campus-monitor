@@ -143,7 +143,7 @@ export default {
       this.loading = true
       getOboxDeviceList(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          const dataSource = res.result.records.map(item =>this.getTransferObjList(item))
+          const dataSource = res.result.records.map(item => item && this.getTransferObjList(item))
           this.dataSource = this.isEditMode ? dataSource.concat(this.deviceList) : dataSource
         }
       }).finally(() => this.loading = false)
@@ -215,6 +215,10 @@ export default {
               } else {
                 that.$message.warning(res.message)
               }
+            }).catch(e => {
+              this.$message.error(e.message || '服务异常')
+              console.log('err ', e)
+              resolve({ status: 0 })
             }).finally(() => that.confirmLoading = false)
           } else resolve({ status: 0 })
         })
@@ -246,7 +250,7 @@ export default {
       this.loading = true
       getPanelGroupDeviceList(groupId).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
-          this.deviceList = res.result && res.result.length ? res.result.map(item => this.getTransferObjList(item)) : []
+          this.deviceList = res.result && res.result.length ? res.result.map(item => item && this.getTransferObjList(item)) : []
           this.targetKeys = this.getDeviceKeys(res.result)
           this.dataSource = this.dataSource.concat(this.deviceList)
           console.log(this.deviceList, this.dataSource)
