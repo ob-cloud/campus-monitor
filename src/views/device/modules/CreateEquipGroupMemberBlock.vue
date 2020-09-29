@@ -138,9 +138,10 @@ export default {
     },
     onChange(nextTargetKeys, direction, moveKeys) {
       console.log('.... --- ', nextTargetKeys)
-      this.loading = true
+      // this.loading = true
       const timeout = moveKeys.length * 6 * 1000 || 6000
       if (direction === 'right') { // 添加组员
+        this.loading = true
         // A B(pre) ---> A B C D(next) |  C D(move) | D(result) ---> A B D(final)
         addDeviceGroupMember(this.groupId, moveKeys, { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
@@ -155,18 +156,43 @@ export default {
           } else this.$message.error('添加失败')
         }).finally(() => this.loading = false)
       } else { // 删除组员
-        // A B C D(pre)  -->  A B(next) | C D(move)  | D(result) --> A B C(final)
-        delDeviceGroupMember(this.groupId, moveKeys, { timeout }).then(res => {
-          if(this.$isAjaxSuccess(res.code)) {
-            const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
-            if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')
-            const preTargetKeys = nextTargetKeys.concat(moveKeys)
-            const memberKeys = difference(moveKeys, res.result.groupNumber) // 删除成功的成员
-            this.targetKeys = preTargetKeys.concat(memberKeys)
-            this.$message.success(`组员（${memberKeys.join(',')}）删除成功`)
-          } else this.$message.error('删除失败')
-        }).finally(() => this.loading = false)
+        const that = this
+        this.$confirm({
+          content: '确定移除设备？',
+          onOk() {
+            that.handleDel(that.groupId, nextTargetKeys, moveKeys, { timeout })
+          },
+          cancelText: '取消'
+        })
+        // delDeviceGroupMember(this.groupId, moveKeys, { timeout }).then(res => {
+        //   if(this.$isAjaxSuccess(res.code)) {
+        //     const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
+        //     if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')
+        //     const preTargetKeys = nextTargetKeys.concat(moveKeys)
+        //     const memberKeys = difference(moveKeys, res.result.groupNumber) // 删除成功的成员
+        //     this.targetKeys = preTargetKeys.concat(memberKeys)
+        //     this.targetKeys = difference(this.targetKeys, res.result.groupNumber)
+        //     const tips = memberKeys.length ? `(${memberKeys.join(',')})` : ''
+        //     this.$message.success(`组员 ${tips}删除成功`)
+        //   } else this.$message.error('删除失败')
+        // }).finally(() => this.loading = false)
       }
+    },
+    handleDel (groupId, nextTargetKeys, moveKeys, timeout) {
+      // A B C D(pre)  -->  A B(next) | C D(move)  | D(result) --> A B C(final)
+      this.loading = true
+      delDeviceGroupMember(groupId, moveKeys, { timeout }).then(res => {
+        if(this.$isAjaxSuccess(res.code)) {
+          const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
+          if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')
+          const preTargetKeys = nextTargetKeys.concat(moveKeys)
+          const memberKeys = difference(moveKeys, res.result.groupNumber) // 删除成功的成员
+          this.targetKeys = preTargetKeys.concat(memberKeys)
+          this.targetKeys = difference(this.targetKeys, res.result.groupNumber)
+          const tips = memberKeys.length ? ` (${memberKeys.join(',')})` : ''
+          this.$message.success(`组员${tips}删除成功`)
+        } else this.$message.error('删除失败')
+      }).finally(() => this.loading = false)
     },
     // 单选
     // getRowSelection({ disabled, selectedKeys, itemSelectAll, itemSelect }) {
