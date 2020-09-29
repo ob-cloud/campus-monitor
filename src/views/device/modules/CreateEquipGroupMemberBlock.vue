@@ -186,9 +186,9 @@ export default {
           const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
           if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')
           const preTargetKeys = nextTargetKeys.concat(moveKeys)
-          const memberKeys = difference(moveKeys, res.result.groupNumber) // 删除成功的成员
-          this.targetKeys = preTargetKeys.concat(memberKeys)
-          this.targetKeys = difference(this.targetKeys, res.result.groupNumber)
+          const memberKeys = difference(moveKeys, res.result.groupNumber) // 未删除成功的成员
+          const targetKeys = preTargetKeys.concat(memberKeys) // 当前成员
+          this.targetKeys = difference(targetKeys, res.result.groupNumber) // 移除删除的成员
           const tips = memberKeys.length ? ` (${memberKeys.join(',')})` : ''
           this.$message.success(`组员${tips}删除成功`)
         } else this.$message.error('删除失败')
