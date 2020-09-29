@@ -139,9 +139,10 @@ export default {
     onChange(nextTargetKeys, direction, moveKeys) {
       console.log('.... --- ', nextTargetKeys)
       this.loading = true
+      const timeout = moveKeys.length * 6 * 1000 || 6000
       if (direction === 'right') { // 添加组员
         // A B(pre) ---> A B C D(next) |  C D(move) | D(result) ---> A B D(final)
-        addDeviceGroupMember(this.groupId, moveKeys).then(res => {
+        addDeviceGroupMember(this.groupId, moveKeys, { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
             const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
             if (!isAsynSuccess) return this.$message.error('添加组员到OBOX失败！')
@@ -155,7 +156,7 @@ export default {
         }).finally(() => this.loading = false)
       } else { // 删除组员
         // A B C D(pre)  -->  A B(next) | C D(move)  | D(result) --> A B C(final)
-        delDeviceGroupMember(this.groupId, moveKeys).then(res => {
+        delDeviceGroupMember(this.groupId, moveKeys, { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
             const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
             if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')

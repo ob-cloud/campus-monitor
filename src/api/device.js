@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-28 09:56:36
+ * @Last Modified time: 2020-09-29 11:27:32
  */
 
 // import {request} from '@/common/request'
@@ -203,13 +203,13 @@ const editDeviceGroup = (groupId, groupName) => postFormAction('/common', {
   group_name: groupName
 })
 
-const addDeviceGroupMember = (groupId, groupMember) => postFormAction('/common', {
+const addDeviceGroupMember = (groupId, groupMember, extra = {}) => postFormAction('/common', {
   CMD: 'set_group',
   operate_type: '03',
   group_style: '00',
   group_member: JSON.stringify(groupMember),
   group_id: groupId
-})
+}, extra)
 const editDeviceGroupMember = (groupId, groupMember) => postFormAction('/common', {
   CMD: 'set_group',
   operate_type: '02',
@@ -218,13 +218,13 @@ const editDeviceGroupMember = (groupId, groupMember) => postFormAction('/common'
   group_id: groupId
 })
 
-const delDeviceGroupMember = (groupId, groupMember) => postFormAction('/common', {
+const delDeviceGroupMember = (groupId, groupMember, extra = {}) => postFormAction('/common', {
   CMD: 'set_group',
   operate_type: '04',
   group_style: '00',
   group_id: groupId,
   group_member: JSON.stringify(groupMember)
-})
+}, extra)
 
 // 温湿度
 const getDeviceStatusHistory = (serialId, fromDate, toDate, type = '02') => getAction('/common', {
