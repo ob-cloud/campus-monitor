@@ -88,6 +88,12 @@
               更多 <a-icon type="down" />
             </a>
             <a-menu slot="overlay">
+              <a-menu-item v-isPermitted="'device:group:equip'" @click="handleDevice(record)">
+                设备
+              </a-menu-item>
+              <a-menu-item v-isPermitted="'device:group:grouping'" @click="handleGrouping(record)">
+                分组
+              </a-menu-item>
               <a-menu-item v-isPermitted="'device:group:delete'">
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.group_id)">
                   <a>删除</a>
@@ -102,11 +108,17 @@
     <!-- table区域-end -->
 
     <group-modal ref="modalForm" @ok="modalFormOk"></group-modal>
+    <add-group-block-modal ref="addBlockModal"></add-group-block-modal>
+    <add-device-block-modal ref="addDeviceModal"></add-device-block-modal>
+    <add-member-block-modal ref="addMemberModal"></add-member-block-modal>
   </a-card>
 </template>
 
 <script>
   import GroupModal from './modules/group/GroupModal'
+  import AddGroupBlockModal from './modules/group/AddGroupBlockModal'
+  import AddDeviceBlockModal from './modules/group/AddDeviceBlockModal'
+  import AddMemberBlockModal from './modules/group/AddMemberBlockModal'
   import { getPanelGroupList, delPanelGroup } from '@/api/device'
   import { ProListMixin } from '@/utils/mixins/ProListMixin'
   import { Converter } from 'hardware-suit'
@@ -115,6 +127,9 @@
     mixins: [ ProListMixin ],
     components: {
       GroupModal,
+      AddGroupBlockModal,
+      AddDeviceBlockModal,
+      AddMemberBlockModal
     },
     data() {
       return {
@@ -174,6 +189,15 @@
           }
           this.loading = false
         })
+      },
+      handleEdit (record) {
+        this.$refs.addBlockModal.edit(record)
+      },
+      handleDevice (record) {
+        this.$refs.addDeviceModal.edit(record)
+      },
+      handleGrouping (record) {
+        this.$refs.addMemberModal.edit(record)
       },
       handleDelete (id) {
         delPanelGroup(id, '00').then(res => {

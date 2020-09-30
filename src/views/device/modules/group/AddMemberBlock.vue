@@ -3,9 +3,14 @@
     <a-spin :spinning="confirmLoading">
       <a-card :bordered="false">
         <div class="card-content">
-
           <a-form-model :ref="`form${index}`" :model="formModel" v-for="(item, index) in formModel.group" :key="index" layout="inline" class="block" v-bind="formItemLayoutWithOutLabel">
             <div class="block-item">
+              <a-tooltip placement="top">
+                <template slot="title">
+                  <span>检测设备，点击后请查看设备是否闪烁</span>
+                </template>
+                <a-icon type="api" class="action-btn" @click="handleCheck(item, index)" title="检测" />
+              </a-tooltip>
               <a-popconfirm title="确定删除组?" @confirm="() => handleDel(item, index)">
                 <a-icon type="close-circle" class="del-btn" title="删除组"></a-icon>
               </a-popconfirm>
@@ -61,7 +66,7 @@
 </template>
 
 <script>
-import { setPanelGroup, delPanelGroup, getPanelGroupDeviceList, getPanelChildGroupList } from '@/api/device'
+import { setPanelGroup, delPanelGroup, getPanelGroupDeviceList, getPanelChildGroupList, twinklePanelGroupDevice } from '@/api/device'
 import { Converter, fillLength } from 'hardware-suit'
 
 export default {
@@ -129,6 +134,14 @@ export default {
         this.formModel.group.splice(index, 1)
       }
     },
+    handleCheck (item) {
+      if (!item.member.length) return this.$message.warning('请选择设备成员!')
+      twinklePanelGroupDevice(item.member.join(',')).then(res => {
+        if (this.$isAjaxSuccess(res.code)) {
+          this.$message.success('指令发送成功，请查看设备闪烁状态')
+        } else this.$message.error(res.message)
+      }).catch(() => this.$message.error('服务异常'))
+    },
     handleConfirm (item, index) {
       console.log(item, index)
       const that = this
@@ -178,18 +191,16 @@ export default {
       // })
     },
     edit (record) {
-      const groupId = record.groupId
-      const oboxSerialId = record.oboxSerialId
-      this.init(oboxSerialId, groupId)
-      this.getMembers(groupId)
+      // const groupId = record.groupId
+      // const oboxSerialId = record.oboxSerialId
+      // this.init(oboxSerialId, groupId)
+      // this.getMembers(groupId)
+      this.init(record.group_id)
     },
-    async init (deviceList, groupNo) {
-      if (!deviceList || !deviceList.length) {
-        const result = await getPanelGroupDeviceList(groupNo)
-        console.log(result)
-        deviceList = result.record
-      }
-      this.deviceList = deviceList
+    async init (groupNo) {
+      if (!groupNo) return
+      const result = await getPanelGroupDeviceList(groupNo)
+      this.deviceList = result.record
       this.groupNo = groupNo
       this.confirmLoading = true
       let addr = new Converter(groupNo, 10).toHex()
@@ -237,16 +248,18 @@ export default {
   float: right;
   margin: 0 5px 0;
 }
+.action-btn,
 .check-btn,
 .del-btn {
-  font-size: 16px;
+  font-size: 18px;
   float: right;
   margin-top: 10px;
   cursor: pointer;
-}
-.check-btn{
   margin-right: 10px;
 }
+// .check-btn{
+//   margin-right: 10px;
+// }
 </style>
 <style lang="less">
   .group .block{

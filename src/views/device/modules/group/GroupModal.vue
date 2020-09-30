@@ -9,11 +9,13 @@
         <a-steps :current="current">
           <a-step key="1" title="" />
           <a-step key="2" title="" />
+          <a-step key="3" title="" />
         </a-steps>
       </div>
       <div class="steps-content">
         <add-group-block v-show="current === 0" ref="createModal"></add-group-block>
-        <add-member-block v-show="current === 1" ref="createMemberModal"></add-member-block>
+        <add-device-block v-show="current === 1" ref="createDeviceModal"></add-device-block>
+        <add-member-block v-show="current === 2" ref="createMemberModal"></add-member-block>
       </div>
     </a-card>
   </a-modal>
@@ -21,9 +23,10 @@
 
 <script>
 import AddGroupBlock from './AddGroupBlock'
+import AddDeviceBlock from './AddDeviceBlock'
 import AddMemberBlock from './AddMemberBlock'
 export default {
-  components: { AddGroupBlock, AddMemberBlock },
+  components: { AddGroupBlock, AddMemberBlock, AddDeviceBlock },
   data () {
     return {
       title: '操作',
@@ -64,22 +67,32 @@ export default {
         addr: record.panel_addr && record.panel_addr.length ? record.panel_addr[0].addr : ''
       }
       this.$nextTick(() => {
+        this.$refs.createModal.init()
         this.$refs.createModal.setFieldsValue(this.model)
         record.group_id && this.$refs.createModal.setEditDeviceList(this.model.group_id)
       })
     },
     handleAddGroupOk () {
       this.confirmLoading = true
-      this.$refs.createModal.handleOk().then(({status, deviceList, groupNo}) => {
+      this.$refs.createModal.handleOk().then(({status, groupNoHex, groupId}) => {
         if (status) {
           this.confirmLoading = false
           this.current++
           this.cancelText = ''
-          this.confirmText = '完成'
-          console.log('===== ', deviceList, groupNo)
-          this.$refs.createMemberModal.init(deviceList, groupNo)
+          this.confirmText = '下一步'
+          console.log('===== ', groupNoHex, groupId)
+          this.$refs.createDeviceModal.init({ groupId, groupNoHex })
         } else {
           this.confirmLoading = false
+        }
+      })
+    },
+    handleDeviceOk () {
+      this.$refs.createDeviceModal.handleOk().then(({ status, groupId }) => {
+        if (status) {
+          this.current++
+          this.confirmText = '完成'
+          this.$refs.createMemberModal.init(groupId)
         }
       })
     },
@@ -99,7 +112,9 @@ export default {
     handleOk () {
       if (this.current === 0) { // 添加分组
         this.handleAddGroupOk()
-      } else { // 添加组员
+      } else if (this.current === 1) { // 添加设备
+        this.handleDeviceOk()
+      } else {
         this.handleAddMemberOk()
       }
     },

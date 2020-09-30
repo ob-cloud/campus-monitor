@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-05 17:32:41
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-29 11:27:32
+ * @Last Modified time: 2020-09-30 10:27:29
  */
 
 // import {request} from '@/common/request'
@@ -137,6 +137,45 @@ const delPanelGroup = (groupId, type) => postFormAction('/common', {
 const getPanelGroupDeviceList = (groupId) => getAction('/common', {
   CMD: 'get_device_panel',
   group_id: groupId
+})
+
+// 组基本信息
+const editPanelGroup = (groupId, groupName) => getAction('/common', {
+  CMD: 'edit_panel',
+  groupId,
+  groupName
+})
+
+// 添加组设备
+const addPanelGroupDeviceMember = (groupId, groupMember, extra = {}) => getAction('/common', {
+  CMD: 'add_panel_member',
+  groupId,
+  groupMember
+}, extra)
+// 删除组设备
+const delPanelGroupDeviceMember = (groupId, groupMember, extra = {}) => getAction('/common', {
+  CMD: 'del_panel_member',
+  groupId,
+  groupMember
+}, extra)
+
+// 组设备闪烁
+const twinklePanelGroupDevice = (serialId) => getAction('/common', {
+  CMD: 'light_twinkle',
+  serialId
+})
+
+// 添加组设备
+const addPanelGroupDevice = (params, extra = {}) => getAction('/common', {
+  CMD: 'set_panel_group',
+  ...params
+}, extra)
+
+// 删除组设备
+const delPanelGroupDevice = (groupId, type) => postFormAction('/common', {
+  CMD: 'del_panel_group',
+  group_id: groupId,
+  type
 })
 
 // 六键开关，键设置
@@ -372,6 +411,12 @@ export {
   getPanelGroupList,
   getPanelChildGroupList,
   getPanelGroupDeviceList,
+  editPanelGroup,
+  addPanelGroupDeviceMember,
+  delPanelGroupDeviceMember,
+  twinklePanelGroupDevice,
+  addPanelGroupDevice,
+  delPanelGroupDevice,
   setPanelGroup,
   delPanelGroup,
   setPanelKey,
