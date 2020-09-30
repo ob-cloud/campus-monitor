@@ -152,10 +152,6 @@ export default {
       this.trasnferVisible = !!val
       val && this.getOboxDeviceList(val)
     },
-    // onTransferChange(nextTargetKeys, direction, moveKeys) {
-    //   console.log(nextTargetKeys, direction, moveKeys)
-    //   this.targetKeys = nextTargetKeys
-    // },
     getRowSelection({ disabled, selectedKeys, itemSelectAll, itemSelect }) {
       return {
         getCheckboxProps: item => ({ props: { disabled: disabled || item.disabled } }),

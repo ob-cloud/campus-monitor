@@ -172,29 +172,8 @@ export default {
           }).finally(() => that.confirmLoading = false)
         }
       })
-      // this.$refs.form.validateField([`group.${index}.no`, `group.${index}.name`, `group.${index}.member`], err => {
-      //   if (!err) {
-      //     let formData = {}
-      //     if (item.group_id) {
-      //       formData.group_id = item.group_id
-      //     }
-      //     formData.panel_addr = {list: [{addr: item.no, groupAddr: '01'}]}
-      //     formData.group_name = item.name
-      //     formData.group_member = item.member.join(',')
-      //     console.log(formData)
-      //     setPanelGroup(formData).then(res => {
-      //       if (this.$isAjaxSuccess(res.code)) {
-      //         this.$message.success('添加成功')
-      //       } else this.$message.error('添加失败')
-      //     })
-      //   }
-      // })
     },
     edit (record) {
-      // const groupId = record.groupId
-      // const oboxSerialId = record.oboxSerialId
-      // this.init(oboxSerialId, groupId)
-      // this.getMembers(groupId)
       this.init(record.group_id)
     },
     async init (groupNo) {

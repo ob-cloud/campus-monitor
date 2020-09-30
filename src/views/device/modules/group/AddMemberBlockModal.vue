@@ -24,9 +24,11 @@ export default {
     edit (record) {
       console.log(record)
       this.visible = true
-      if (!record.group_id) return
+      const panelAddr = record.panel_addr[0]
+      const groupNo = panelAddr ? panelAddr.addr : ''
+      if (!groupNo) return
       this.$nextTick(() => {
-        record.group_id && this.$refs.modal.init(record.group_id)
+        groupNo && this.$refs.modal.init(groupNo)
       })
     },
     handleOk () {
