@@ -10,7 +10,7 @@
     <a-form-item v-if="trasnferVisible" :labelCol="labelCol" :wrapperCol="wrapperCol2" label="设备">
       <a-transfer
         :data-source="dataSource"
-        :titles="['设备列表', '编组列表']"
+        :titles="['设备列表', '编组设备']"
         :target-keys="targetKeys"
         :filter-option="(inputValue, item) => item.title.indexOf(inputValue) !== -1"
         :showSelectAll="false"
@@ -105,18 +105,20 @@ export default {
       leftColumns: leftTableColumns,
       rightColumns: rightTableColumns,
       oboxSerialId: '',
-      groupId: '',
+      groupId: '',  // 教室号
+      groupPrimaryId: '',
       loading: false
     }
   },
   methods: {
     init (record) {
       this.getOboxList()
-      this.groupId = record.groupNoHex
+      this.groupId = record.groupId
+      this.groupPrimaryId = record.primaryId
     },
-    edit (groupId) {
-      this.init({ groupNoHex: groupId })
-      this.setEditDeviceList(groupId)
+    edit (record) {
+      this.init(record)
+      this.setEditDeviceList(record.primaryId)
     },
     getOboxList () {
       getAllOboxList().then(res => {
@@ -177,7 +179,7 @@ export default {
           resolve({ status: 0 })
           return
         }
-        resolve({ status: 1, groupId: this.groupId })
+        resolve({ status: 1, groupId: this.groupId, primaryId: this.groupPrimaryId })
       })
     },
     getDeviceListByKeys (keyList) {
@@ -202,34 +204,34 @@ export default {
         // A B(pre) ---> A B C D(next) |  C D(move) | D(result) ---> A B D(final)
         addPanelGroupDeviceMember(this.groupId, moveKeys.join(','), { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
-            const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
-            if (!isAsynSuccess) return this.$message.error('添加组员到OBOX失败！')
+            const isAsynSuccess = res.result.groupMember && res.result.groupMember.length
+            if (!isAsynSuccess) return this.$message.error('添加设备到组失败！')
             // 原绑定设备
             const preTargetKeys = difference(nextTargetKeys, moveKeys)
             // 成功添加的设备
-            const memberKeys = intersection(moveKeys, res.result.groupNumber)
+            const memberKeys = intersection(moveKeys, res.result.groupMember)
             this.targetKeys = preTargetKeys.concat(memberKeys)
-            this.$message.success(`组员（${memberKeys.join(',')}）添加成功`)
+            this.$message.success(`设备（${memberKeys.join(',')}）添加成功`)
           } else this.$message.error('添加失败')
         }).finally(() => this.loading = false)
       } else { // 删除组员
         delPanelGroupDeviceMember(this.groupId, moveKeys.join(','), { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
-            const isAsynSuccess = res.result.groupNumber && res.result.groupNumber.length
-            if (!isAsynSuccess) return this.$message.error('从OBOX移除组员失败！')
+            const isAsynSuccess = res.result.groupMember && res.result.groupMember.length
+            if (!isAsynSuccess) return this.$message.error('从组中移除设备失败！')
             const preTargetKeys = nextTargetKeys.concat(moveKeys)
-            const memberKeys = difference(moveKeys, res.result.groupNumber) // 删除成功的成员
+            const memberKeys = difference(moveKeys, res.result.groupMember) // 删除成功的成员
             this.targetKeys = preTargetKeys.concat(memberKeys)
-            this.targetKeys = difference(this.targetKeys, res.result.groupNumber)
+            this.targetKeys = difference(this.targetKeys, res.result.groupMember)
             const tips = memberKeys.length ? `(${memberKeys.join(',')})` : ''
-            this.$message.success(`组员 ${tips}删除成功`)
+            this.$message.success(`设备 ${tips}删除成功`)
           } else this.$message.error('删除失败')
         }).finally(() => this.loading = false)
       }
     },
     setEditDeviceList (groupId) {
       this.trasnferVisible = true
-      this.groupId = groupId
+      // this.groupId = groupId
       this.loading = true
       getPanelGroupDeviceList(groupId).then(res => {
         if (this.$isAjaxSuccess(res.code)) {

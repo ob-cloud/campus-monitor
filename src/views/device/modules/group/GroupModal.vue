@@ -74,25 +74,25 @@ export default {
     },
     handleAddGroupOk () {
       this.confirmLoading = true
-      this.$refs.createModal.handleOk().then(({status, groupNoHex, groupId}) => {
+      this.$refs.createModal.handleOk().then(({status, groupNoHex, groupId, primaryId}) => {
         if (status) {
           this.confirmLoading = false
           this.current++
           this.cancelText = ''
           this.confirmText = '下一步'
           console.log('===== ', groupNoHex, groupId)
-          this.$refs.createDeviceModal.init({ groupId, groupNoHex })
+          this.$refs.createDeviceModal.init({ groupId, groupNoHex, primaryId })
         } else {
           this.confirmLoading = false
         }
       })
     },
     handleDeviceOk () {
-      this.$refs.createDeviceModal.handleOk().then(({ status, groupId }) => {
+      this.$refs.createDeviceModal.handleOk().then(({ status, groupId, primaryId }) => {
         if (status) {
           this.current++
           this.confirmText = '完成'
-          this.$refs.createMemberModal.init(groupId)
+          this.$refs.createMemberModal.init({ groupId, primaryId })
         }
       })
     },

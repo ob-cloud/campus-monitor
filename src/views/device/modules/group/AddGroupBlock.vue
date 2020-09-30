@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { setPanelGroup } from '@/api/device'
+import { setPanelGroup, editPanelGroup } from '@/api/device'
 import { Converter, fillLength } from 'hardware-suit'
 export default {
   data () {
@@ -41,8 +41,9 @@ export default {
   methods: {
     init () {
     },
-    edit () {
-      this.init()
+    edit (record) {
+      // this.init()
+      this.setFieldsValue(record)
     },
     handleOk () {
       return new Promise(resolve => {
@@ -64,14 +65,15 @@ export default {
             formData.group_member = ''
             formData.type = '00'
             console.log(formData)
-            const groupNoHex = addr
-            const groupId = values.addr
-            let obj = setPanelGroup(formData)
+            const groupNoHex = addr // 教室号 hex
+            const groupId = values.addr // 教室号 十进制
+            let obj = formData.group_id ? editPanelGroup(formData.group_id, formData.group_name) : setPanelGroup(formData)
             obj.then(res => {
               if (that.$isAjaxSuccess(res.code)) {
-                resolve({status: 1, groupNoHex, groupId })
+                resolve({status: 1, groupNoHex, groupId, primaryId: res.result.group_id })
               } else {
                 that.$message.warning(res.message)
+                resolve({ status: 0 })
               }
             }).catch(e => {
               this.$message.error(e.message || '服务异常')

@@ -174,11 +174,13 @@ export default {
       })
     },
     edit (record) {
-      this.init(record.group_id)
+      this.init(record)
     },
-    async init (groupNo) {
+    async init (record) {
+      const groupNo = record.groupId
       if (!groupNo) return
-      const result = await getPanelGroupDeviceList(groupNo)
+      // 组id
+      const result = await getPanelGroupDeviceList(record.primaryId)
       this.deviceList = result.record
       this.groupNo = groupNo
       this.confirmLoading = true
@@ -186,6 +188,7 @@ export default {
       addr = fillLength(addr, 4)
       this.groupNoHex = addr
 
+      // addr 教室号
       getPanelChildGroupList(addr).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           if (res.result && res.result.length) {

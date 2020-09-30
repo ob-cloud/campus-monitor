@@ -26,9 +26,9 @@ export default {
       this.visible = true
       const panelAddr = record.panel_addr[0]
       const groupNo = panelAddr ? panelAddr.addr : ''
-      if (!groupNo) return
+      if (!record.group_id) return
       this.$nextTick(() => {
-        groupNo && this.$refs.modal.edit(groupNo)
+        this.$refs.modal.edit({ groupId: groupNo, primaryId: record.group_id})
       })
     },
     handleOk () {

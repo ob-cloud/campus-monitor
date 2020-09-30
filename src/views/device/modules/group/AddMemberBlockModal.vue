@@ -7,6 +7,7 @@
 
 <script>
 import AddMemberBlock from './AddMemberBlock'
+import { Converter } from 'hardware-suit'
 export default {
   components: { AddMemberBlock },
   data () {
@@ -25,10 +26,12 @@ export default {
       console.log(record)
       this.visible = true
       const panelAddr = record.panel_addr[0]
-      const groupNo = panelAddr ? panelAddr.addr : ''
+      let groupNo = panelAddr ? panelAddr.addr : ''
+      groupNo = new Converter(groupNo, 16).toDecimal()
       if (!groupNo) return
+      if (!record.group_id) return
       this.$nextTick(() => {
-        groupNo && this.$refs.modal.init(groupNo)
+        this.$refs.modal.init({ groupId: groupNo, primaryId: record.group_id})
       })
     },
     handleOk () {
