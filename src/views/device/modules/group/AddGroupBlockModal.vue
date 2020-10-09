@@ -35,6 +35,7 @@ export default {
     handleOk () {
       this.confirmLoading = true
       this.$refs.createModal.handleOk().finally(() => {
+        this.$emit('ok')
         this.confirmLoading = false
         this.handleCancel()
       })

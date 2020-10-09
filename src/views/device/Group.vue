@@ -108,7 +108,7 @@
     <!-- table区域-end -->
 
     <group-modal ref="modalForm" @ok="modalFormOk"></group-modal>
-    <add-group-block-modal ref="addBlockModal"></add-group-block-modal>
+    <add-group-block-modal ref="addBlockModal" @ok="modalFormOk"></add-group-block-modal>
     <add-device-block-modal ref="addDeviceModal"></add-device-block-modal>
     <add-member-block-modal ref="addMemberModal"></add-member-block-modal>
   </a-card>
