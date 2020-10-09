@@ -70,7 +70,8 @@ export default {
             let obj = formData.group_id ? editPanelGroup(formData.group_id, formData.group_name) : setPanelGroup(formData)
             obj.then(res => {
               if (that.$isAjaxSuccess(res.code)) {
-                resolve({status: 1, groupNoHex, groupAddr: values.addr, primaryId: res.result.group_id })
+                const Action = formData.group_id ? {} : { primaryId: res.result.group_id }
+                resolve({status: 1, groupNoHex, groupAddr: values.addr, ...Action })
               } else {
                 that.$message.warning(res.message)
                 resolve({ status: 0 })
