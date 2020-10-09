@@ -106,6 +106,7 @@ export default {
       rightColumns: rightTableColumns,
       oboxSerialId: '',
       groupId: '',  // 教室号
+      groupAddr: '',
       groupPrimaryId: '',
       loading: false
     }
@@ -113,7 +114,7 @@ export default {
   methods: {
     init (record) {
       this.getOboxList()
-      this.groupId = record.groupId
+      this.groupAddr = record.groupAddr
       this.groupPrimaryId = record.primaryId
     },
     edit (record) {
@@ -179,7 +180,7 @@ export default {
           resolve({ status: 0 })
           return
         }
-        resolve({ status: 1, groupId: this.groupId, primaryId: this.groupPrimaryId })
+        resolve({ status: 1, groupAddr: this.groupAddr, primaryId: this.groupPrimaryId })
       })
     },
     getDeviceListByKeys (keyList) {
@@ -192,7 +193,7 @@ export default {
       this.form.resetFields()
       this.oboxList = []
       this.trasnferVisible = false
-      this.groupId = ''
+      this.groupAddr = ''
       this.groupPrimaryId = ''
       this.dataSource = []
       this.targetKeys = []
@@ -232,7 +233,6 @@ export default {
     },
     setEditDeviceList (groupId) {
       this.trasnferVisible = true
-      // this.groupId = groupId
       this.loading = true
       getPanelGroupDeviceList(groupId).then(res => {
         if (this.$isAjaxSuccess(res.code)) {

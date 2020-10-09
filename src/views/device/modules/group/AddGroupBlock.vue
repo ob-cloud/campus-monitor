@@ -66,11 +66,11 @@ export default {
             formData.type = '00'
             console.log(formData)
             const groupNoHex = addr // 教室号 hex
-            const groupId = values.addr // 教室号 十进制
+            // const groupId = values.addr // 教室号 十进制
             let obj = formData.group_id ? editPanelGroup(formData.group_id, formData.group_name) : setPanelGroup(formData)
             obj.then(res => {
               if (that.$isAjaxSuccess(res.code)) {
-                resolve({status: 1, groupNoHex, groupId, primaryId: res.result.group_id })
+                resolve({status: 1, groupNoHex, groupAddr: values.addr, primaryId: res.result.group_id })
               } else {
                 that.$message.warning(res.message)
                 resolve({ status: 0 })

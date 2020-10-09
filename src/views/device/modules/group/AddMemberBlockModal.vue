@@ -31,7 +31,7 @@ export default {
       if (!groupNo) return
       if (!record.group_id) return
       this.$nextTick(() => {
-        this.$refs.modal.init({ groupId: groupNo, primaryId: record.group_id})
+        this.$refs.modal.init({ groupAddr: groupNo, primaryId: record.group_id})
       })
     },
     handleOk () {

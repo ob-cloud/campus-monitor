@@ -177,7 +177,7 @@ export default {
       this.init(record)
     },
     async init (record) {
-      const groupNo = record.groupId
+      const groupNo = record.groupAddr
       if (!groupNo) return
       // 组id
       const result = await getPanelGroupDeviceList(record.primaryId)
