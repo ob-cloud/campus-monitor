@@ -193,6 +193,7 @@ export default {
       this.oboxList = []
       this.trasnferVisible = false
       this.groupId = ''
+      this.groupPrimaryId = ''
       this.dataSource = []
       this.targetKeys = []
     },
@@ -202,7 +203,7 @@ export default {
       const timeout = moveKeys.length * 6 * 1000 || 6000
       if (direction === 'right') { // 添加组员
         // A B(pre) ---> A B C D(next) |  C D(move) | D(result) ---> A B D(final)
-        addPanelGroupDeviceMember(this.groupId, moveKeys.join(','), { timeout }).then(res => {
+        addPanelGroupDeviceMember(this.groupPrimaryId, moveKeys.join(','), { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
             const isAsynSuccess = res.result.groupMember && res.result.groupMember.length
             if (!isAsynSuccess) return this.$message.error('添加设备到组失败！')
@@ -215,7 +216,7 @@ export default {
           } else this.$message.error('添加失败')
         }).finally(() => this.loading = false)
       } else { // 删除组员
-        delPanelGroupDeviceMember(this.groupId, moveKeys.join(','), { timeout }).then(res => {
+        delPanelGroupDeviceMember(this.groupPrimaryId, moveKeys.join(','), { timeout }).then(res => {
           if(this.$isAjaxSuccess(res.code)) {
             const isAsynSuccess = res.result.groupMember && res.result.groupMember.length
             if (!isAsynSuccess) return this.$message.error('从组中移除设备失败！')
