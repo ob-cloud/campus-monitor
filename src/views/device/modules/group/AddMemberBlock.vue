@@ -165,7 +165,9 @@ export default {
               // if (!res.result) return this.$message.error('添加组失败，请查看OBOX是否正常!')
               // 根据设备组员入网结果，重置选项值
               item.group_member = res.result.group_member ? res.result.group_member.split(',') : []
-              this.$message.success(`${item.group_id ? '编辑' : '添加'}组成功，设备成员有(${item.group_member.join(',')})`)
+              const addTips = `添加组成功，设备成员有(${item.group_member.join(',')})`
+              const editTips = `编辑组成功，${res.result.addMember && '添加设备成员(' + res.result.addMember + ')'} ${res.result.delMember && '删除设备成员(' + res.result.delMember + ')'}`
+              this.$message.success(item.group_id ? editTips : addTips)
               // 添加时，添加group_id
               if (res.result.group_id) item.group_id = res.result.group_id
             } else this.$message.error('添加失败')
@@ -180,8 +182,8 @@ export default {
       const groupNo = record.groupAddr
       if (!groupNo) return
       // 组id
-      const result = await getPanelGroupDeviceList(record.primaryId)
-      this.deviceList = result.record
+      const records = await getPanelGroupDeviceList(record.primaryId)
+      this.deviceList = records.result
       this.groupNo = groupNo
       this.confirmLoading = true
       let addr = new Converter(groupNo, 10).toHex()

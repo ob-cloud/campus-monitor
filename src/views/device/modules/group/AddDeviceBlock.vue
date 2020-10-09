@@ -140,6 +140,9 @@ export default {
       getOboxDeviceList(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataSource = res.result.records.map(item => item && this.getTransferObjList(item))
+          if (this.deviceList.length) {
+            this.dataSource = this.dataSource.concat(this.deviceList)
+          }
         }
       }).finally(() => this.loading = false)
     },
@@ -208,10 +211,11 @@ export default {
           if(this.$isAjaxSuccess(res.code)) {
             const isAsynSuccess = res.result.groupMember && res.result.groupMember.length
             if (!isAsynSuccess) return this.$message.error('添加设备到组失败！')
+            const memberResult = res.result.groupMember.split(',')
             // 原绑定设备
             const preTargetKeys = difference(nextTargetKeys, moveKeys)
             // 成功添加的设备
-            const memberKeys = intersection(moveKeys, res.result.groupMember)
+            const memberKeys = intersection(moveKeys, memberResult)
             this.targetKeys = preTargetKeys.concat(memberKeys)
             this.$message.success(`设备（${memberKeys.join(',')}）添加成功`)
           } else this.$message.error('添加失败')
@@ -221,10 +225,11 @@ export default {
           if(this.$isAjaxSuccess(res.code)) {
             const isAsynSuccess = res.result.groupMember && res.result.groupMember.length
             if (!isAsynSuccess) return this.$message.error('从组中移除设备失败！')
+            const memberResult = res.result.groupMember.split(',')
             const preTargetKeys = nextTargetKeys.concat(moveKeys)
-            const memberKeys = difference(moveKeys, res.result.groupMember) // 删除成功的成员
-            this.targetKeys = preTargetKeys.concat(memberKeys)
-            this.targetKeys = difference(this.targetKeys, res.result.groupMember)
+            const memberKeys = difference(moveKeys, memberResult) // 删除成功的成员
+            const targetKeys = preTargetKeys.concat(memberKeys)
+            this.targetKeys = difference(targetKeys, memberResult)
             const tips = memberKeys.length ? `(${memberKeys.join(',')})` : ''
             this.$message.success(`设备 ${tips}删除成功`)
           } else this.$message.error('删除失败')
