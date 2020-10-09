@@ -188,7 +188,7 @@ export default {
         }
       }).finally(() => {
         this.confirmLoading = false
-        setTimeout(() => this.close(), 2000)
+        // setTimeout(() => this.close(), 2000)
 
       })
     },
