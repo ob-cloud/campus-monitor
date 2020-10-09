@@ -174,8 +174,8 @@ export default {
       const groupStatus = this.checkboxGroupList.map(item => {
         return {
           groupNum: item.groupNum,
-          light: item.light,
-          temp: item.temp
+          light: item.light || 0,
+          temp: item.temp || 0
         }
       })
       params.groupStatus = {list: groupStatus}
