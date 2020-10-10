@@ -55,6 +55,7 @@
 import { getAllOboxList, getOboxDeviceList, addPanelGroupDeviceMember, delPanelGroupDeviceMember, getPanelGroupDeviceList } from '@/api/device'
 import difference from 'lodash/difference'
 import intersection from 'lodash/intersection'
+import uniqBy from 'lodash/uniqBy'
 import { Descriptor } from 'hardware-suit'
 
 const leftTableColumns = [
@@ -141,7 +142,7 @@ export default {
         if (this.$isAjaxSuccess(res.code)) {
           this.dataSource = res.result.records.map(item => item && this.getTransferObjList(item))
           if (this.deviceList.length) {
-            this.dataSource = this.dataSource.concat(this.deviceList)
+            this.dataSource = this.unique(this.dataSource.concat(this.deviceList))
           }
         }
       }).finally(() => this.loading = false)
@@ -243,10 +244,13 @@ export default {
         if (this.$isAjaxSuccess(res.code)) {
           this.deviceList = res.result && res.result.length ? res.result.map(item => item && this.getTransferObjList(item)) : []
           this.targetKeys = this.getDeviceKeys(res.result)
-          this.dataSource = this.dataSource.concat(this.deviceList)
+          this.dataSource = this.unique(this.dataSource.concat(this.deviceList))
           console.log(this.deviceList, this.dataSource)
         }
       }).finally(() => this.loading = false)
+    },
+    unique (list) {
+      return uniqBy(list, 'serialId')
     }
   },
 }
