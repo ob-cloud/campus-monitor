@@ -52,7 +52,7 @@
     </div>
 
     <!-- 操作按钮区域 -->
-    <div v-isPermitted="'device:group:add'" class="table-operator" style="border-top: 5px">
+    <div v-isPermitted="'device:equip:add'" class="table-operator" style="border-top: 5px">
       <a-button @click="handleAdd" type="primary" icon="plus">添加</a-button>
     </div>
 
