@@ -113,7 +113,8 @@ export default {
       this.reset()
     },
     reset () {
-      this.selectionRows = []
+      // this.selectionRows = []
+      this.onClearSelected()
     }
   },
 }
