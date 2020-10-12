@@ -192,6 +192,7 @@ export default {
     close () {
       this.$emit('close')
       this.visible = false
+      this.scanDeviceListFromWebsocket = []
     }
   },
 }
