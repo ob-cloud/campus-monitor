@@ -100,6 +100,7 @@ export default {
         sm: { span: 18 }
       },
       oboxList: [],
+      deviceList: [],
       form: this.$form.createForm(this),
       dataSource: [],
       targetKeys: [],
