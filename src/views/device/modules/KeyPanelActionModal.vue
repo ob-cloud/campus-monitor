@@ -41,7 +41,7 @@
                 <a-spin :spinning="lampGroupLoading">
                   <div class="wrapper" v-for="(item, index) in checkboxGroupList" :key="index">
                     <a-row :gutter="40" class="row">
-                      <a-col :span="1" style="padding: 0"><span class="circle">{{ item.name }}</span></a-col>
+                      <a-col :span="1" style="padding: 0"><span class="circle" :title="item.name">{{ item.name }}</span></a-col>
                       <a-col :span="12">
                         <span class="text">亮度</span>
                         <a-slider class="slider" v-model="item.light" :min="0" :max="100" :marks="{0: '0', 100: '100'}"></a-slider>
@@ -253,6 +253,8 @@ export default {
   margin-left: 0!important;
   margin-right: 0!important;
   margin-bottom: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   // box-shadow: 1px 1px 3px 0px #f2f2f2;
 }
 .circle{
