@@ -79,7 +79,7 @@ export default {
         this.timePicker && clearTimeout(this.timePicker)
         return this.confirmLoading = false
       }
-      this.oboxList.push(record.serialId)
+      !this.oboxList.includes(record.serialId) && this.oboxList.push(record.serialId)
     })
     this.$bus.$on('obox-connected-fail', () => {
       this.timePicker && clearTimeout(this.timePicker)
