@@ -40,13 +40,13 @@
               <div class="card-footer" style="height: 290px; overflow-y:auto;">
                 <a-spin :spinning="lampGroupLoading">
                   <div class="wrapper" v-for="(item, index) in checkboxGroupList" :key="index">
-                    <a-row :gutter="40" style="margin: 0;">
-                      <!-- <a-col :span="2"><span>{{ item.name }}</span></a-col> -->
+                    <a-row :gutter="40" class="row">
+                      <a-col :span="1" style="padding: 0"><span class="circle">{{ item.name }}</span></a-col>
                       <a-col :span="12">
                         <span class="text">亮度</span>
                         <a-slider class="slider" v-model="item.light" :min="0" :max="100" :marks="{0: '0', 100: '100'}"></a-slider>
                       </a-col>
-                      <a-col :span="12">
+                      <a-col :span="11">
                         <span class="text">色度</span>
                         <a-slider class="slider" v-model="item.temp" :min="0" :max="100" :marks="{0: '0', 100: '100'}"></a-slider>
                       </a-col>
@@ -245,6 +245,39 @@ export default {
   left: 0;
   background: #fff;
   border-radius: 0 0 2px 2px;
+}
+.row{
+  border: 1px solid #f1f1f1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-left: 0!important;
+  margin-right: 0!important;
+  margin-bottom: 6px;
+  // box-shadow: 1px 1px 3px 0px #f2f2f2;
+}
+.circle{
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #000;
+  border-radius: 50%;
+  text-align: center;
+  background: #000;
+  color: #fff;
+  font-size: 13px;
+  margin-top: 24px;
+  user-select: none;
+  &::after {
+    display: inline-block;
+    content: ' ';
+    width: 1px;
+    height: 20px;
+    background: #f2f2f2;
+    margin-left: 12px;
+    position: absolute;
+  }
 }
 </style>
 <style lang="less">
