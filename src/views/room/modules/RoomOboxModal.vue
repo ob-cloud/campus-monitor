@@ -4,12 +4,12 @@
       <div slot="title">
         <a-tag class="tag" :color="item.obox_status ? 'green' : ''" v-for="(item, index) in oboxList" :key="index" :title="item.obox_status ? '在线' : '离线'">
           <a-popconfirm title="解绑OBOX?" @confirm="() => handleUndbind(item)">
-            <a-icon type="close" class="close" title="解绑" />
+            <a-icon v-isPermitted="'room:classroom:device:unbind'" type="close" class="close" title="解绑" />
           </a-popconfirm>
           {{ item.obox_name }}
         </a-tag>
       </div>
-      <a-button slot="extra" size="small" type="primary" title="绑定" @click="handleBind"><i class="obicon obicon-bangding" style="margin-right: 5px;"></i>绑定OBOX</a-button>
+      <a-button slot="extra" v-isPermitted="'room:classroom:device:bind'" size="small" type="primary" title="绑定" @click="handleBind"><i class="obicon obicon-bangding" style="margin-right: 5px;"></i>绑定OBOX</a-button>
       <div class="content">
         <a-row>
           <a-col :span="12">
