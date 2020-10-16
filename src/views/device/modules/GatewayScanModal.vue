@@ -170,6 +170,7 @@ export default {
         this.form.clearField()
       }
       this.type = 1
+      this.oboxList = []
     }
   },
 }
