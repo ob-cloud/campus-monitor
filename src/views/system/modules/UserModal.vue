@@ -54,7 +54,7 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="头像" :labelCol="labelCol" :wrapperCol="wrapperCol">
+        <!-- <a-form-item label="头像" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-upload
             listType="picture-card"
             class="avatar-uploader"
@@ -71,7 +71,7 @@
               <div class="ant-upload-text">上传</div>
             </div>
           </a-upload>
-        </a-form-item>
+        </a-form-item> -->
 
         <a-form-item label="生日" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-date-picker

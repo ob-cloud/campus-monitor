@@ -4,7 +4,7 @@
       <notice-icon class="action" />
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
-          <a-avatar class="avatar" size="small" :src="avatar" />
+          <!-- <a-avatar class="avatar" size="small" :src="avatar" /> -->
           <span>{{ nickname }}</span>
         </span>
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">

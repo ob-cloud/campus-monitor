@@ -194,13 +194,13 @@
             width: 100,
             dataIndex: 'realname',
           },
-          {
-            title: '头像',
-            align: 'center',
-            width: 120,
-            dataIndex: 'avatar',
-            scopedSlots: { customRender: 'avatarslot' }
-          },
+          // {
+          //   title: '头像',
+          //   align: 'center',
+          //   width: 120,
+          //   dataIndex: 'avatar',
+          //   scopedSlots: { customRender: 'avatarslot' }
+          // },
 
           {
             title: '性别',
