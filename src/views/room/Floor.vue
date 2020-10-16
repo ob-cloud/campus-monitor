@@ -19,27 +19,30 @@
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
-          <div class="block-item" :class="{'active': item.lightState}" v-for="item in dataList" :key="item.id">
-            <div class="toolbar">
-              <a-popconfirm :title="`${item.lightState ? '关' : '开'}楼层灯?`" @confirm="() => handleLamp(item)">
-                <!-- <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" :class="{active: item.lightState}" title="楼层灯"></i> -->
-                <i v-isPermitted="'room:floor:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="楼层灯"></i>
-              </a-popconfirm>
-              <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}楼层开关?`" @confirm="() => handlePower(item)">
-                <i v-isPermitted="'room:floor:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="楼层开关"></i>
-              </a-popconfirm>
-              <a-icon v-isPermitted="'room:floor:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
-                <a-icon v-isPermitted="'room:floor:delete'" class="icon" type="delete" />
-              </a-popconfirm>
+          <template v-if="dataList.length">
+            <div class="block-item" :class="{'active': item.lightState}" v-for="item in dataList" :key="item.id">
+              <div class="toolbar">
+                <a-popconfirm :title="`${item.lightState ? '关' : '开'}楼层灯?`" @confirm="() => handleLamp(item)">
+                  <!-- <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-lamp" :class="{active: item.lightState}" title="楼层灯"></i> -->
+                  <i v-isPermitted="'room:floor:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="楼层灯"></i>
+                </a-popconfirm>
+                <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}楼层开关?`" @confirm="() => handlePower(item)">
+                  <i v-isPermitted="'room:floor:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="楼层开关"></i>
+                </a-popconfirm>
+                <a-icon v-isPermitted="'room:floor:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
+                  <a-icon v-isPermitted="'room:floor:delete'" class="icon" type="delete" />
+                </a-popconfirm>
+              </div>
+              <div class="content">
+                <i class="building-sign obicon obicon-building"></i>
+                <p class="text">
+                  {{ item.buildingName }}栋{{ item.floorName }}层
+                </p>
+              </div>
             </div>
-            <div class="content">
-              <i class="building-sign obicon obicon-building"></i>
-              <p class="text">
-                {{ item.buildingName }}栋{{ item.floorName }}层
-              </p>
-            </div>
-          </div>
+          </template>
+          <a-empty :image="simpleImage" v-else />
         </a-spin>
         <a-pagination style="position: fixed; right: 70px; bottom: 30px;" simple :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" @change="handlePageChange" />
       </div>
@@ -51,7 +54,7 @@
 <script>
 import { getFloorList, delFloor, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
-
+import { Empty } from 'ant-design-vue'
 import FloorModal from './modules/FloorModal'
 export default {
   components: { FloorModal },
@@ -67,6 +70,9 @@ export default {
       },
       total: 0
     }
+  },
+  beforeCreate() {
+    this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE
   },
   mounted () {
     this.calculateContentHeight()

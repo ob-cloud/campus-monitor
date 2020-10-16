@@ -20,32 +20,35 @@
       </div>
       <div class="block-list" :style="{height: contentHeight + 'px', 'overflow-y': 'auto'}">
         <a-spin :spinning="loading">
-          <div class="block-item" :class="{'active': item.lightState}" v-for="item in roomList" :key="item.id">
-            <div class="toolbar left">
-              <span title="温度/湿度">{{ getHumidity(item.deviceState) }}</span>
-              <!-- <span><i class="obicon obicon-icon-temperature" style="color: #f66c32;"></i>35℃</span>
-              <span><i class="obicon obicon-humidity" style="color: #73d1f0;"></i>40%</span> -->
+          <template v-if="roomList.length">
+            <div class="block-item" :class="{'active': item.lightState}" v-for="item in roomList" :key="item.id">
+              <div class="toolbar left">
+                <span title="温度/湿度">{{ getHumidity(item.deviceState) }}</span>
+                <!-- <span><i class="obicon obicon-icon-temperature" style="color: #f66c32;"></i>35℃</span>
+                <span><i class="obicon obicon-humidity" style="color: #73d1f0;"></i>40%</span> -->
+              </div>
+              <div class="toolbar">
+                <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="绑定OBOX" @click="handleDeviceModal(item)"></i>
+                <a-popconfirm :title="`${item.lightState ? '关' : '开'}灯?`" @confirm="() => handleLamp(item)">
+                  <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="教室灯"></i>
+                </a-popconfirm>
+                <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}教室开关?`" @confirm="() => handlePower(item)">
+                  <i v-isPermitted="'room:classroom:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="教室开关"></i>
+                </a-popconfirm>
+                <a-icon v-isPermitted="'room:classroom:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
+                <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
+                  <a-icon v-isPermitted="'room:classroom:delete'" class="icon" type="delete" />
+                </a-popconfirm>
+              </div>
+              <div class="content">
+                <i class="building-sign obicon obicon-classroom"></i>
+                <p class="text">
+                  {{ item.buildingName }}栋{{ item.floorName }}层{{ item.roomName }}
+                </p>
+              </div>
             </div>
-            <div class="toolbar">
-              <i v-isPermitted="'room:classroom:device:view'" class="icon obicon obicon-device" title="绑定OBOX" @click="handleDeviceModal(item)"></i>
-              <a-popconfirm :title="`${item.lightState ? '关' : '开'}灯?`" @confirm="() => handleLamp(item)">
-                <i v-isPermitted="'room:classroom:lamp'" class="icon obicon obicon-droplight" style="font-weight: 600;" :class="{active: item.lightState}" title="教室灯"></i>
-              </a-popconfirm>
-              <a-popconfirm :title="`${item.switchState ? '关闭' : '开启'}教室开关?`" @confirm="() => handlePower(item)">
-                <i v-isPermitted="'room:classroom:switch'" class="icon obicon obicon-power" :class="{active: item.switchState}" title="教室开关"></i>
-              </a-popconfirm>
-              <a-icon v-isPermitted="'room:classroom:edit'" class="icon" type="edit" title="编辑" @click="handleEdit(item)" />
-              <a-popconfirm title="确定删除吗?" @confirm="() => handleRemove(item.id)">
-                <a-icon v-isPermitted="'room:classroom:delete'" class="icon" type="delete" />
-              </a-popconfirm>
-            </div>
-            <div class="content">
-              <i class="building-sign obicon obicon-classroom"></i>
-              <p class="text">
-                {{ item.buildingName }}栋{{ item.floorName }}层{{ item.roomName }}
-              </p>
-            </div>
-          </div>
+          </template>
+          <a-empty :image="simpleImage" v-else />
         </a-spin>
         <a-pagination simple style="position: fixed; right: 70px; bottom: 30px;" :current="queryParam.pageNo" :pageSize.sync="queryParam.pageSize" :total="total" :showSizeChanger="true" @change="handlePageChange" />
       </div>
@@ -60,7 +63,7 @@
 import { getRoomList, delRoom, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 // import { editSwitchStatus } from '@/api/device'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
-
+import { Empty } from 'ant-design-vue'
 import ClassroomModal from './modules/ClassroomModal'
 import RoomDeviceModal from './modules/RoomDeviceModal'
 import RoomOboxModal from './modules/RoomOboxModal'
@@ -79,6 +82,9 @@ export default {
       },
       total: 0
     }
+  },
+  beforeCreate() {
+    this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE
   },
   mounted () {
     this.calculateContentHeight()
