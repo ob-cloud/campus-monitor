@@ -146,7 +146,6 @@ export default {
         } else { // 栋、层批量处理
           this.activeAction.action = actionData.action.action
           this.activeAction.node_type = actionData.action.node_type
-          // TODO 之前不知为何移除
           this.activeAction.device_child_type = actionData.action.device_child_type || actionData.action.deviceChildType
         }
       } else { // 子 action
