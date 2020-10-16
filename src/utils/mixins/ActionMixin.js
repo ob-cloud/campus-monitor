@@ -14,7 +14,7 @@ export default {
       }
     },
     changeAirConditionToAction (action, device, room) {
-      return this.toAction(action, {'device_child_type': '01', addr: 'fe', 'device_type': device.deviceType, name: device.name, index: device.index, node_type: '07'}, room)
+      return this.toAction(action, {'device_child_type': '', addr: 'fe', 'device_type': device.deviceType, name: device.name, index: device.index, node_type: '07'}, room)
     },
     changeSwitchButtonToAction (value, device, room) {
       const status = new Array(7).fill(0)
