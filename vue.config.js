@@ -55,7 +55,7 @@ module.exports = {
   },
 
   devServer: {
-    port: 3001,
+    port: 3002,
     proxy: {
      '/pro': {
         // target: 'http://yapi.demo.qunar.com/mock/66959', //mock API接口系统
@@ -63,7 +63,8 @@ module.exports = {
         // target: 'http://192.168.200.241',
         // target: 'http://10.10.92.161:8082/nurse',
         // target: 'https://aliiot.on-bright.com/nurseTest',
-        target: 'http://10.10.92.129',
+        // target: 'http://10.10.92.129',
+        target: 'http://192.168.31.9:8201',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -71,7 +72,8 @@ module.exports = {
         }
       },
       '/pro/aliService': {
-        target: 'http://10.10.92.129',
+        // target: 'http://10.10.92.129',
+        target: 'http://192.168.31.9:8201',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -79,7 +81,8 @@ module.exports = {
         }
       },
       '/pro/facade': {
-        target: 'http://10.10.92.129',
+        // target: 'http://10.10.92.129',
+        target: 'http://192.168.31.9:8201',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -87,7 +90,8 @@ module.exports = {
         }
       },
       '/image': {
-        target: 'http://10.10.92.129',
+        // target: 'http://10.10.92.129',
+        target: 'http://192.168.31.9:8201',
         ws: false,
         changeOrigin: true,
         pathRewrite: {

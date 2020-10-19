@@ -37,7 +37,7 @@ sudo nano /etc/nginx/sites-available/default
 #  server_name localhost;
 
 #  location /campus {
-#    root /home/pi/html;
+#    root /home/server/html;
 #    index index.html index.htm;
 #  }
 
