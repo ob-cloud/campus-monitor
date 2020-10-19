@@ -144,7 +144,7 @@ main() {
   sleep 1
   fetch_project
   sleep 1
-  HOST_IP=ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"
+  HOST_IP=$(ifconfig |grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:")
   echo -e "\033[32m Open browser and visit http://$HOST_IP/$PROJ \033[0m"
 }
 main
