@@ -229,3 +229,7 @@ X-Access-Token: BearereyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImNyZWF0ZWQiOjE1O
   "onLine": false
 }
 ~~~
+
+## nginx config
+
+[nginx]()https://skyao.gitbooks.io/learning-nginx/content/configure/vhost/action_domian.html
