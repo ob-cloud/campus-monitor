@@ -52,6 +52,6 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "vue-echarts": "^5.0.0-beta.0",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "^2.6.11"
   }
 }
