@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { getFloorList, delFloor, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
+import { getFloorList, delFloor, handleLampPowerGroup, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 import { Empty } from 'ant-design-vue'
 import FloorModal from './modules/FloorModal'
@@ -121,11 +121,16 @@ export default {
         floorId: item.id,
         deviceType: item.lightState ? 2 : 1
       }
-      handleLampPower(params).then(res => {
+      // handleLampPower(params).then(res => {
+      //   if (this.$isAjaxSuccess(res.code)) {
+      //     this.$message.success('操作成功')
+      //   } else this.$message.error(res.message)
+      // })
+      handleLampPowerGroup(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
         } else this.$message.error(res.message)
-      })
+      }).catch(() => this.$message.error('服务异常'))
     },
     handlePower (item) {
       // const isPowerOn = this.isLightActive(item.deviceState)
