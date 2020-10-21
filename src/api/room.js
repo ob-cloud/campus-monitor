@@ -2,7 +2,7 @@
  * @Author: eamiear
  * @Date: 2019-08-07 16:43:10
  * @Last Modified by: eamiear
- * @Last Modified time: 2020-09-22 18:12:44
+ * @Last Modified time: 2020-10-21 10:45:12
  */
 
 import { getAction, postFormAction } from '@/utils/ajax'
@@ -44,6 +44,11 @@ const unbindRoomDevice = (params = {}) => postFormAction('/common', {
 // 灯控
 const handleLampPower = (params = {}) => postFormAction('/common', {
   CMD: 'tigger_room_device',
+  device: JSON.stringify({ ...params, deviceChildType: '01' })
+})
+// 灯组控
+const handleLampPowerGroup = (params = {}) => postFormAction('/common', {
+  CMD: 'smart_room_group_control',
   device: JSON.stringify({ ...params, deviceChildType: '01' })
 })
 // 开关
@@ -209,6 +214,7 @@ export {
   bindRoomDevice,
   unbindRoomDevice,
   handleLampPower,
+  handleLampPowerGroup,
   handleSwitchPower,
   getPowerStatus,
   triggerAllPower,

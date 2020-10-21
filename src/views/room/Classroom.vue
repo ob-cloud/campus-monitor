@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { getRoomList, delRoom, handleLampPower, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
+import { getRoomList, delRoom, handleLampPowerGroup, handleSwitchPower, getPowerStatus, triggerAllPower } from '@/api/room'
 // import { editSwitchStatus } from '@/api/device'
 import { ProListMixin } from '@/utils/mixins/ProListMixin'
 import { Empty } from 'ant-design-vue'
@@ -142,11 +142,16 @@ export default {
         roomId: item.id,
         deviceType: item.lightState ? 2 : 1
       }
-      handleLampPower(params).then(res => {
+      // handleLampPower(params).then(res => {
+      //   if (this.$isAjaxSuccess(res.code)) {
+      //     this.$message.success('操作成功')
+      //   } else this.$message.error(res.message)
+      // })
+      handleLampPowerGroup(params).then(res => {
         if (this.$isAjaxSuccess(res.code)) {
           this.$message.success('操作成功')
         } else this.$message.error(res.message)
-      })
+      }).catch(() => this.$message.error('服务异常'))
     },
     handlePower (item) {
       // const isPowerOn = this.isLightActive(item.deviceState)
