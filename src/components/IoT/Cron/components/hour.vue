@@ -7,9 +7,9 @@
       <div class="block">
         <a-radio :value="2" border>周期</a-radio>
         <span style="margin-left: 10px; margin-right: 5px;">从</span>
-        <a-input-number @change="type = '2'" v-model="cycle.start" :min="0" :max="23" style="width: 100px;"></a-input-number>
+        <a-input-number @change="type = 2" v-model="cycle.start" :min="0" :max="23" style="width: 100px;"></a-input-number>
         <span style="margin-left: 5px; margin-right: 5px;">至</span>
-        <a-input-number @change="type = '2'" v-model="cycle.end" :min="2" :max="23" style="width: 100px;"></a-input-number>
+        <a-input-number @change="type = 2" v-model="cycle.end" :min="2" :max="23" style="width: 100px;"></a-input-number>
       </div>
       <!-- <div>
         <a-radio value="3" border>循环</a-radio>
