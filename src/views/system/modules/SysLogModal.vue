@@ -3,7 +3,7 @@
     <div class="actionBar" style="text-align: center;">
       <a-range-picker
         v-model="pickerValue"
-        format="YYYY-MM-DD HH:mm"
+        format="YYYY-MM-DD"
         :placeholder="['开始日期', '结束日期']"
         @change="onChange"
       />
